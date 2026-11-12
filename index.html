@@ -1200,6 +1200,27 @@ body.career.phoneRace .dock{position:absolute;left:8px;right:8px;bottom:8px;padd
 .dkMode button{padding:0 7px}
 .dkPace button,.dkMode button{font-size:12.5px}
 .dkTy .dkBox{flex:none;width:auto;min-width:5.6em;padding:0 12px}
+/* BOXの段（2026-11）：ふだんはカメラの操作とBOX。BOXを押すとタイヤの一覧（＋✕）に切り替わる */
+.dkTy .dkCamSlot{flex:1 1 auto;min-width:0;display:flex}
+.dkTy button[data-c],.dkTy .dkPickX{display:none}
+.dkTy.picking button[data-c]{display:flex}
+.dkTy.picking .dkPickX{display:flex;flex:none;width:40px;justify-content:center}
+.dkTy.picking .dkCamSlot{display:none}
+.dkTy .dkBox{flex-direction:column;justify-content:center;line-height:1.1}
+.dkTy .dkBox small{font-size:10px;font-weight:700}
+.dkTy .dkBox.picking{background:#3a3f47;color:#ffc400;font-size:12px}
+.dkTy .dkBox.ai{background:#00c8ff;color:#06222e}
+#camctl.inDock{position:static!important;inset:auto!important;width:auto!important;max-width:none!important;flex:1 1 auto;min-width:0;flex-direction:row!important;align-items:stretch!important;gap:3px!important;padding:0!important;margin:0;background:transparent!important;box-shadow:none!important;border:0!important;backdrop-filter:none!important;overflow-x:auto;scrollbar-width:none}
+#camctl.inDock .camIco,#camctl.inDock .who{display:none!important}
+#camctl.inDock>*{order:0!important}
+#camctl.inDock button{flex:1 1 0;min-width:0;height:auto!important;min-height:40px;padding:0 4px!important;border-radius:8px;background:rgba(255,255,255,.08);font-size:12px!important}
+#camctl.inDock button.on{background:#ffc400;color:#15171a}
+#camctl.inDock button[hidden]{display:none}
+body.phoneRace:not(.pcRace) #camctl.inDock #camOut,body.phoneRace:not(.pcRace) #camctl.inDock #camIn,body.phoneRace:not(.pcRace) #camctl.inDock .zl,body.phoneRace:not(.pcRace) #camctl.inDock .sep,body.phoneRace:not(.pcRace) #camctl.inDock #camRot{display:none!important}   /* スマホの拡大縮小は2本指で */
+#camctl.inDock .sep{width:1px;height:auto;align-self:stretch;margin:6px 2px;flex:none}
+#camctl.inDock .zl{display:flex;align-items:center;flex:none}
+#camctl.inDock #camOut,#camctl.inDock #camIn{flex:none;width:36px}
+body.career.pcRace .dock .dkTy{display:flex}
 /* 自チームのカード：押すと担当マシンを切り替える */
 .teamTel .tc{pointer-events:auto;cursor:pointer}
 .teamTel .tc:focus-visible{outline:2px solid #5bc0ff;outline-offset:1px}
@@ -1459,6 +1480,10 @@ body.qMode #lcBtn,body.qMode #lapChartWrap{display:none!important}
 .qtc .qtSet{flex:1;min-width:0;height:18px;margin:0;accent-color:#ffc400;cursor:pointer;touch-action:none}
 .qtc .qtSet:disabled{opacity:.45;cursor:default}
 .qtc .qtSetV{min-width:4.6em;text-align:right;font-size:11px;font-weight:700;color:#e9ebee;white-space:nowrap}
+.qtc .qtSets{display:inline-flex;margin-left:2px}
+.qtS{display:inline-flex;align-items:center;gap:2px;font:700 11px "Chakra Petch",sans-serif;color:#e9ebee}
+.qtS i{display:inline-grid;place-items:center;width:15px;height:15px;border:2px solid;border-radius:50%;box-sizing:border-box;font:800 8.5px/1 "Chakra Petch",sans-serif;font-style:normal;color:#fff}
+.qtS.old{color:#ff8a96}
 span.qNm{display:inline-block;width:2.4em;white-space:nowrap}
 span.qMk{display:inline-flex;align-items:center;justify-content:center;width:15px;height:12px;vertical-align:middle;flex:none}
 span.qMk span.qPit,span.qMk span.qChk{margin-left:0!important}
@@ -1490,6 +1515,7 @@ body.pcRace .qrTower{top:44px;width:162px;max-height:calc(100% - 44px - var(--te
 .qrMsg.fade{opacity:0}
 @media (max-width:640px){ .qrMsg{top:auto;bottom:calc(var(--dockH,40px) + var(--telH,120px) + 22px);max-width:calc(100% - 24px)} }
 .qrBar{position:absolute;left:8px;right:8px;bottom:8px;display:flex;align-items:center;gap:6px;padding:5px;border-radius:12px;background:rgba(20,22,26,.86);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.qrBar:has(.qrRest){flex-wrap:wrap}
 body.pcRace .qrBar{left:50%;right:auto;transform:translateX(-50%)}
 .qrBar .qSpd button{min-width:38px;min-height:34px}
 body.career.phoneRace.watch .qrBar{opacity:0;pointer-events:none!important}
@@ -1547,6 +1573,7 @@ body:not(.pcRace) .qrRow span.qChk svg{width:9px;height:8px}
 .qrCtl .b.sm{min-height:34px}
 .qrIco{min-width:34px;min-height:34px;padding:0 8px;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:rgba(255,255,255,.06);color:#e9ebee;font:700 13px inherit;font-family:inherit;cursor:pointer}
 .qrIco{white-space:nowrap}
+.qrBar .qrRest{flex-basis:100%;order:-1;min-height:38px;margin-bottom:2px}
 .qrIco.qrEnd{margin-left:auto}
 .qrSum{display:flex;align-items:center;gap:4px;width:100%;min-height:30px;padding:0 8px;border:0;border-radius:7px;background:rgba(255,255,255,.05);color:#aab0b8;font:500 11.5px inherit;font-family:inherit;text-align:left;cursor:pointer}
 .qrSum b{color:#e9ebee}.qrSum span{margin-left:auto;color:#5bc0ff;font-weight:700}
@@ -1584,6 +1611,10 @@ body:not(.pcRace) .qrRow span.qChk svg{width:9px;height:8px}
 .qrRes tr.mine td{background:rgba(0,200,255,.14)}
 .qrRes tr.elim td{color:#ff8b98}
 .qrRes svg.logo{vertical-align:-3px;margin-right:5px}
+.qrRes{font-size:12px}
+.qrRes td{padding:1px 5px;line-height:17px}
+.qrOvBox .wrapx:has(.qrRes){flex:1 1 auto;min-height:0;overflow-y:auto}
+.qrRes tr.qLineRow td{padding:0!important;line-height:14px}
 
 .qmSecs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
 .qmS{display:flex;flex-direction:column;align-items:center;padding:3px 2px;border-radius:6px;background:rgba(255,255,255,.07);line-height:1.15}
@@ -2347,7 +2378,7 @@ body.career.pcRace .tc:first-child .tcPick{right:auto;left:0}
 body.career.pcRace .dock{display:flex!important;flex-direction:row;align-items:center;gap:8px;left:50%!important;right:auto!important;bottom:8px!important;transform:translateX(-50%);
   width:auto!important;max-width:calc(100% - 2*var(--tcW) - 56px);padding:8px!important}
 body.career.pcRace .dock>.dkRow.dkFoldable{display:contents!important}
-body.career.pcRace .dock .dkTy,body.career.pcRace .dock .dkPace,body.career.pcRace .dock .dkFold,body.career.pcRace .dock .dkFoldOnly{display:none!important}
+body.career.pcRace .dock .dkTy button[data-c],body.career.pcRace .dock .dkTy .dkPickX,body.career.pcRace .dock .dkTy .dkBox,body.career.pcRace .dock .dkTy .dkStart2,body.career.pcRace .dock .dkPace,body.career.pcRace .dock .dkFold,body.career.pcRace .dock .dkFoldOnly{display:none!important}
 body.career.pcRace .dock button{min-height:50px;font-size:14px}
 body.career.pcRace .dock #dkStart{min-width:132px;padding:0 16px;font-size:15px}
 body.career.pcRace #dkSpeed button{display:inline-flex!important;min-width:46px;font-size:14px;background:rgba(255,255,255,.08);color:#e9ebee}
@@ -3511,7 +3542,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
         <div class="dkSeg dkMode" id="dkMode" role="group" aria-label="ピット判断"><span class="lab">ピット</span><button type="button" data-m="self">自分で</button><button type="button" data-m="auto">おまかせ</button></div>
         <div class="dkTOW" id="dkTOW" hidden><button type="button" class="dkTO" id="dkTO" aria-haspopup="true" aria-expanded="false"><small>オーダー</small><b>自由</b></button><div class="toMenu" id="toMenu" hidden role="menu" aria-label="チームオーダー"></div></div>
       </div>
-      <div class="dkRow dkTy dkPitRow" id="dkTy" role="group" aria-label="次のタイヤ"><button type="button" data-c="S"><span class="tring" style="border-color:#e63946"></span>S</button><button type="button" data-c="M"><span class="tring" style="border-color:#f4b400"></span>M</button><button type="button" data-c="H"><span class="tring" style="border-color:#e8e8e8"></span>H</button><button type="button" data-c="I"><span class="tring" style="border-color:#3ce08c"></span>I</button><button type="button" data-c="W"><span class="tring" style="border-color:#2f8fff"></span>W</button><button type="button" class="dkBox" id="dkBox2">BOX</button><button type="button" class="dkMain dkStart2" id="dkStart2"></button><button type="button" class="dkIco dkFoldOnly" id="dkUnfold" aria-label="操作ボタンをすべて表示" title="操作ボタンをすべて表示"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button></div>
+      <div class="dkRow dkTy dkPitRow" id="dkTy" role="group" aria-label="カメラとBOX"><span class="dkCamSlot" id="dkCamSlot"></span><button type="button" data-c="S"><span class="tring" style="border-color:#e63946"></span>S</button><button type="button" data-c="M"><span class="tring" style="border-color:#f4b400"></span>M</button><button type="button" data-c="H"><span class="tring" style="border-color:#e8e8e8"></span>H</button><button type="button" data-c="I"><span class="tring" style="border-color:#3ce08c"></span>I</button><button type="button" data-c="W"><span class="tring" style="border-color:#2f8fff"></span>W</button><button type="button" class="dkPickX" id="dkPickX" aria-label="タイヤ選びをやめる">✕</button><button type="button" class="dkBox" id="dkBox2">BOX</button><button type="button" class="dkMain dkStart2" id="dkStart2"></button><button type="button" class="dkIco dkFoldOnly" id="dkUnfold" aria-label="操作ボタンをすべて表示" title="操作ボタンをすべて表示"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button></div>
     </div>
     <canvas class="miniMap" id="miniMap" hidden aria-label="ミニマップ"></canvas>
     <div class="miniTower" id="miniTower" hidden aria-label="順位表"><button type="button" class="mtHead" id="mtHead" aria-expanded="true" aria-controls="mtRows"><span>順位</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><div class="mtRows" id="mtRows"></div></div>
@@ -4618,8 +4649,8 @@ const bg = document.createElement('canvas'), bgCtx = bg.getContext('2d');
 let bgDirty = true, bgK = 1;
 let dpr = 1, scale = 1, viewZ = 1, viewRot = 0;   // viewRot：いま描いている画面の回転                   // viewZ：いま描いている画面のカメラ倍率
 /* ---------- カメラ（レース中のズームと追従） ---------- */
-const CAM_ZOOMS = [1.6, 2.2, 3.0], CAM_ZMAX = 3.0;
-const cam = { x: 500, y: 350, z: 1, rot: 0, mode: 'all', follow: null, zi: 1 };   // rot：画面の回転（追従視点で車を上向きにする）   // follow はマシン（machines の要素）
+const CAM_ZOOMS = [1.0, 1.3, 1.6, 2.2, 3.0, 4.0, 5.5], CAM_ZMAX = 5.5;   // 追いかけるカメラの拡大の段階（2026-11：幅を広げた）
+const cam = { x: 500, y: 350, z: 1, rot: 0, mode: 'all', follow: null, zi: 3 };   // rot：画面の回転（追従視点で車を上向きにする）   // follow はマシン（machines の要素）
 // cam.z は「画面の基準の広さ（VW×VH）が画面にちょうど収まる倍率」を1とした倍率。
 // 広いマップ全体を映すときは1より小さくなる（Lなら0.5）
 function worldFitZ(){ return Math.min(VW/W, VH/H); }
@@ -4953,9 +4984,9 @@ function setCam(m, machine){
    ・タッチ：フリーのあいだだけ、1本指のドラッグで移動・2本指のピンチで拡大縮小（ほかのときは今までどおりタップで車を追う）
    ・動かさずに離したとき（クリック・タップ）は、これまでどおり近くの車を追う（フリーは終わる）
    中継レイアウトでは、下のズーム画面（cv2）がフリーカメラになる */
-const FCAM_ZMAX = 4.5;
+const FCAM_ZMAX = 8;
 const fcam = { x: VW/2, y: VH/2, z: 1 };
-function fcamZMin(){ return worldFitZ()*0.85; }
+function fcamZMin(){ return worldFitZ()*0.6; }
 function setFcam(x, y, z){
   fcam.z = clamp(z, fcamZMin(), FCAM_ZMAX);
   fcam.x = clamp(x, -W*0.15, W*1.15); fcam.y = clamp(y, -H*0.15, H*1.15);
@@ -4978,7 +5009,12 @@ let fges = null;
 function racePtrDown(e, canvas, pickCm){
   if(canvas !== fcamCanvas()){ pickCar(e, canvas, pickCm); return; }   // 中継レイアウトの全体画面は、車を選ぶだけ
   const touch = e.pointerType === 'touch';
-  if(touch && cam.mode !== 'free'){ pickCar(e, canvas, cam); return; }
+  if(touch && cam.mode !== 'free'){                       // 追いかけるカメラ：1本指のタップで車を選ぶ／2本指のピンチで拡大縮小（段階を切り替える）
+    fptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(fptr.size >= 2){ fges = { kind: 'none', canvas }; return; }   // 2本指の拡大縮小は、下の touch のイベントで扱う（ページの拡大にさせないため）
+    if(fptr.size === 1) fges = { kind: 'tap', canvas, sx: e.clientX, sy: e.clientY, e0: { clientX: e.clientX, clientY: e.clientY, pointerType: e.pointerType } };
+    return;
+  }
   if(!touch && e.button !== 0 && e.button !== 1) return;
   if(e.isPrimary){ fptr.clear(); fges = null; }
   fptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -4995,6 +5031,14 @@ function racePtrMove(e){
   if(!fptr.has(e.pointerId) || !fges) return;
   fptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
   const g = fges, r = g.canvas.getBoundingClientRect();
+  if(g.kind === 'zpinch'){
+    if(fptr.size < 2) return;
+    const [a, b] = [...fptr.values()], k = Math.hypot(a.x - b.x, a.y - b.y)/g.d0;
+    const zi = clamp(g.zi0 + Math.round(Math.log(k)/Math.log(1.3)), 0, CAM_ZOOMS.length - 1);   // 指の間が1.3倍広がるごとに1段
+    if(zi !== cam.zi){ cam.zi = zi; if(cam.mode === 'all' && zi > 0) cam.mode = MY ? 'car' : 'lead'; if(cam.mode === 'car' && !cam.follow && MY) cam.follow = MY; updateCamUI(); dirty = true; }
+    return;
+  }
+  if(g.kind === 'tap'){ if(Math.hypot(e.clientX - g.sx, e.clientY - g.sy) > 10) g.kind = 'none'; return; }
   if(g.kind === 'pinch'){
     if(fptr.size < 2) return;
     const [a, b] = [...fptr.values()], mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
@@ -5016,7 +5060,9 @@ function racePtrUp(e){
   fptr.delete(e.pointerId);
   const g = fges;
   if(g && g.kind === 'drag' && !g.moved && !fptr.size) pickCar(g.e0, g.canvas, cam);   // 動かさずに離した：車を選ぶ
-  if(g && g.kind === 'pinch' && fptr.size) fges = { kind: 'none' };                   // 残った指では動かさない
+  if(g && g.kind === 'tap' && !fptr.size) pickCar(g.e0, g.canvas, cam);                 // タッチ：動かさずに離した
+  if(g && g.kind === 'zpinch' && fptr.size) fges = { kind: 'none', canvas: g.canvas };
+  if(g && g.kind === 'pinch' && fptr.size) fges = { kind: 'none', canvas: g.canvas };                   // 残った指では動かさない
   if(!fptr.size){ fges = null; if(g && g.canvas) g.canvas.style.cursor = ''; }
 }
 for(const c of [cv, cv2]){
@@ -5031,6 +5077,25 @@ for(const c of [cv, cv2]){
   }, { passive: false });
   // フリーのあいだはキャンバス上のタッチでページをスクロールさせない（iPhone の Safari では touch-action だけでは効かないことがある）
   for(const ev of ['touchstart', 'touchmove']) c.addEventListener(ev, e => { if(mode === 'race' && cam.mode === 'free' && c === fcamCanvas()) e.preventDefault(); }, { passive: false });
+  // 追いかけるカメラの2本指：ページ全体の拡大にさせず、カメラの拡大の段階を切り替える（指の間が1.3倍広がるごとに1段）。
+  // ポインターのイベントだと、1本目の指でページのスクロールが始まると取り消されて拾えないことがあるので、touch のイベントで直接扱う
+  let tz = null;
+  const tDist = e => Math.max(10, Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY));
+  c.addEventListener('touchstart', e => {
+    if(mode !== 'race' || e.touches.length < 2) return;
+    e.preventDefault();
+    if(cam.mode === 'free') return;                          // フリーのときは今までどおり（ポインターの操作で自由に拡大）
+    tz = { d0: tDist(e), zi0: cam.zi };
+  }, { passive: false });
+  c.addEventListener('touchmove', e => {
+    if(mode !== 'race' || e.touches.length < 2) return;
+    e.preventDefault();
+    if(!tz || cam.mode === 'free') return;
+    const zi = clamp(tz.zi0 + Math.round(Math.log(tDist(e)/tz.d0)/Math.log(1.3)), 0, CAM_ZOOMS.length - 1);
+    if(zi !== cam.zi){ cam.zi = zi; if(cam.mode === 'all' && zi > 0) cam.mode = MY ? 'car' : 'lead'; if(cam.mode === 'car' && !cam.follow && MY) cam.follow = MY; updateCamUI(); dirty = true; }
+  }, { passive: false });
+  c.addEventListener('touchend', e => { if(e.touches.length < 2) tz = null; });
+  c.addEventListener('touchcancel', () => { tz = null; });
 }
 /* ミニマップ：押した場所へフリーカメラを動かす（押したままドラッグで動かし続ける） */
 {
@@ -7144,6 +7209,8 @@ cv.addEventListener('lostpointercapture', e=>{ if(ptrs.has(e.pointerId)) endPoin
 // iPhone/iPad の Safari では、レース画面でスクロール可にしたあと touch-action を戻しても効かないことがあるため、
 // コース作成中はキャンバス上のタッチでページがスクロールしないよう、ここでも止めておく
 cv.addEventListener('touchstart', e=>{ if(mode === 'edit') e.preventDefault(); }, { passive: false });
+// iPhone/iPad の Safari：レース画面のコースの上での2本指の操作で、ページ全体が拡大しないようにする
+for(const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => { if(mode === 'race' && e.target && e.target.closest && e.target.closest('canvas')) e.preventDefault(); }, { passive: false });
 cv.addEventListener('touchmove', e=>{ if(mode === 'edit') e.preventDefault(); }, { passive: false });
 document.addEventListener('keydown', e=>{ if(e.code === 'Space' && mode === 'edit' && !/^(input|textarea|select|button)$/i.test(e.target.tagName || '')){ e.preventDefault(); if(!spaceDown){ spaceDown = true; edCursor(); } } });
 document.addEventListener('keyup', e=>{ if(e.code === 'Space'){ spaceDown = false; edCursor(); } });
@@ -8303,7 +8370,7 @@ function cancelAiBox(c){
 }
 /* ---------- PC：自チームのカードからのBOX（担当でないマシンにも出せる） ---------- */
 const TYRE_KEYS_ALL = ['S', 'M', 'H', 'I', 'W'];
-let tcPickFor = null;                                           // タイヤを選ぶ窓を開いているマシン（race.cars の要素）
+let tcPickFor = null, tcPickT = 0;                                           // タイヤを選ぶ窓を開いているマシン（race.cars の要素）
 // おすすめのタイヤ（選ぶ窓に水色の点で出す）：担当マシンはドライバーの希望、なければ路面と残り周回から
 function recTyre(c){
   if(c.m === MY && pw.suggest) return pw.suggest;
@@ -20509,9 +20576,7 @@ function syncDock(){
   syncSpdMenu();
   document.querySelectorAll('#dkPace button').forEach(b => { const on = b.dataset.p === pw.pace; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.disabled = pw.drive; });
   document.querySelectorAll('#dkMode button').forEach(b => { const on = b.dataset.m === pw.mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
-  document.querySelectorAll('#dkTy button[data-c]').forEach(b => { const on = b.dataset.c === pw.pick; b.classList.toggle('on', on); b.classList.toggle('sug', b.dataset.c === pw.suggest); b.setAttribute('aria-pressed', on); });
-  const src = $('#pwBox');
-  document.querySelectorAll('#dock .dkBox').forEach(box => { box.textContent = src.textContent.replace('指示中', '').replace(/\s+/g, ' ').trim(); box.disabled = src.disabled; box.classList.toggle('on', src.classList.contains('on')); });
+  dkBoxSync();
   document.querySelectorAll('#dock .dkPitRow').forEach(r => r.hidden = !MY);
 }
 {
@@ -20551,8 +20616,14 @@ function syncDock(){
       tm.hidden = true; tb.setAttribute('aria-expanded', 'false'); toKey = ''; syncTO(); });
     document.addEventListener('pointerdown', e => { if(!tm.hidden && !e.target.closest('#dkTOW')) { tm.hidden = true; tb.setAttribute('aria-expanded', 'false'); } }); }
   document.querySelectorAll('#dkPace button').forEach(b => b.onclick = () => { const s = document.querySelector(`#pwPace button[data-p="${b.dataset.p}"]`); if(s) s.click(); });
-  document.querySelectorAll('#dkTy button[data-c]').forEach(b => b.onclick = () => { const s = document.querySelector(`#pwTyres button[data-c="${b.dataset.c}"]`); if(s) s.click(); });
-  document.querySelectorAll('#dock .dkBox').forEach(b => b.onclick = () => $('#pwBox').click());
+  // BOX：押すとタイヤの一覧が開き、選ぶと担当マシンにBOXを指示（PCのカードのBOXと同じ流れ）。指示中・AIのBOX中に押すと取り消し
+  document.querySelectorAll('#dkTy button[data-c]').forEach(b => b.onclick = () => { const c = myCar(); if(!c || tcPickFor !== c || b.disabled) return; tcPickFor = null; teamBox(c, b.dataset.c); syncTel(); syncPwButtons(); dkBoxSync(); });
+  $('#dkPickX').onclick = () => { tcPickFor = null; syncTel(); syncPwButtons(); dkBoxSync(); };
+  document.querySelectorAll('#dock .dkBox').forEach(b => b.onclick = () => { const c = myCar(); if(!c || b.disabled) return; sndInit();
+    const S = cardBoxState(c);
+    if(S.act === 'cancel') teamBoxCancel(c); else if(S.act === 'cancelAi') teamAiCancel(c);
+    else if(S.act === 'open'){ tcPickFor = tcPickFor === c ? null : c; tcPickT = performance.now(); }
+    syncTel(); syncPwButtons(); dkBoxSync(); });
   // 画面の中のボタンを押してもコースのタップ（車の選択）にならないようにする
   ['pointerdown','click'].forEach(ev => { dk.addEventListener(ev, e => e.stopPropagation()); });
   // 自チームのカードを押すと、そのマシンを担当にする（ボタンの指示はこのマシンに出る）
@@ -20590,7 +20661,7 @@ function syncDock(){
       const act = t.dataset.act;
       if(act === 'cancel') teamBoxCancel(c);
       else if(act === 'cancelAi') teamAiCancel(c);
-      else if(act === 'open'){ tcPickFor = tcPickFor === c ? null : c; el.dataset.rec = recTyre(c); }
+      else if(act === 'open'){ tcPickFor = tcPickFor === c ? null : c; tcPickT = performance.now(); el.dataset.rec = recTyre(c); }
       syncTel(); syncPwButtons();
     }
   });
@@ -20690,7 +20761,29 @@ function setStartTyre(c, k){
   noteTyre(c, comp);
   syncTel(); renderStandings(true); try{ updatePitWall(); }catch(e){}
 }
+// 下の操作エリアのBOX（スマホ）：状態の表示と、タイヤの一覧の開け閉め
+function dkBoxSync(){
+  const row = $('#dkTy'); if(!row) return;
+  const c = myCar(), S = c ? cardBoxState(c) : { dis: true, act: '' };
+  const picking = !!c && tcPickFor === c && S.act === 'open';
+  row.classList.toggle('picking', picking);
+  const rec = picking ? recTyre(c) : null;
+  row.querySelectorAll('button[data-c]').forEach(b => { b.classList.toggle('sug', b.dataset.c === rec); b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
+  const lab = S.act === 'cancel' ? `取消<small>BOX・${c.boxComp || c.nextComp}</small>` : S.act === 'cancelAi' ? `取消<small>AIのBOX</small>` : S.cls === 'pit' ? 'PIT' : picking ? 'タイヤを選ぶ' : 'BOX';
+  document.querySelectorAll('#dock .dkBox').forEach(box => { if(box.innerHTML !== lab) box.innerHTML = lab; box.disabled = !!S.dis; box.classList.toggle('on', S.act === 'cancel'); box.classList.toggle('ai', S.act === 'cancelAi'); box.classList.toggle('picking', picking); });
+}
+// カメラの操作：キャリアの決勝では下の操作エリア（BOXの段）に置いて、コースを広く見せる。予選やほかのモードでは今までどおりコースの上
+function placeCamctl(){
+  const cc = $('#camctl'), slot = $('#dkCamSlot'); if(!cc || !slot) return;
+  if(!cc._home){ cc._home = cc.parentNode; cc._next = cc.nextSibling; }
+  const B = document.body.classList, inDock = B.contains('career') && !B.contains('qMode') && mode === 'race';
+  if(inDock && cc.parentNode !== slot){ slot.appendChild(cc); cc.classList.add('inDock'); }
+  else if(!inDock && cc.parentNode === slot){ cc._home.insertBefore(cc, cc._next && cc._next.parentNode === cc._home ? cc._next : null); cc.classList.remove('inDock'); }
+}
+new MutationObserver(() => placeCamctl()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 function syncTel(){
+  if(tcPickFor && performance.now() - tcPickT > 7000) tcPickFor = null;
+  if(mode === 'race' && document.body.classList.contains('career')) dkBoxSync();   // 下のBOX（状態・タイヤの一覧）を毎回合わせる   // タイヤの一覧は、選ばないまま7秒たったら閉じる
   const box = $('#teamTel'); if(!box) return;
   if(Q && race.state === 'quali' && document.body.classList.contains('qMode')){ qrTel(); return; }   // 予選：同じ場所に予選のカードを出す
   const st = $('#stage');
@@ -22870,7 +22963,10 @@ let qSpeed = 1;                                       // 予選の進む速さ�
 const qRandn = () => { let u = 0, v = 0; while(!u) u = Math.random(); while(!v) v = Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
 const qMine = c => c.m.team === career.team;
 const qSecB = () => { const P = track && track._qrProf ? track._qrProf : (track ? qrProfile(track) : null); return P ? [P.secF[0], P.secF[1], 1] : [1/3, 2/3, 1]; };   // セクターの終わり（時間の割合）：コースに描いたセクターの線に合わせる
-const qDur = () => QS_DUR[Q.sess];
+// セッションの長さ：コースの1周のタイム（基準のマシン）の QS_LAPS 周分。1周が長いコースでもQ3で2回アタックでき、急げば少し余るくらい
+// （1回の走行：ピットアウト〜アタック開始 約1.3周、アタック 約0.9周、クールダウン〜ガレージ 約1.5周。2回目のアタック開始まで最短で約5.3周）
+const QS_LAPS = [10, 9, 8];
+const qDur = () => track && qrProfile(track).lap > 0 ? Math.round(QS_LAPS[Q.sess]*qrProfile(track).lap) : QS_DUR[Q.sess];
 const qFlag = () => Q.t >= qDur();
 /* マシンのセッティング（2026-11）：-3＝ダウンフォース寄り 〜 +3＝最高速寄り。予選中、ガレージにいるときだけ変えられ、決勝にも持ち越す。
    コースごとにちょうどよい位置（setOpt：全開で最高速近くを出す距離の割合から決める）があり、離れるほどタイムが落ちる（離れた段数の2乗）。
@@ -23104,7 +23200,7 @@ function qrProfile(T){
     if(apex > 0){ let m = apex; while(m < N*0.8){ const i = ((s0 - m) % N + N) % N, prev = ((i - 1) % N + N) % N; if(v[prev] < v[i] - 1e-6) break; m++; }   // 戻りながら速さが上がり続ける間：ブレーキの区間
       pushIdx = ((s0 - m - Math.round(40/sp)) % N + N) % N; } }
   const fs = v.reduce((a, x) => a + (x >= vmax*0.93 ? 1 : 0), 0)/N;   // 全開で最高速近くを出している距離の割合（セッティングの目安）
-  return (T._qrProf = { CT, N, s0, pushIdx, fs, secF: [fr(sc[1]), fr(sc[2])], pExit: pl.exit != null ? fr(pl.exit) : 0.03, pEntry: pl.entry != null ? fr(pl.entry) : 0.96 });
+  return (T._qrProf = { CT, N, s0, pushIdx, fs, lap: tot, secF: [fr(sc[1]), fr(sc[2])], pExit: pl.exit != null ? fr(pl.exit) : 0.03, pEntry: pl.entry != null ? fr(pl.entry) : 0.96 });
 }
 // 時間の割合 p（0〜1）→ コースの点の番号（小数つき）
 function qrIdxAt(P, p){
@@ -23223,7 +23319,7 @@ function qrTel(){
   if(qrTelKey !== key || !box.querySelector('.qtc')){
     qrTelKey = key; telKey = '';                                          // 決勝のカードに戻るときは作り直させる
     box.innerHTML = mine.map(c => `<div class="tc qtc" data-mi="${machines.indexOf(c.m)}" data-qn="${esc(c.m.name)}" role="button" tabindex="0"><div class="secBar" aria-hidden="true"><i><b>S1</b></i><i><b>S2</b></i><i><b>S3</b></i></div>
-      <div class="tcHead"><span class="dot" style="background:${swatchBg(c.m)}"></span>${esc(c.m.name)}<span class="tag"></span></div>
+      <div class="tcHead"><span class="dot" style="background:${swatchBg(c.m)}"></span>${esc(c.m.name)}<span class="qtSets"></span><span class="tag"></span></div>
       <div class="tcRow t1"></div><div class="tcRow t3"></div><div class="tcRow t2"></div>
       <div class="tcPace" role="group" aria-label="${esc(c.m.name)}の攻め具合">${[['safe', 'save'], ['norm', 'norm'], ['max', 'push']].map(([k, ico]) => `<button type="button" data-qp="${k}" class="pc-${ico}" title="${esc(QS_PUSH[k].d)}">${PACE_ICO[ico]}<span class="pcLab">${QS_PUSH[k].n}</span></button>`).join('')}</div>
       <div class="qtAct"><button type="button" class="qtGo"></button><button type="button" class="qtAuto" aria-pressed="false">おまかせ</button></div></div>`).join('');
@@ -23238,6 +23334,10 @@ function qrTel(){
     el.classList.toggle('mine', !!(MY && c.m === MY)); el.classList.toggle('qGone', gone);
     el.classList.toggle('danger', !gone && b != null && s < 2 && pos > safe);
     // 見出し：順位
+    // 名前の横：予選の新品ソフトの残り（赤い輪のS＋数）。使い切ったら「中古」
+    set(el.querySelector('.qtSets'), 'innerHTML', Q.wet[s] || gone ? '' : c.m.qOldS
+      ? `<span class="qtS old" title="新品ソフトを使い切り。決勝のソフトは中古"><i style="border-color:${TYRES.S.color}">S</i>中古</span>`
+      : `<span class="qtS" title="予選の新品ソフトの残り"><i style="border-color:${TYRES.S.color}">S</i>×${c.m.qNew ?? QS_SETS}</span>`);
     set(el.querySelector('.tag'), 'innerHTML', gone ? `<span class="pp">Q${c.out + 1}で脱落</span>` : `<span class="pp">${b == null ? '—' : 'P' + pos}</span>`);
     // 1行目：ベストタイムと、ラインまでの余裕（Q3はポールとの差）
     let gap = '';
@@ -23258,7 +23358,6 @@ function qrTel(){
       else if(Q.red) stTxt = '赤旗：再開待ち';
       else { const left = qLatestGo(c, 'norm') - Q.t, tr = qExitTraffic(c);
         stTxt = left > 0 ? `ガレージ・締切 <b>${qClockTxt(left/qDur()*QS_MIN[s]*60)}</b>${tr ? `・出口${tr}台` : ''}` : '<b class="qgNg">もう間に合わない</b>'; }
-      if(!Q.wet[s]) stTxt += c.m.qOldS ? '・<b class="qgNg">S中古</b>' : `・新品S <b>${c.m.qNew ?? QS_SETS}</b>`;   // 予選の新品ソフトの残り
     } else {
       const ah = st === 'out' || st === 'push' || st === 'cool' ? qAheadInfo(c) : null;
       const ahTxt = ah && ah.gap < 3 ? `・前の${ah.o.m.name} ${ah.gap.toFixed(1)}秒` : '';
@@ -23299,8 +23398,11 @@ function qrTel(){
   });
 }
 // 操作バー（決勝の操作パネルの位置）
+// 自チームの車が、このセッション（とその先）に1台も残っていない
+const qNoMine = s => !qActive(s).some(qMine);
 function qrBarHtml(){
-  return `<div class="qSpd" role="group" aria-label="進む速さ">${[1, 2, 4, 8].map(v => `<button type="button" data-qspd="${v}" class="${qSpeed === v ? 'on' : ''}">×${v}</button>`).join('')}</div>`
+  return (qNoMine(Q.sess) ? `<button type="button" class="b go qrRest" data-qrest="1" title="自チームは全車脱落。残りの予選を計算して結果へ">残りの予選をスキップ</button>` : '')
+    + `<div class="qSpd" role="group" aria-label="進む速さ">${[1, 2, 4, 8].map(v => `<button type="button" data-qspd="${v}" class="${qSpeed === v ? 'on' : ''}">×${v}</button>`).join('')}</div>`
     + `<button type="button" class="qrIco" data-qpause="1" aria-label="${Q.paused ? '再開' : '一時停止'}">${Q.paused ? '▶' : 'Ⅱ'}</button>`
     + `<button type="button" class="qrIco qrEnd" data-qend="1" title="残りを計算だけで進めて、このセッションの結果へ">結果へ</button>`
     + `<button type="button" class="qrIco" data-qskipmenu="1" aria-expanded="${!!Q.skipOpen}" aria-label="スキップ" title="予選（と決勝）を計算だけで進める"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 6l7 6-7 6zM12 6l7 6-7 6z" fill="currentColor"/><rect x="19" y="6" width="2" height="12" fill="currentColor"/></svg></button>`
@@ -23444,8 +23546,7 @@ function qrOvHtml(){
   }
   // セッション終了
   const order = s === 2 && Q.grid ? Q.grid : qOrder(s), safe = s < 2 ? qActive(s).length - cut : 0;
-  const keep = new Set([0, 1, 2]); if(safe) for(let k = safe - 2; k <= safe + 2; k++) if(k >= 0 && k < order.length) keep.add(k);
-  order.forEach((c, i) => { if(qMine(c)) keep.add(i); });
+  const keep = new Set(order.map((c, i) => i));            // 全員の順位を出す（省略しない）
   let prev = -1, rows = '';
   order.slice(0, s === 2 ? 10 : order.length).forEach((c, i) => { if(!keep.has(i)) return; if(i - prev > 1) rows += '<tr class="qSkipRow"><td colspan="4">⋮</td></tr>'; prev = i;
     if(safe && i === safe) rows += '<tr class="qLineRow"><td colspan="4"><span>ノックアウトのライン</span></td></tr>';
@@ -23455,7 +23556,8 @@ function qrOvHtml(){
   if(s < 2){
     const outMine = Q.cars.filter(c => c.out === s && qMine(c)).map(c => c.m.name);
     res = `<p class="qrNote">${['Q1', 'Q2'][s]}終了。${outMine.length ? `<b class="qgNg">${outMine.join('・')}は脱落</b>` : '<b class="qgOk">自チームは全車が次へ進出</b>'}</p>`;
-    btns = `<button class="b go" type="button" data-qnext="1">${['Q2', 'Q3'][s]}へ進む</button>${skipRace}`;
+    btns = qNoMine(s + 1) ? `<button class="b go" type="button" data-qskipall="1">残りの予選をスキップ</button><button class="b" type="button" data-qnext="1">${['Q2', 'Q3'][s]}を観る</button>${skipRace}`   // 自チームが全車脱落：残りは飛ばせる
+      : `<button class="b go" type="button" data-qnext="1">${['Q2', 'Q3'][s]}へ進む</button>${skipRace}`;
   } else {
     const mineG = Q.grid.map((c, i) => [c, i + 1]).filter(([c]) => qMine(c));
     res = `<p class="qrNote">ポールポジション：<b>${Q.grid[0].m.name}</b>（${esc(teamOf(Q.grid[0].m.team).name)}）<br>${mineG.map(([c, p]) => `${c.m.name} <b>${p}番手</b>`).join('　')}</p>`;
@@ -23482,7 +23584,7 @@ function qrRender(live){
 function qrWire(h){
   h.addEventListener('pointerdown', e => {
     if(!Q || !Q.cars) return;
-    const b = e.target.closest('[data-qgo],[data-qabort],[data-qset],[data-qauto],[data-qspd],[data-qpause],[data-qend],[data-qskipmenu],[data-qfollow],[data-qtower]'); if(!b || b.disabled) return;
+    const b = e.target.closest('[data-qgo],[data-qabort],[data-qset],[data-qauto],[data-qspd],[data-qpause],[data-qend],[data-qskipmenu],[data-qrest],[data-qfollow],[data-qtower]'); if(!b || b.disabled) return;
     e.preventDefault(); e.stopPropagation();
     const find = n => Q.cars.find(c => c.m.name === n);
     if(b.dataset.qtower){ qrTowerOpen = !qrTowerOpen; }
@@ -23490,6 +23592,7 @@ function qrWire(h){
     else if(b.dataset.qpause){ Q.paused = !Q.paused; }
     else if(b.dataset.qend){ qRunToEnd(); qEndSession(); return; }
     else if(b.dataset.qskipmenu){ Q.skipOpen = !Q.skipOpen; Q.paused = Q.skipOpen; qrRender(); return; }
+    else if(b.dataset.qrest){ qSkipAll(); qrRender(); return; }   // 自チームが全車脱落：残りの予選を計算して結果へ
     else if(b.dataset.qfollow){ const c = find(b.dataset.qfollow), rc = c && qrRc(c); if(rc) setCam('car', rc.m); }
     else if(b.dataset.qgo){ const c = find(b.dataset.qgo); if(c && qGo(c)){ const rc = qrRc(c); if(rc) setCam('car', rc.m); } }
     else if(b.dataset.qabort){ const c = find(b.dataset.qabort); if(c) qAbort(c); }
@@ -24980,15 +25083,18 @@ const UPD_LOG = [
       'クラッシュの損傷：激しいときは以降のセッションに出走できず、軽いときは修理が終わりしだい出走',
       '新品ソフトは予選全体で5セット。使い切って走ると、決勝のソフトがすべて中古（摩耗15%から）になる',
       'マシンのセッティング（ダウンフォース寄り⇔最高速寄り）。予選のガレージと決勝のスタート前に調整でき、決勝にも持ち越す',
+      'セッションの長さをコースの1周のタイムに合わせて決めるように（Q1 10周・Q2 9周・Q3 8周分）。Q3でも2回アタックできる',
       'タイム確定の車にチェッカー、ピットの車に「P」。全車のアタックが終わったら次のセッションへ。開始時は×1。開始前の画面は廃止',
     ]],
     ['決勝', [
       '順位表の入れ替わりを、行がすべって動く表示に。入れ替わりは2秒続いてから反映',
       'SC・VSC・赤旗の出る回数を見直し。おまかせのピットが1周目の終わりに入らないように',
       '再生速度を1回で選べるメニュー。SCが出たら×1に戻す設定',
+      'BOXを押すとタイヤの一覧が開いて選ぶ方式に（おすすめのタイヤに印）。カメラの操作を下の操作エリアに移してコースを広く表示。拡大縮小の幅を広げ、スマホは2本指で拡大縮小',
     ]],
     ['本部・その他', [
       '本部の「スキップ」で「予選をスキップ」か「予選と決勝をスキップ」を選べる',
+      '自チームが全車脱落したら、予選の結果画面と操作バーに「残りの予選をスキップ」を表示',
       'ゲーム内のチーム名の前にロゴを表示。ロゴの種類を追加',
       'スポンサー依頼の金額・天気予報・お金の表示・ニュースの文言・表示の切れなどを修正',
     ]],
