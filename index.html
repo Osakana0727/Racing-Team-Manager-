@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.2.0 -->
+<!-- レーシングチームマネージャー ver 1.2.1 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,7 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.2.0">
+<meta name="version" content="1.2.1">
+<meta name="build" content="20261113-2">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -3244,6 +3245,9 @@ body.phoneRace .wxPg{grid-template-columns:repeat(8,1fr)}
 .updBtn{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border:1px solid var(--line,#d9dde2);border-radius:999px;background:transparent;color:inherit;font:700 12.5px "M PLUS 1p",sans-serif;cursor:pointer;opacity:.85}
 .updBtn small{font:600 11px "Chakra Petch",sans-serif;opacity:.7}
 .updBtn:hover{opacity:1}
+.updBar{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:230;display:flex;align-items:center;gap:8px;max-width:calc(100% - 24px);padding:8px 8px 8px 14px;border-radius:12px;background:#1b1f25;color:#f4f4f2;font:700 13px "M PLUS 1p",sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.updBar[hidden]{display:none}
+.updBarX{width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:inherit;font-size:18px;cursor:pointer}
 .updOv{position:fixed;inset:0;z-index:220;display:grid;place-items:center;padding:16px;background:rgba(10,12,16,.6)}
 .updOv[hidden]{display:none}
 .updBox{display:flex;flex-direction:column;width:min(560px,100%);max-height:min(80vh,720px);border-radius:14px;background:#fff;color:#1b1f25;box-shadow:0 12px 36px rgba(0,0,0,.35)}
@@ -3504,7 +3508,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.2.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.2.1</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -25228,8 +25232,51 @@ function makeRealPoints(type){
 }
 { const _renderHQ = renderHQ; renderHQ = function(msg){ _renderHQ(msg); addLeftToArmed($('#hq')); }; }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.2.0';
+const APP_VER = '1.2.1';
+/* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
+   開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
+   バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
+const APP_BUILD = (document.querySelector('meta[name="build"]') || {}).content || '';
+let updChecking = false, updLastCheck = 0, updFound = null;
+function updSafe(){ return !updBusy() && (typeof career === 'undefined' || !career || !$('#hq').hidden); }   // 本部（かタイトル）にいるときだけ読み込み直す
+function updBusy(){ return (typeof race !== 'undefined' && (race.state === 'racing' || race.state === 'quali')) || (typeof Q !== 'undefined' && Q && Q.phase === 'run'); }
+function updGo(){ const u = new URL(location.href); u.searchParams.set('u', Date.now().toString(36)); location.replace(u.toString()); }   // URLを変えて、古い控えを使わせない
+function updBanner(v){
+  let b = document.getElementById('updBar');
+  if(!b){ b = document.createElement('div'); b.id = 'updBar'; b.className = 'updBar'; b.setAttribute('role', 'status'); document.body.appendChild(b);
+    b.addEventListener('click', e => { if(e.target.closest('[data-upgo]')) updGo(); else if(e.target.closest('[data-upx]')) b.hidden = true; }); }
+  b.innerHTML = `<span>${v === APP_VER ? '新しい版' : `新しいバージョン（ver ${esc(v)}）`}があります</span><button type="button" class="b sm go" data-upgo="1">更新</button><button type="button" class="updBarX" data-upx="1" aria-label="閉じる">×</button>`;
+  b.hidden = false;
+}
+async function updCheck(force){
+  if(updChecking || !/^https?:$/.test(location.protocol) || !navigator.onLine) return;
+  if(!force && Date.now() - updLastCheck < 60000) return;       // 1分に1回まで
+  updChecking = true; updLastCheck = Date.now();
+  try{
+    const u = new URL(location.href); u.search = ''; u.hash = ''; u.searchParams.set('chk', Date.now().toString(36));
+    const r = await fetch(u.toString(), { cache: 'no-store', credentials: 'same-origin' }); if(!r.ok) return;
+    const t = await r.text();
+    const v = (t.match(/<meta name="version" content="([^"]+)"/) || [])[1], bd = (t.match(/<meta name="build" content="([^"]+)"/) || [])[1] || '';
+    if(!v || (v === APP_VER && bd === APP_BUILD)) return;   // 同じ版
+    updFound = v;
+    if(!updSafe()) updBanner(v);                                  // レース・予選・結果画面の途中：知らせるだけ（本部に戻ったら更新）
+    else { try{ if(typeof career !== 'undefined' && career) saveCareer(); }catch(e){} updGo(); }   // それ以外：保存してから読み込み直す
+  }catch(e){}                                                     // 取れなければ何もしない（オフライン・アーティファクトの中など）
+  finally{ updChecking = false; }
+}
+// 開いたとき・アプリに戻ってきたとき。レースが終わって本部に戻ったときに、見つかっていた更新を当てる
+if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone){
+  setTimeout(() => updCheck(true), 1500);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') updCheck(false); });
+  window.addEventListener('pageshow', e => { if(e.persisted) updCheck(true); });
+  setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
+}
 const UPD_LOG = [
+  { v: '1.2.1', items: [
+    ['その他', [
+      'ホーム画面に追加したアプリでも、開いたときに最新版へ自動で更新（レース中は知らせだけ出し、本部に戻ったら更新）',
+    ]],
+  ] },
   { v: '1.2.0', items: [
     ['予選', [
       '雨の予選：セッション中に濡れ具合が変わる（乾いていく／強くなる／変わらない）。インターとウェットをカードで選べる',
