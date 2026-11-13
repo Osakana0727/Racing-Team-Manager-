@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.1.0 -->
+<!-- レーシングチームマネージャー ver 1.2.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,7 +29,7 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.1.0">
+<meta name="version" content="1.2.0">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1515,7 +1515,7 @@ body.pcRace .qrTower{top:44px;width:162px;max-height:calc(100% - 44px - var(--te
 .qrMsg.fade{opacity:0}
 @media (max-width:640px){ .qrMsg{top:auto;bottom:calc(var(--dockH,40px) + var(--telH,120px) + 22px);max-width:calc(100% - 24px)} }
 .qrBar{position:absolute;left:8px;right:8px;bottom:8px;display:flex;align-items:center;gap:6px;padding:5px;border-radius:12px;background:rgba(20,22,26,.86);box-shadow:0 4px 14px rgba(0,0,0,.35)}
-.qrBar:has(.qrRest){flex-wrap:wrap}
+.qrBarIn:has(.qrRest){flex-wrap:wrap}
 body.pcRace .qrBar{left:50%;right:auto;transform:translateX(-50%)}
 .qrBar .qSpd button{min-width:38px;min-height:34px}
 body.career.phoneRace.watch .qrBar{opacity:0;pointer-events:none!important}
@@ -1524,6 +1524,16 @@ body.career.phoneRace.watch .qrBar{opacity:0;pointer-events:none!important}
 .qtc .t1{grid-template-columns:auto minmax(0,1fr) auto!important;grid-column:1/-1;width:auto!important;min-width:0}   /* カードの横幅いっぱい（狭い列に入ると、タイムと差の表示が重なった） */
 .qtc .t1 .qtGap{width:auto;font-size:10.5px;white-space:nowrap}
 .qtc .t2{grid-template-columns:1fr!important;grid-column:1/-1}
+.qtc .t2[hidden]{display:none!important}
+.qtc .qtWet{display:flex!important;gap:6px;grid-column:1/-1;align-items:center}
+.qtc .qtWet .k{flex:none;width:auto!important}
+.qtc .qtWet .qtTys{flex:1;min-width:0}
+.qtc .qtWet[hidden]{display:none!important}
+.qtTys{display:flex;gap:4px}
+.qtTy{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;height:24px;padding:0 3px;border:0;border-radius:6px;background:rgba(255,255,255,.09);color:#dfe4ea;font:700 10.5px "M PLUS 1p",sans-serif;white-space:nowrap;cursor:pointer}
+.qtTy i{display:inline-grid;place-items:center;width:14px;height:14px;border:2px solid;border-radius:50%;box-sizing:border-box;font:800 8px/1 "Chakra Petch",sans-serif;font-style:normal;flex:none}
+.qtTy.on{background:#e9ebee;color:#15171a}
+.qtTy:disabled{opacity:.5;cursor:default}
 .qtc .qtSt{font-size:10.5px;color:#aab0b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qtc .qtSt b{color:#fff}.qtc .qtSt.live{color:#ffc400}.qtc .qtSt.atk{color:#d6a8ff}
 .qtc .qtAct{grid-column:1/-1;display:flex;gap:5px;margin-top:4px}
@@ -1573,7 +1583,18 @@ body:not(.pcRace) .qrRow span.qChk svg{width:9px;height:8px}
 .qrCtl .b.sm{min-height:34px}
 .qrIco{min-width:34px;min-height:34px;padding:0 8px;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:rgba(255,255,255,.06);color:#e9ebee;font:700 13px inherit;font-family:inherit;cursor:pointer}
 .qrIco{white-space:nowrap}
-.qrBar .qrRest{flex-basis:100%;order:-1;min-height:38px;margin-bottom:2px}
+.qrBar{flex-wrap:wrap}
+.qrBarIn{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1 1 100%;min-width:0}
+.qrCamSlot{display:flex;flex:1 1 100%;min-width:0;padding-top:4px;border-top:1px solid rgba(255,255,255,.1)}
+.qrCamSlot[hidden]{display:none}
+.qrCamBtn.on{background:#ffc400!important;color:#15171a!important}
+body:not(.pcRace) .qrBarIn [data-guide="quali"]{display:none}   /* スマホ：バーを1行に収める（遊び方は右上の？から） */
+body.pcRace .qrBar{max-width:min(560px,calc(100% - 690px));box-sizing:border-box}
+body.pcRace .qrCamSlot #camctl.inDock button{min-width:0}
+.qbDl{display:inline-flex;align-items:baseline;gap:3px;margin-left:2px;padding:0 6px;border-radius:5px;background:rgba(255,196,0,.16);color:#ffd34d;font-size:11px;font-weight:700;white-space:nowrap}
+.qbDl b{font-size:12px;color:#ffe08a}
+.qbDl.ng{background:rgba(255,90,110,.18);color:#ff8a96}
+.qrBarIn .qrRest{flex-basis:100%;order:-1;min-height:38px;margin-bottom:2px}
 .qrIco.qrEnd{margin-left:auto}
 .qrSum{display:flex;align-items:center;gap:4px;width:100%;min-height:30px;padding:0 8px;border:0;border-radius:7px;background:rgba(255,255,255,.05);color:#aab0b8;font:500 11.5px inherit;font-family:inherit;text-align:left;cursor:pointer}
 .qrSum b{color:#e9ebee}.qrSum span{margin-left:auto;color:#5bc0ff;font-weight:700}
@@ -2475,6 +2496,17 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .hotDot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-left:5px;box-shadow:0 0 0 2px rgba(255,196,0,.25);vertical-align:1px}
 .devBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);margin-bottom:10px}
 .devBar .dbSlots{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pGroups{display:grid;grid-template-columns:1fr 2fr;gap:10px;align-items:start}
+.pGrp{display:grid;gap:8px;align-content:start}
+.pg-body{grid-template-columns:1fr 1fr}
+.pg-body>.pcSlot{grid-column:1/-1}
+@media (max-width:900px){.pGroups,.pg-body{grid-template-columns:1fr}}
+.pcSlot{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px;margin:0;min-height:42px;box-sizing:border-box;padding:5px 8px;border-radius:8px;background:rgba(0,0,0,.04);font-size:12px}
+.pcSlot .psLab{font-weight:700;color:var(--muted)}
+.pcSlot.pu .psLab{color:#b07800}
+.pcSlot b{font-size:15px}
+.pcSlot small{font-size:11px}
+.pcSlot #buySlot{margin-left:auto}
 .devBar .dbSlot{display:inline-flex;align-items:center;gap:6px}
 .devBar .dbSlot small{font-size:11px;color:var(--muted);font-weight:700}
 .devBar .dbSlot b{font-size:16px}
@@ -3472,7 +3504,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.1.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.2.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -11829,6 +11861,7 @@ function stepCar(c, dt){
   c.slip = slip * clamp((p.r - 250)/400, 0, 1);
   const edge = c.spinAvoid ? fenceLat(T, best) - 3 : (c.weaving ? half - 1.5 : ((onCurb(T, best) || onCurb(T, liA)) ? (street ? Math.min(half + 1, fenceLat(T, best) - 3) : half + CURB_USE + Math.max(0, CA)*3) : half - 3));   // コーナーでは縁石の上まで使う   // スピン車をよけるときはグラベルまで使う    // ウィービング中は白線ぎりぎりまで使う
   tgt = clamp(tgt, -edge, edge);
+  if(race.state === 'quali' && !c.spinAvoid && street !== true){ const tl = half + CURB_USE; tgt = clamp(tgt, -tl, tl); }   // 予選：縁石はレーシングラインの分（CURB_USE）まで。攻めてさらに外へはみ出す分（決勝のプッシュ）は使わない（トラックリミットがあるので）
   if(!c.pitReq && !c.inPit){ const ph = pitLineHi(T, best), PS = pitSide(T); if(tgt*PS > ph) tgt = ph*PS; }   // ピットに入らない車は、ピットの分岐・合流の白線を踏まない
   // 横並びの間隔：前後に重なる位置にいる車とは、横に車1台分（GAP）空ける
   if(!c.inPit && !c.weaving){
@@ -12730,6 +12763,7 @@ function brakeMistake(c){
   const rate = (uiEl('#crashOn').checked ? 0.5 + incRate()/6 : 0.5) * paceP(c).m;   // プッシュ中はミスが増え、セーブ中は減る
   let pr = 0.005 * (1.5 - c.m.brake*0.08) * rate * trMist(c, c.m.mistK);
   pr *= 1 + race.wet*(isSlick(c.comp) ? 2.5*1.5 : WET_MIST.brk);   // 濡れた路面ではブレーキのミスが増える（スリックのままならもっと）
+  if(race.state === 'quali') pr *= qWetMisK(c.comp, race.wet);   // 予選：濡れすぎた路面のインターは滑りやすい
   if(c.defend || c.slip > 0.4 || c.dirty > 0.5) pr *= 1.8;               // 抜きに行く／守るときは突っ込みがち
   if(c.wear > 0.8) pr *= 1.5;
   const r = Math.random();
@@ -13333,24 +13367,8 @@ function rankChanges(order, now, quiet){
     c.lastRank = k;
   }
 }
-function renderStandings(force){
-  if(Q && race.state === 'quali'){ qrTiming(force); return; }   // 予選：同じ窓に予選のタイミング表を出す
-  const now = performance.now();
-  updateCtl();
-  if(!force && now - lastTable < 150) return; lastTable = now;
-  $('#clock').textContent = fmt(race.t);
-  const fl = $('#flag');
-  let ft = '';
-  if(race.state === 'racing' && mode === 'race'){
-    if(race.red) ft = 'RED FLAG';
-    else if(race.form) ft = 'FORMATION LAP';
-    else if(race.sc && race.sc.until > race.t) ft = 'SC';
-    else if(race.vsc) ft = race.vsc.ending ? 'VSC ENDING' : 'VSC';
-    else { const zs = yZones(); if(zs.length === 1) ft = `${zs[0].dbl ? 'DBL YELLOW' : 'YELLOW'} MS${zs[0].ms+1}`; else if(zs.length > 1) ft = `YELLOW ×${zs.length}`; }
-  }
-  const fh = ft ? `<span${ft === 'RED FLAG' ? ' class="red"' : ''}>${ft}</span>` : '';
-  $('#stage').classList.toggle('redflag', !!race.red && mode === 'race');
-  if(fl.innerHTML !== fh){ fl.innerHTML = fh; fixOverlays(); }
+// 右上の TRACK の表示（路面の状態・路面温度・予報）。予選でも使う
+function wxBoxSync(){
   const wxEl = $('#weather');
   if(wxEl){
     const dry = race.wet < 0.02 && race.rain <= 0.02;           // 雨も路面の濡れもなければ天候モードに関係なくDRY
@@ -13370,6 +13388,26 @@ function renderStandings(force){
     const pop = $('#wxPop');
     if(pop && !pop.hidden){ if(!fcHtml) pop.hidden = true; else { const h = wxPopHtml(); if(pop.innerHTML !== h) pop.innerHTML = h; } }
   }
+}
+function renderStandings(force){
+  if(Q && race.state === 'quali'){ qrTiming(force); wxBoxSync(); return; }   // 予選：同じ窓に予選のタイミング表を出す
+  const now = performance.now();
+  updateCtl();
+  if(!force && now - lastTable < 150) return; lastTable = now;
+  $('#clock').textContent = fmt(race.t);
+  const fl = $('#flag');
+  let ft = '';
+  if(race.state === 'racing' && mode === 'race'){
+    if(race.red) ft = 'RED FLAG';
+    else if(race.form) ft = 'FORMATION LAP';
+    else if(race.sc && race.sc.until > race.t) ft = 'SC';
+    else if(race.vsc) ft = race.vsc.ending ? 'VSC ENDING' : 'VSC';
+    else { const zs = yZones(); if(zs.length === 1) ft = `${zs[0].dbl ? 'DBL YELLOW' : 'YELLOW'} MS${zs[0].ms+1}`; else if(zs.length > 1) ft = `YELLOW ×${zs.length}`; }
+  }
+  const fh = ft ? `<span${ft === 'RED FLAG' ? ' class="red"' : ''}>${ft}</span>` : '';
+  $('#stage').classList.toggle('redflag', !!race.red && mode === 'race');
+  if(fl.innerHTML !== fh){ fl.innerHTML = fh; fixOverlays(); }
+  wxBoxSync();
   const order = dispRanking();   // 表示の順位（入れ替わりが2秒続いてから反映）
   // 順位変動：走行中の車どうしの並び順で比べる（リタイアで繰り上がった分は数えない）
   if(race.state === 'racing') rankChanges(order, now, false);
@@ -14260,8 +14298,8 @@ function guideHtml(){
     <p>上の6つのタブで切り替えます。</p>
     ${tbl(['タブ', 'できること'], [
       ['概要', '次戦の情報（コース・天気予報・路面温度・合うタイヤ）、スポンサー目標、やること、選手権の順位（上位）、前戦の結果とニュース、カレンダー'],
-      ['ドライバー', '2人の能力・契約・重点トレーニング、リザーブ、契約の更改'],
       ['マシン開発', 'パワーユニット・空力・ブレーキの7項目の開発'],
+      ['ドライバー', '2人の能力・契約・重点トレーニング、リザーブ、契約の更改'],
       ['施設', '風洞・シミュレーターなど5つの施設の強化と売却'],
       ['移籍市場', 'ドライバーとの契約（交代・リザーブ）'],
       ['記録', '選手権の順位表、シーズン別ランキング（戦ごとの結果・ポイント推移）、歴代チャンピオン・通算成績・レース履歴・自チームの歩み']])}
@@ -14287,7 +14325,7 @@ function guideHtml(){
     <p>シーズンが終わると、コンストラクターズの順位で来季の基本額が更改されます（1位 +${RENEW_PCT[0]}% 〜 10位 ${RENEW_PCT[9]}%。人気度が高いとさらに上乗せ）。他チームも同じで、基本額はチームの開発の速さにも関わります。</p>
     <p>ときどきスポンサーから<b>依頼</b>が届きます。次戦で条件を達成すると今季の残りは毎戦上乗せ、失敗すると減額です。受けるか断るかを選べます。</p>
     ${sub('loan', '融資（借入）・施設の売却')}
-    <p>足りないときは、ドライバー・マシン開発・施設・移籍市場タブの下にある「融資」で <b>${M(LOAN.step)}ずつ</b>借りられます（残高 ${M(LOAN.cap)} まで、利息 ${Math.round(LOAN.rate*100)}%）。返済は毎戦 ${M(LOAN.pay)} ずつ自動で引かれます。施設タブでは、施設を1段階下げて建設費の半分を受け取れます。資金がマイナスの間は、開発や契約ができません。</p>`)}
+    <p>足りないときは、マシン開発・ドライバー・施設・移籍市場タブの下にある「融資」で <b>${M(LOAN.step)}ずつ</b>借りられます（残高 ${M(LOAN.cap)} まで、利息 ${Math.round(LOAN.rate*100)}%）。返済は毎戦 ${M(LOAN.pay)} ずつ自動で引かれます。施設タブでは、施設を1段階下げて建設費の半分を受け取れます。資金がマイナスの間は、開発や契約ができません。</p>`)}
   ${sec('drivers', 'ドライバー', `
     <p>能力は6項目（${DSTATS.map(x => x[1]).join('・')}）。表示は0〜100で、G〜Sのランクで色分けしています。</p>
     <div class="gRanks">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
@@ -14359,7 +14397,7 @@ function guideHtml(){
       <li>自チームがポールポジションを取ると、賞金 $1.0M。</li>
       <li>「予選を飛ばして結果へ」で、一気に結果まで進められます（自チームもおまかせで、簡単な計算だけで走らせます）。セッションの途中の「結果へ」は、そのセッションの残りを、自チームもおまかせにして走りの計算で一気に進めます。</li>
       <li>予選中にクラッシュ・ストップした車は、そのセッションはもう走れません。クラッシュが起きると<b>赤旗</b>：セッションの時計が止まり、走っている車は全車ピットへ戻ります（そのとき走っていたアタックは無効）。撤去が終わって全車がガレージに戻ったら再開します。</li>
-      <li><b>コース外走行</b>：アタック中に4輪がコースの外（縁石の外）へ出ると、その周のタイムは抹消されます。</li><li>チーム本部の「スキップ」（「予選へ」の横）を押すと、予選も決勝も画面を見ずに計算だけで進め、結果とハイライト（首位の交代・リタイア・SCなど）を出します。計算は普段のレースと同じです。自チームのピットはAIにおまかせ、スタートタイヤとチームオーダーは今の設定のままです。予選を始めたあとでも、予選の画面の「決勝までスキップ」（予選が終わったあとは「決勝をスキップ」）や、決勝のスタート前ならチーム本部の「スキップ」から飛ばせます。決勝を観始めてから途中で飛ばすことはできません。</li></ul>`)}
+      <li><b>トラックリミット違反</b>：アタック中に4輪すべてがコースの端の白線を越えると（白線はコース内、縁石はコース外）、その周のタイムは抹消されます。</li><li>チーム本部の「スキップ」（「予選へ」の横）を押すと、予選も決勝も画面を見ずに計算だけで進め、結果とハイライト（首位の交代・リタイア・SCなど）を出します。計算は普段のレースと同じです。自チームのピットはAIにおまかせ、スタートタイヤとチームオーダーは今の設定のままです。予選を始めたあとでも、予選の画面の「決勝までスキップ」（予選が終わったあとは「決勝をスキップ」）や、決勝のスタート前ならチーム本部の「スキップ」から飛ばせます。決勝を観始めてから途中で飛ばすことはできません。</li></ul>`)}
   ${sec('race', 'レース中の操作', `
     <p>コース画面の下（スマホでは画面の中）の操作パネルで指示を出します。指示は<b>担当マシン</b>に出ます。自チームのカードを押すと担当が切り替わり、カメラもそのマシンに寄ります。</p>
     ${tbl(['操作', '内容'], [
@@ -16327,9 +16365,9 @@ function mktList(){                    // 並べ替え・絞り込み後の移�
 let careerRace = null;                 // いま走っている（走った）ラウンド { round, done }
 let hqView = career ? 'hq' : 'new';
 let standView = 'drivers';
-/* チーム本部のタブ（概要・ドライバー・マシン開発・移籍市場・記録）。最後に見ていたタブを覚えておく */
+/* チーム本部のタブ（概要・マシン開発・ドライバー・施設・移籍市場・記録）。最後に見ていたタブを覚えておく */
 const HQ_TAB_KEY = 'rtm.hqTab.v1';
-const HQ_TABS = [['ov','概要'],['drv','ドライバー'],['dev','マシン開発'],['fac','施設'],['mkt','移籍市場'],['rec','記録']];
+const HQ_TABS = [['ov','概要'],['dev','マシン開発'],['drv','ドライバー'],['fac','施設'],['mkt','移籍市場'],['rec','記録']];
 /* タブのアイコン（24×24の線画）。概要＝旗、ドライバー＝ヘルメット、マシン開発＝レンチ、施設＝建物、移籍市場＝入れ替えの矢印、記録＝トロフィー */
 const HQ_TAB_ICO = {
   ov:  'M6 21V4M6 4h11l-2.5 4L17 12H6',
@@ -19980,8 +20018,7 @@ function renderHQ(msg){
     const bar = (() => {
       const bought = slotBought(), cost = slotPrice(), on = armed.key === 'buyslot', poor = career.money < cost, live = career.round < career.calendar.length;
       return `<div class="devBar">
-        <div class="dbSlots"><span class="dbSlot"><small>開発枠</small><b class="num">${slotsLeft()}/${devSlots()}</b>${pips(devSlots(), slotsUsed())}</span>${puWorks(me) ? `<span class="dbSlot pu"><small>PU枠${aduoOf(me.id) ? ' <span class="aduoTag sm">ADUO</span>' : ''}</small><b class="num">${puSlotsLeft()}/${puSlots()}</b>${pips(puSlots(), puUsed())}</span>` : ''}
-          ${live ? `<button type="button" class="b sm ${on ? 'go' : ''}" id="buySlot" ${bought || poor ? 'disabled' : ''} title="${bought ? '追加の枠は1戦に1つまで' : `1戦に1枠まで・今戦だけ有効${slotBuysSeason() ? '・買うたびに値上がり' : ''}${myFac('wind') ? `・風洞で−${myFac('wind')*6}%` : ''}`}">${bought ? '枠を追加済み' : on ? `もう一度押して確定（${money(cost)}）` : `＋枠 ${money(cost)}`}</button>` : ''}</div>
+        <!-- 開発枠と枠の追加は、各部品のカード（開発ボタンのそば）へ移した（2026-11） -->
         <div class="dbDs">${myDs ? dsFace(myDs, 36, teamSuit(me)) : '<span class="dsNone" aria-hidden="true">?</span>'}<div class="dsTxt"><small>設計責任者</small><b>${myDs ? esc(myDs.name) : '不在（技術陣で開発中）'}</b>${myDs ? `<span class="dsTags">${dsTagsHtml(myDs, true)}</span>` : '<span class="muted dsWarn">失敗しやすくなっています。移籍市場で契約してください</span>'}</div><button type="button" class="b sm" data-gods="1">${myDs ? '設計者を探す' : '移籍市場で探す'}</button></div>
         <div class="dbOdds"><span class="dbKey"><i class="f">失敗</i><i class="s">成功</i>${P.great > 0 ? '<i class="g">大成功</i>' : ''}</span>${odds(aeroResLv(me) ? '空力*' : '空力', devOdds(dsType(me), dsLevel(me, 'df', aeroFacLv(me))))}${puWorks(me) ? odds(resSupport(me) ? 'PU*' : 'PU', devOdds(dsType(me), dsLevel(me, 'power', puFacLv(me)))) : ''}${odds(resSupport(me) ? 'ブレーキ*' : 'ブレーキ', devOdds(dsType(me), dsLevel(me, 'bpow', puFacLv(me))))}<span class="dbMult">伸び ×${P.k[0]}／×1${P.great > 0 ? `／×${P.k[2]}` : ''}</span></div>
       </div>`;
@@ -20025,13 +20062,18 @@ function renderHQ(msg){
           ${open ? `<span class="dDesc">${esc(CAR_DESC[k])}</span>` : ''}</div>`;
       }).join('');
       return `<div class="pCard pc-${pid}"><div class="pcHead"><span class="pcIco">${PART_ICO[pid]}</span><b>${plab}</b>${tag}<span class="pcStat"><span class="num">${avg.toFixed(1)}</span><span class="pcRk ${rk <= 3 ? 'top' : ''}">${rk}位</span></span></div>${sub}${rows}</div>`;
-    }).join('');
+    });
+    // 開発枠：PUはPUのカードの上、空力・ブレーキの共通の枠は2枚のカードの上にまとめて1つ（枠の追加はこちらだけ）
+    const puSlotHtml = puWorks(me) ? `<div class="pcSlot pu"><span class="psLab">PU開発枠${aduoOf(me.id) ? ' <span class="aduoTag sm">ADUO</span>' : ''}</span><b class="num">${puSlotsLeft()}/${puSlots()}</b>${pips(puSlots(), puSlots() - puSlotsLeft())}<small class="muted">PU専用（追加はできません）</small></div>` : '';
+    const bodySlotHtml = (() => { const bought = slotBought(), cost = slotPrice(), on = armed.key === 'buyslot', poor = career.money < cost, live = career.round < career.calendar.length;
+      return `<div class="pcSlot"><span class="psLab">開発枠</span><b class="num">${slotsLeft()}/${devSlots()}</b>${pips(devSlots(), slotsUsed())}<small class="muted">空力・ブレーキ共通</small>${live ? `<button type="button" class="b sm ${on ? 'go' : ''}" id="buySlot" ${bought || poor ? 'disabled' : ''} title="空力・ブレーキの開発枠を1つ追加（PUの枠は増えません）・1戦に1枠まで・今戦だけ有効${slotBuysSeason() ? '・買うたびに値上がり' : ''}${myFac('wind') ? `・風洞で−${myFac('wind')*6}%` : ''}">${bought ? '枠を追加済み' : on ? `もう一度押して確定（${money(cost)}）` : `開発枠＋1 ${money(cost)}`}</button>` : ''}</div>`; })();
+    const cardsHtml = `<div class="pGroups"><div class="pGrp pg-pu">${puSlotHtml}${cards[0]}</div><div class="pGrp pg-body">${bodySlotHtml}${cards.slice(1).join('')}</div></div>`;
     return `<div class="sec devSec">
       <h2>マシン開発<button type="button" class="qm" data-guide="machine" aria-label="遊び方を見る">?</button>${rd ? `<span class="kick"><span class="hotDot"></span>次戦の${esc(COURSE_TYPES[rd.type].short)}コースで効きやすい</span>` : ''}</h2>
       ${bar}
       ${grayCardHtml()}
       <div class="devInfo">${puSum1}${reg}</div>
-      <div class="pCards">${cards}</div>
+      ${cardsHtml}
       <p class="devFoot muted">数字の右は、ライバルの最高値との差です。項目名を押すと説明が出ます。開発の仕組みは「?」から。</p>
     </div>`;
   })();
@@ -20776,9 +20818,10 @@ function dkBoxSync(){
 function placeCamctl(){
   const cc = $('#camctl'), slot = $('#dkCamSlot'); if(!cc || !slot) return;
   if(!cc._home){ cc._home = cc.parentNode; cc._next = cc.nextSibling; }
-  const B = document.body.classList, inDock = B.contains('career') && !B.contains('qMode') && mode === 'race';
-  if(inDock && cc.parentNode !== slot){ slot.appendChild(cc); cc.classList.add('inDock'); }
-  else if(!inDock && cc.parentNode === slot){ cc._home.insertBefore(cc, cc._next && cc._next.parentNode === cc._home ? cc._next : null); cc.classList.remove('inDock'); }
+  const B = document.body.classList, inRace = B.contains('career') && mode === 'race', qs = $('#qrCamSlot');
+  const tgt = inRace && B.contains('qMode') && qs ? qs : inRace && !B.contains('qMode') ? slot : null;   // 予選は下のバーの中、決勝は操作エリア
+  if(tgt && cc.parentNode !== tgt){ tgt.appendChild(cc); cc.classList.add('inDock'); }
+  else if(!tgt && cc.classList.contains('inDock')){ cc._home.insertBefore(cc, cc._next && cc._next.parentNode === cc._home ? cc._next : null); cc.classList.remove('inDock'); }
 }
 new MutationObserver(() => placeCamctl()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 function syncTel(){
@@ -21040,7 +21083,7 @@ const GP_THEME = {
   'スペイン':        { palm: true, dry: true },                                           // スペイン：乾いた土地とヤシ（コースは内陸）
   'シンガポール':    { sea: true, harbor: true, palm: true, tropical: true },             // シンガポール：港のある海沿いの都市
   // 2026年のカレンダーで加わった国
-  'オーストラリア':  { bigLake: true, palm: true },                                         // オーストラリア：公園の湖（メルボルン）
+  'オーストラリア':  { parkLake: true, palm: true },                                        // オーストラリア：コースに囲まれた公園の湖（アルバートパーク）
   '中国':            { river: true },                                                       // 中国：大きな川（上海）
   'バーレーン':      { desert: true, dry: true },                                           // バーレーン：砂漠
   'サウジアラビア':  { sea: true, beach: true, palm: true, dry: true, seaDir: [0.42, 0.91] },                     // サウジアラビア：紅海沿い（ジェッダ）
@@ -21180,6 +21223,63 @@ function drawRiver(main, T, th, rnd, nz, inside, waterPath, avoid){
   for(const [x, y] of pts){ const c = new Path2D(); c.arc(x, y, 18, 0, 7); waterPath.addPath(c); }
 }
 /* 大きな湖：コースから一番離れた場所に */
+/* アルバートパークの湖：コースに囲まれたインフィールドの大部分を湖にする。
+   コース・グラベル・外周の道路の帯と、ピットレーン・パドックのまわりは陸のまま残す。
+   形は、インフィールドからそれらを削った形を粗い格子で取り、いちばん大きな塊の輪郭をなぞってなめらかにする */
+function drawParkLake(main, T, rnd, path, pad, waterPath){
+  const cell = 6, gw = Math.ceil(W/cell) + 2, gh = Math.ceil(H/cell) + 2;
+  const mc = document.createElement('canvas'); mc.width = gw; mc.height = gh;
+  const m = mc.getContext('2d'); m.setTransform(1/cell, 0, 0, 1/cell, cell/cell, cell/cell);
+  m.fillStyle = '#fff'; m.fill(path);                                  // インフィールド
+  m.globalCompositeOperation = 'destination-out'; m.lineJoin = 'round'; m.lineCap = 'round';
+  m.lineWidth = T.width + 2*(escW(T) + 44); m.stroke(path);           // コース・グラベル・外周の道路から離す
+  const pl = T.pit, N = T.N;
+  if(pl){ const span = (pl.exit - pl.entry + N) % N; m.beginPath();     // ピットレーン（と、その内側のピットの建物）
+    for(let k = 0; k <= span; k++){ const [x, y] = pitPos(T, (pl.entry + k) % N, 0, 0); k ? m.lineTo(x, y) : m.moveTo(x, y); }
+    m.lineWidth = 130; m.stroke(); }
+  for(const q of pad || []){ m.beginPath(); m.arc(q.x, q.y, 85, 0, 7); m.fill(); }   // パドック
+  const img = m.getImageData(0, 0, gw, gh).data, on = new Uint8Array(gw*gh);
+  for(let i = 0; i < gw*gh; i++) on[i] = img[i*4 + 3] > 127 ? 1 : 0;
+  // いちばん大きな塊だけ残す
+  const lab = new Int32Array(gw*gh); let best = 0, bestN = 0, id = 0;
+  for(let i = 0; i < gw*gh; i++){ if(!on[i] || lab[i]) continue; id++; let n = 0; const st = [i]; lab[i] = id;
+    while(st.length){ const j = st.pop(); n++; const x = j % gw, y = (j/gw) | 0;
+      for(const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const xx = x + dx, yy = y + dy; if(xx < 0 || yy < 0 || xx >= gw || yy >= gh) continue; const k = yy*gw + xx; if(on[k] && !lab[k]){ lab[k] = id; st.push(k); } } }
+    if(n > bestN){ bestN = n; best = id; } }
+  if(!best || bestN*cell*cell < 40000) return;                          // 湖を置く広さがない
+  // 大きな塊（いちばん大きい塊の12%以上）は、すべて湖にする（ピットのまわりで分かれた部分も）
+  const sizes = new Map(); for(let i = 0; i < gw*gh; i++) if(lab[i]) sizes.set(lab[i], (sizes.get(lab[i]) || 0) + 1);
+  const ids = [...sizes].filter(([, n]) => n >= bestN*0.12).map(([k]) => k);
+  const D = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
+  const trace = lid => {                                               // 輪郭をなぞる（ムーア近傍）→ 間引いてなめらかに（チャイキン法を3回）
+    const inB = (x, y) => x >= 0 && y >= 0 && x < gw && y < gh && lab[y*gw + x] === lid;
+    let sx = -1, sy = -1; for(let i = 0; i < gw*gh && sx < 0; i++) if(lab[i] === lid){ sx = i % gw; sy = (i/gw) | 0; }
+    let cx = sx, cy = sy, dir = 6; const pts = [];
+    for(let guard = 0; guard < gw*gh*2; guard++){
+      pts.push([cx, cy]);
+      let found = false;
+      for(let t = 0; t < 8; t++){ const d = (dir + 6 + t) % 8, nx = cx + D[d][0], ny = cy + D[d][1]; if(inB(nx, ny)){ cx = nx; cy = ny; dir = d; found = true; break; } }
+      if(!found || (cx === sx && cy === sy && pts.length > 2)) break;
+    }
+    if(pts.length < 12) return null;
+    let P = pts.filter((_, i) => i % 3 === 0).map(([x, y]) => [(x - 1)*cell + cell/2, (y - 1)*cell + cell/2]);
+    for(let it = 0; it < 3; it++){ const Q = []; for(let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length]; Q.push([a[0]*0.75 + b[0]*0.25, a[1]*0.75 + b[1]*0.25], [a[0]*0.25 + b[0]*0.75, a[1]*0.25 + b[1]*0.75]); } P = Q; }
+    return P;
+  };
+  const polys = ids.map(trace).filter(Boolean); if(!polys.length) return;
+  const P = polys.flat();
+  const lake = new Path2D(); for(const Pp of polys){ Pp.forEach(([x, y], i) => i ? lake.lineTo(x, y) : lake.moveTo(x, y)); lake.closePath(); }
+  waterPath.addPath(lake);
+  main.save(); main.lineJoin = 'round';
+  main.strokeStyle = '#d6cb9c'; main.lineWidth = 12; main.stroke(lake);   // 岸の砂地
+  main.fillStyle = '#3a7fb0'; main.fill(lake);
+  main.clip(lake); main.strokeStyle = 'rgba(130,200,215,.45)'; main.lineWidth = 30; main.stroke(lake);   // 岸に近い浅いところ
+  main.restore();
+  // ボート（湖の中だけ）
+  const xs = P.map(p => p[0]), ys = P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const pc = document.createElement('canvas').getContext('2d');
+  for(let n = 0, k = 0; n < 6 && k < 200; k++){ const x = x0 + rnd()*(x1 - x0), y = y0 + rnd()*(y1 - y0); if(!pc.isPointInPath(lake, x, y) || !pc.isPointInPath(lake, x + 25, y) || !pc.isPointInPath(lake, x - 25, y)) continue; drawBoat(main, x, y, rnd()*6.3, rnd); n++; }
+}
 function drawBigLake(main, T, rnd, nz, freeFar, inside, waterPath){
   let best = null;
   for(let n = 0; n < 300; n++){
@@ -21481,6 +21581,7 @@ function drawLand(T){
   else if(theme.sea){ const sea = drawSea(main, T, th, rnd, nz, free, inside, waterPath); if(sea) drawSeaExtras(main, sea, theme, rnd, free, inside); }
   if(theme.river) drawRiver(main, T, th, rnd, nz, inside, waterPath, (x, y) => padC && Math.hypot(x - padC[0], y - padC[1]) < 240);
   if(theme.bigLake) drawBigLake(main, T, rnd, nz, freeFar, inside, waterPath);
+  if(theme.parkLake) drawParkLake(main, T, rnd, path, pad, waterPath);
   if(theme.desert){ let n = 0; for(let k = 0; k < 300 && n < 6; k++){ const x = rnd()*W, y = rnd()*H, R = 40 + rnd()*50; let ok = !inside(x, y); for(let a = 0; a < 6.28 && ok; a += 0.6) if(!freeFar(x + Math.cos(a)*R*1.3, y + Math.sin(a)*R) || inside(x + Math.cos(a)*R*1.3, y + Math.sin(a)*R)) ok = false; if(!ok) continue; drawMesa(main, x, y, R, rnd, nz); const c = new Path2D(); c.ellipse(x, y, R*1.3, R, 0, 0, 7); waterPath.addPath(c); n++; } }
   const inWater = (x, y) => pc.isPointInPath(waterPath, x, y);
   // ---- 外周・インフィールドのサービス道路（コースに沿ってグラベルのすぐ外） ----
@@ -22842,6 +22943,10 @@ const Q_HOT_K = 0.25;                              // 予選での熱すぎの�
 let Q = null;
 function qCut(n){ return Math.max(1, Math.round(n/4)); }      // 20台なら各5台が脱落
 function qTyreK(comp, wet, rd){
+  if(wet && typeof wet === 'number' && !isSlick(comp)){        // 雨：その濡れ具合でのレインタイヤの速さ（グリップの平方根で周回タイムが決まる）。濡れ具合75%のインターを1とする
+    const g = c => TYRES[c].grip*wetGrip(c, wet), g0 = TYRES.I.grip*wetGrip('I', 0.75);
+    return Q_WET.I*Math.sqrt(g0/g(comp));
+  }
   let k = (wet ? Q_WET : Q_DRY)[comp] || 1;
   if(!wet && isSlick(comp)){
     // 1周のアタックなので、熱すぎの遅れは小さい（熱が溜まりきらない）。冷えすぎは1周では温まりきらないので、決勝と同じだけ遅い
@@ -22855,11 +22960,24 @@ function qBestTyre(wet, rd){
   return (wet ? ['I', 'W'] : ['S', 'M', 'H']).reduce((a, k) => qTyreK(k, wet, rd) < qTyreK(a, wet, rd) ? k : a);
 }
 // AIの予選タイヤ：どのセッションも、いちばん速いタイヤでアタックする（スタートタイヤの縛りがないので、温存する理由がない）
-function qAiTyre(m, sess, wet){ return qBestTyre(wet, Q.rd); }
+function qAiTyre(m, sess, wet){ return wet ? qBestWet(qWetNow()) : qBestTyre(wet, Q.rd); }
+/* 雨の予選（2026-11）：セッションの途中で路面の濡れ具合が変わる。セッションごとに「乾いていく／強くなる／変わらない」を決め、
+   時計の2割〜8割のあいだに移っていく。濡れ具合でインター（I）とウェット（W）のどちらが速いかが入れ替わるので、タイヤと出る時を選ぶ */
+const QW_KINDS = { dry: [0.88, 0.42, '乾いていく'], wetter: [0.52, 0.95, '雨が強くなる'], steady: [0.74, 0.78, '変わらない'] };
+function qWetPlan(){ const ks = Object.keys(QW_KINDS); return ks[Math.floor(Math.random()*ks.length)]; }
+function qWetAt(s, t){                                         // セッション s の時刻 t（ゲームの秒）の濡れ具合
+  if(!Q.wet[s]) return 0;
+  const K = QW_KINDS[(Q.wk || [])[s]] || QW_KINDS.steady, f = clamp((t/qDurOf(s) - 0.2)/0.6, 0, 1), e = f*f*(3 - 2*f);
+  return K[0] + (K[1] - K[0])*e;
+}
+const qWetNow = () => qWetAt(Q.sess, Q.t);
+// 合わないタイヤのミス：濡れすぎた路面のインターは滑りやすい（濡れ具合80%から急に増える）
+const qWetMisK = (k, w) => k === 'I' && w > 0.8 ? 1 + (w - 0.8)*14 : 1;
+const qBestWet = w => TYRES.I.grip*wetGrip('I', w) >= TYRES.W.grip*wetGrip('W', w) ? 'I' : 'W';
 function startQuali(list, rd){
   const n = list.length;
   const wet = [0, 1, 2].map(() => rd.weather === 'wet' || (rd.weather === 'mixed' && Math.random() < (rd.rainP || 50)/100*0.5));
-  Q = { rd, wet, sess: 0, phase: 'pick', t: 0, cars: list.map(m => ({ m, out: -1, best: [null, null, null], bestSec: [[null,null,null],[null,null,null],[null,null,null]], comp: [null, null, null], runs: [] })),
+  Q = { rd, wet, wk: wet.map(w => w ? qWetPlan() : null), sess: 0, phase: 'pick', t: 0, cars: list.map(m => ({ m, out: -1, best: [null, null, null], bestSec: [[null,null,null],[null,null,null],[null,null,null]], comp: [null, null, null], runs: [] })),
         msg: '', grid: null };
   // レース画面（実際のコース）で走らせる。車はガレージに並べておく
   machines = list.slice(); machines.forEach(m => { delete m.mine; });
@@ -22926,7 +23044,7 @@ const qFmt = v => v == null ? '—' : fmt(v);
    ・路面：セッションが進むほど、また Q1 → Q3 と進むほど速くなる（遅く出るほど有利。ただし混雑と締め切りの危険）
    ・前の車：アタック中に、アウトラップ・クールダウンの車に追いつくと、譲ってもらえないことがあり、タイムを失う。
      アタック中の車の後ろにつくとスリップストリームで少し速くなる
-   ・ミス：攻め具合が強いほど起きやすい（タイムを失う／走路外走行でタイム抹消）
+   ・ミス：攻め具合が強いほど起きやすい（タイムを失う／トラックリミット違反でタイム抹消）
    ・チェッカー：時間切れまでにアタックを始められなかった車は、アタックできない（時間切れの前に始めたアタックは最後まで走れる）
    自チームの車は「コースに出る」「中止して戻る」と、攻め具合・アウトラップの温め方をプレイヤーが決める（おまかせにもできる）
    ===================================================================== */
@@ -22966,7 +23084,8 @@ const qSecB = () => { const P = track && track._qrProf ? track._qrProf : (track 
 // セッションの長さ：コースの1周のタイム（基準のマシン）の QS_LAPS 周分。1周が長いコースでもQ3で2回アタックでき、急げば少し余るくらい
 // （1回の走行：ピットアウト〜アタック開始 約1.3周、アタック 約0.9周、クールダウン〜ガレージ 約1.5周。2回目のアタック開始まで最短で約5.3周）
 const QS_LAPS = [10, 9, 8];
-const qDur = () => track && qrProfile(track).lap > 0 ? Math.round(QS_LAPS[Q.sess]*qrProfile(track).lap) : QS_DUR[Q.sess];
+const qDurOf = s => track && qrProfile(track).lap > 0 ? Math.round(QS_LAPS[s]*qrProfile(track).lap) : QS_DUR[s];
+const qDur = () => qDurOf(Q.sess);
 const qFlag = () => Q.t >= qDur();
 /* マシンのセッティング（2026-11）：-3＝ダウンフォース寄り 〜 +3＝最高速寄り。予選中、ガレージにいるときだけ変えられ、決勝にも持ち越す。
    コースごとにちょうどよい位置（setOpt：全開で最高速近くを出す距離の割合から決める）があり、離れるほどタイムが落ちる（離れた段数の2乗）。
@@ -22981,7 +23100,7 @@ function applySetup(c){
   c.grip = c.grip0*(1 - SET_G*sv)*(1 - 2*L);                 // コーナーの速さは グリップの平方根 に比例するので、2倍効かせて周回で L 分になる
 }
 const setLab = v => v === 0 ? '中間' : v < 0 ? `DF ${-v}` : `最高速 ${v}`;
-function qBase(c){ const wet = Q.wet[Q.sess]; return estLap(track, c.m)*(1 + setLoss(c.m))*(c.m.qK || 1)*qTyreK(c.comp[Q.sess], wet, Q.rd)*(wet ? 1.08 : 1); }
+function qBase(c){ const wet = Q.wet[Q.sess]; return estLap(track, c.m)*(1 + setLoss(c.m))*(c.m.qK || 1)*qTyreK(c.comp[Q.sess], wet ? 0.75 : 0, Q.rd)*(wet ? 1.08 : 1); }
 // いまから出たとき、アタックを始められる最後の時刻（ゲーム内の秒）
 function qLatestGo(c, outKey){ const o = QS_OUT[outKey || 'norm'], P = track ? qrProfile(track) : { pExit: 0 }; return qDur() - (c.q.tOut || QS_PIT_OUT) - (1 - P.pExit)*c.q.base*o.k - 0.3; }
 /* セッションの準備：タイヤ・基準タイム・AIの出る時刻を決める */
@@ -23000,7 +23119,7 @@ function qPlanSession(quiet){
     const keep = c.q && c.q.cfg ? c.q.cfg : { push: 'norm', out: 'norm' };
     const auto = quiet || (c.q ? c.q.auto : !qMine(c));
     c.q = { st: 'garage', p: 0, v: 0, at: 0, runN: 0, base: 0, cfg: keep, auto: qMine(c) ? auto : true, plan: [], held: null, msg: '' };
-    c.q.base = qBase(c);
+    c.q.base = qBase(c); c.q.baseComp = c.comp[c.q ? Q.sess : 0];
     { const rc = race.cars.find(x => x.m === c.m); if(rc && track && track.pit){ const G = rc.qGeo = qrPitGeo(track, rc); c.q.tOut = G.tOut; c.q.tIn = G.tIn; } else { c.q.tOut = QS_PIT_OUT; c.q.tIn = QS_PIT_IN; } }
     c.runs = [];
     if(c.q.auto) qAiPlan(c);
@@ -23039,6 +23158,7 @@ function qAiSaveSet(c, s){
   return Math.random() < 0.5;                                // Q3：中古になってもポールを狙うチームもある
 }
 function qGo(c){                                       // ガレージを出る
+  if(c.q && c.q.auto && Q.wet[Q.sess]) c.comp[Q.sess] = qBestWet(qWetNow());   // 雨：おまかせ（AI）は、出るときの濡れ具合で速いほうのタイヤ
   if(!c.q || c.q.st !== 'garage' || qFlag() || c.q.dead || Q.red || qRepairing(c)) return false;
   if(qSetCounts(c, Q.sess)){ const m = c.m; m.qNew = m.qNew ?? QS_SETS; if(m.qNew > 0) m.qNew--; else if(!m.qOldS){ m.qOldS = true; if(qMine(c)) Q.msg = `${m.name}：新品ソフトを使い切りました。決勝のソフトは中古（摩耗${Math.round(QS_OLD_WEAR*100)}%から）になります`; } }
   if(Q.phys){ qpRelease(c); return true; }
@@ -23057,11 +23177,13 @@ function qStartPush(c){
   const evo = 1 - QS_EVO_S*s - QS_EVO_T*clamp(Q.t/dur, 0, 1);
   const cons = c.m.vSpread ? c.m.vSpread/0.03 : 1;
   let lap = c.q.base*P.k*(1 + O.tyre)*evo*(1 + qRandn()*QS_NOISE*cons);
+  const wNow = Q.wet[s] ? qWetNow() : 0;
+  if(wNow){ const k = c.comp[s] || 'I'; lap *= qTyreK(k, wNow, Q.rd)/qTyreK(c.q.baseComp || k, 0.75, Q.rd); }   // 雨：いまの濡れ具合と選んだタイヤでの速さ
   const B = qSecB(), f0 = [B[0], B[1] - B[0], 1 - B[1]], f = f0.map(x => x*(1 + (Math.random() - 0.5)*0.03)), fs = f.reduce((a, b) => a + b, 0);
   const secs = f.map(x => x/fs*lap);
   let del = false, mis = null;
-  if(Math.random() < (P.mist + O.mist)*(c.m.mistK || 1)*(Q.wet[s] ? 1.5 : 1)){
-    if(Math.random() < 0.3) del = true;                                           // 走路外走行でタイム抹消
+  if(Math.random() < (P.mist + O.mist)*(c.m.mistK || 1)*(Q.wet[s] ? 1.5*qWetMisK(c.comp[s], wNow) : 1)){
+    if(Math.random() < 0.3) del = true;                                           // トラックリミット違反でタイム抹消
     else { const k = Math.floor(Math.random()*3), loss = lap*(0.006 + Math.random()*0.016); secs[k] += loss; mis = k; }   // ミスでタイムを失う
   }
   const run = { start: Q.t, secs: [], plan: secs, shown: 0, del, mis, lap: 0, t0: Q.t, held: 0 };
@@ -23118,7 +23240,7 @@ function qStepCar(c, dt){
     if(r.shown >= 3){
       r.lap = r.secs[0] + r.secs[1] + r.secs[2];
       if(!r.del && (c.best[s] == null || r.lap < c.best[s])) c.best[s] = r.lap;
-      if(qMine(c)) Q.msg = r.del ? `${c.m.name}：走路外走行でタイム抹消` : `${c.m.name}：${fmt(r.lap)}${r.mis != null ? `（S${r.mis + 1}でミス）` : ''}${r.held > 0.08 ? `・前の車に引っかかり 約${r.held.toFixed(1)}秒ロス` : ''}`;
+      if(qMine(c)) Q.msg = r.del ? `${c.m.name}：トラックリミット違反でタイム抹消` : `${c.m.name}：${fmt(r.lap)}${r.mis != null ? `（S${r.mis + 1}でミス）` : ''}${r.held > 0.08 ? `・前の車に引っかかり 約${r.held.toFixed(1)}秒ロス` : ''}`;
       q.run = null; q.st = 'cool'; q.p -= 1;
     }
   } else if(q.st === 'out' && q.p >= 1){
@@ -23146,7 +23268,7 @@ const qOnTrack = () => qActive(Q.sess).some(c => c.q && (c.q.st === 'out' || c.q
 function qRunToEnd(){                                    // 残りを計算だけで終わらせる（自チームもおまかせで走る）
   qActive(Q.sess).forEach(c => { if(c.q && !c.q.auto){ c.q.auto = true; if(c.q.st === 'garage'){ const late = qLatestGo(c, 'norm'); c.q.plan = c.q.runN >= 2 ? [] : Q.t < late ? [Q.t + 0.5] : []; } } });
   let guard = 0;
-  if(Q.phys){ while(!qpStep(QP_H) && guard++ < 40000); for(const qc of Q.cars){ const rc = qrRc(qc); if(rc) qrPlace(rc, qc, 0); } return; }
+  if(Q.phys){ while(!qpStep(QP_H) && guard++ < 40000); qpParkAll(); Q.endWait = null; for(const qc of Q.cars){ const rc = qrRc(qc); if(rc) qrPlace(rc, qc, 0); } return; }
   while(!qStep(QS_DT) && guard++ < 20000);
 }
 function qAdvance(){}                                    // 古い方式の名残（使わない）
@@ -23283,6 +23405,11 @@ function qrFrame(realDt){
       const tot = steps.reduce((a, b) => a + b, 0);
       for(const qc of Q.cars){ const rc = qrRc(qc); if(rc) qrPlace(rc, qc, tot); }
     }
+    if(done && Q.phys){                                    // 最後の車がチェッカーを受けた：3秒（実際の時間）そのまま見せてから結果画面へ
+      Q.endWait = (Q.endWait || 0) + real;
+      if(Q.endWait < QP_END_WAIT){ if(performance.now() - (Q.lastDraw || 0) > 150){ Q.lastDraw = performance.now(); qrRender(true); } return; }
+      Q.endWait = null; qpParkAll(); qEndSession(); return;
+    }
     if(done){ qEndSession(); return; }
     if(performance.now() - (Q.lastDraw || 0) > 150){ Q.lastDraw = performance.now(); qrRender(true); }
   } else for(const qc of Q.cars){ const rc = qrRc(qc); if(rc) qrPlace(rc, qc, 0); }
@@ -23292,14 +23419,17 @@ function qrHud(){
   let h = document.getElementById('qrHud');
   if(!h){
     h = document.createElement('div'); h.id = 'qrHud'; h.className = 'qrHud';
-    h.innerHTML = '<div class="qrBand" id="qrBand"></div><div class="qrTower" id="qrTower"></div><div class="qrMsg" id="qrMsg" hidden role="status"></div><div class="qrBar" id="qrBar"></div><div class="qrOv" id="qrOv" hidden></div>';
+    h.innerHTML = '<div class="qrBand" id="qrBand"></div><div class="qrTower" id="qrTower"></div><div class="qrMsg" id="qrMsg" hidden role="status"></div><div class="qrBar" id="qrBar"><div class="qrBarIn" id="qrBarIn"></div><div class="qrCamSlot" id="qrCamSlot" hidden></div></div><div class="qrOv" id="qrOv" hidden></div>';
     $('#stage').appendChild(h);
     qrWire(h);
   }
   return h;
 }
 // 天気（セッションごと）：雨のセッションは雨を降らせる（見た目と路面）
-function qrSessionWx(){ const w = Q.wet[Q.sess]; race.rain = w ? 0.65 : 0; race.wet = w ? 0.75 : 0; race.wTarget = race.rain; try{ updateWeatherUI && updateWeatherUI(); }catch(e){} dirty = true; }
+// 雨のセッション：いまの濡れ具合を路面・雨の見た目・路面温度に入れる
+function qWetApply(){ const w = qWetNow(), K = QW_KINDS[Q.wk[Q.sess]] || QW_KINDS.steady; race.wet = w; race.rain = clamp(K[1] < K[0] ? (w - 0.45)*1.6 : w*0.85, 0, 1); race.wTarget = race.rain;
+  if(race.ttBase != null) race.trackT = race.ttBase + (TT_WET - race.ttBase)*clamp(w*1.1, 0, 1); }
+function qrSessionWx(){ const w = Q.wet[Q.sess]; race.rain = w ? 0.65 : 0; race.wet = w ? 0.75 : 0; race.wTarget = race.rain; setupTrackTemp();   /* その週末の路面温度（決勝と同じ） */ race.trackT = race.ttBase + (TT_WET - race.ttBase)*clamp(race.wet*1.1, 0, 1);   /* 雨のセッションは冷えた路面 */ if(w) qWetApply(); try{ wxBoxSync(); }catch(e){} try{ updateWeatherUI && updateWeatherUI(); }catch(e){} dirty = true; }
 const qrSafe = () => { const n = qActive(Q.sess).length; return Q.sess < 2 ? n - qCut(Q.cars.length) : 0; };
 /* ---------- 予選の画面（2026-11 見直し）：決勝と同じ配置 ----------
    左上：セッションの帯（Q1・残り時間・赤旗/チェッカー） → その下にミニマップ（決勝と同じ） → その下に順位表（たためる）
@@ -23320,7 +23450,7 @@ function qrTel(){
     qrTelKey = key; telKey = '';                                          // 決勝のカードに戻るときは作り直させる
     box.innerHTML = mine.map(c => `<div class="tc qtc" data-mi="${machines.indexOf(c.m)}" data-qn="${esc(c.m.name)}" role="button" tabindex="0"><div class="secBar" aria-hidden="true"><i><b>S1</b></i><i><b>S2</b></i><i><b>S3</b></i></div>
       <div class="tcHead"><span class="dot" style="background:${swatchBg(c.m)}"></span>${esc(c.m.name)}<span class="qtSets"></span><span class="tag"></span></div>
-      <div class="tcRow t1"></div><div class="tcRow t3"></div><div class="tcRow t2"></div>
+      <div class="tcRow t1"></div><div class="tcRow t3"></div><div class="tcRow qtWet" hidden></div><div class="tcRow t2"></div>
       <div class="tcPace" role="group" aria-label="${esc(c.m.name)}の攻め具合">${[['safe', 'save'], ['norm', 'norm'], ['max', 'push']].map(([k, ico]) => `<button type="button" data-qp="${k}" class="pc-${ico}" title="${esc(QS_PUSH[k].d)}">${PACE_ICO[ico]}<span class="pcLab">${QS_PUSH[k].n}</span></button>`).join('')}</div>
       <div class="qtAct"><button type="button" class="qtGo"></button><button type="button" class="qtAuto" aria-pressed="false">おまかせ</button></div></div>`).join('');
   }
@@ -23356,8 +23486,8 @@ function qrTel(){
       else if(q.dead) stTxt = c.qDmg && c.qDmg.sess === s && !c.qDmg.heavy ? `もう走れない・修理 残り<b>${qClockTxt(c.qDmg.fix)}</b>` : c.qDmg && c.qDmg.sess === s ? 'もう走れない・損傷大' : 'もう走れない';
       else if(qRepairing(c)) stTxt = `<b class="qgNg">修理中</b>・残り <b>${qClockTxt(c.qDmg.fix)}</b>`;
       else if(Q.red) stTxt = '赤旗：再開待ち';
-      else { const left = qLatestGo(c, 'norm') - Q.t, tr = qExitTraffic(c);
-        stTxt = left > 0 ? `ガレージ・締切 <b>${qClockTxt(left/qDur()*QS_MIN[s]*60)}</b>${tr ? `・出口${tr}台` : ''}` : '<b class="qgNg">もう間に合わない</b>'; }
+      else { const left = qLatestGo(c, 'norm') - Q.t;           // 締切は左上の時計の横に出す
+        stTxt = left > 0 ? 'ガレージ' : '<b class="qgNg">もう間に合わない</b>'; }
     } else {
       const ah = st === 'out' || st === 'push' || st === 'cool' ? qAheadInfo(c) : null;
       const ahTxt = ah && ah.gap < 3 ? `・前の${ah.o.m.name} ${ah.gap.toFixed(1)}秒` : '';
@@ -23368,7 +23498,10 @@ function qrTel(){
       else if(st === 'pitin') stTxt = 'ピットへ';
       else if(st === 'wreck'){ stTxt = '<b class="qgNg">' + (rc && rc.out === 'mech' ? 'ストップ' : 'クラッシュ') + '</b>・もう走れない'; cls = ''; }
     }
-    set(el.querySelector('.t2'), 'innerHTML', `<span class="qtSt ${cls}">${stTxt}</span>`);
+    // 2行目は、注意が要るときだけ出す（クラッシュ・故障・修理中・出走不可・締切切れ・タイム抹消）。ふだんの状態（ガレージ・ピットアウト・前の車との差など）は出さず、カードを短くする
+    if(st === 'push' && q.run && q.run.del) stTxt = '<b class="qgNg">トラックリミット違反・タイム抹消</b>';
+    const alert = /qgNg/.test(stTxt) || (st === 'garage' && /もう走れない/.test(stTxt));
+    { const t2 = el.querySelector('.t2'); set(t2, 'hidden', !alert); if(alert) set(t2, 'innerHTML', `<span class="qtSt ${cls}">${stTxt}</span>`); }
     // 3行目：タイヤ温度（アウトラップで温まっていく様子が見える）
     { const row = el.querySelector('.t3'); let inp = row.querySelector('.qtSet');
       if(!inp){ row.innerHTML = `<span class="k">セッティング</span><span class="v qtSetV"></span><span class="qtSetW"><small>DF</small><input type="range" class="qtSet" min="-3" max="3" step="1" aria-label="${esc(c.m.name)}のセッティング（左：ダウンフォース寄り、右：最高速寄り）"><small>最高速</small></span>`; inp = row.querySelector('.qtSet'); }
@@ -23376,6 +23509,11 @@ function qrTel(){
       if(document.activeElement !== inp && +inp.value !== sv) inp.value = sv;
       set(inp, 'disabled', !canSet); set(inp, 'title', canSet ? 'ガレージにいる間だけ変えられます（決勝もこのセッティングで走ります）' : 'コースに出ている間は変えられません');
       set(row.querySelector('.qtSetV'), 'textContent', setLab(sv)); }
+    // 雨のセッション：タイヤ（I・W）を選ぶ。ガレージにいる間だけ。おまかせなら出るときにAIが選ぶ
+    { const row = el.querySelector('.qtWet'), wet = !!Q.wet[s] && !gone; set(row, 'hidden', !wet);
+      if(wet){ const cur = c.comp[s] || 'I', can = st === 'garage' && !qDoneSess(c) && !q.auto;
+        const btn = k => `<button type="button" class="qtTy${cur === k ? ' on' : ''}" data-qty="${k}" ${can ? '' : 'disabled'} aria-pressed="${cur === k}"><i style="border-color:${TYRES[k].color}">${k}</i>${k === 'I' ? 'インター' : 'ウェット'}</button>`;
+        set(row, 'innerHTML', `<span class="k">タイヤ</span><span class="qtTys">${btn('I')}${btn('W')}</span>${q.auto ? '<small class="muted">おまかせ</small>' : ''}`); } }
     // セクターの帯：アタック中・最後のアタックのセクターの色
     { const r = (c.runs || []).filter(x => x.shown > 0).pop(), bars = el.querySelectorAll('.secBar i');
       bars.forEach((bi, k) => { const v = r && k < r.shown ? r.secs[k] : null, col = v == null ? '' : r.del ? '#6b7079' : v <= bestAll[k] + 1e-9 ? '#a855f7' : v <= (c.bestSec[s][k] ?? Infinity) + 1e-9 ? '#22c55e' : '#eab308';
@@ -23406,13 +23544,20 @@ function qrBarHtml(){
     + `<button type="button" class="qrIco" data-qpause="1" aria-label="${Q.paused ? '再開' : '一時停止'}">${Q.paused ? '▶' : 'Ⅱ'}</button>`
     + `<button type="button" class="qrIco qrEnd" data-qend="1" title="残りを計算だけで進めて、このセッションの結果へ">結果へ</button>`
     + `<button type="button" class="qrIco" data-qskipmenu="1" aria-expanded="${!!Q.skipOpen}" aria-label="スキップ" title="予選（と決勝）を計算だけで進める"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 6l7 6-7 6zM12 6l7 6-7 6z" fill="currentColor"/><rect x="19" y="6" width="2" height="12" fill="currentColor"/></svg></button>`
+    + `<button type="button" class="qrIco qrCamBtn${qrCamOpen ? ' on' : ''}" data-qcam="1" aria-expanded="${qrCamOpen}" aria-label="カメラの操作" title="カメラの操作を開く・閉じる"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`
     + `<button type="button" class="qrIco" data-guide="quali" aria-label="予選の遊び方">?</button>`;
 }
+let qrCamOpen = false;                                         // 予選のカメラの操作（下のバーの中）。ふだんは閉じておく
 // セッションの帯（左上）
 function qrBandHtml(){
   const s = Q.sess, wet = Q.wet[s];
   const clock = Q.phase !== 'run' ? '' : Q.red ? '<span class="qrRed">赤旗</span>' : qFlag() ? '<span class="qrChk">チェッカー</span>' : `<b class="num">${qClockTxt(qGameToClock(Q.t))}</b>`;
-  return `<b class="qbS">${['Q1', 'Q2', 'Q3'][s]}</b>${clock}<span class="qbW">${wet ? WX_ICO.wet : WX_ICO.dry}</span>`;
+  // 出走の締切（自チームの車がガレージを出て、アタックに間に合う最後の時刻までの残り）
+  let dl = '';
+  if(Q.phase === 'run' && !Q.red && !qFlag()){ const mine = qActive(s).filter(qMine);
+    if(mine.length){ const left = Math.max(...mine.map(c => qLatestGo(c, 'norm') - Q.t));
+      dl = left > 0 ? `<span class="qbDl" title="締切までの残り時間。それまでにガレージを出れば、アタックに間に合います">締切まで <b class="num">${qClockTxt(left/qDur()*QS_MIN[s]*60)}</b></span>` : '<span class="qbDl ng">締切済み</span>'; } }
+  return `<b class="qbS">${['Q1', 'Q2', 'Q3'][s]}</b>${clock}${dl}<span class="qbW">${wet ? WX_ICO.wet : WX_ICO.dry}</span>`;
 }
 // 順位表（ミニマップの下）。ふだんは上位・ノックアウトのラインの前後・自チームだけ。押すと全車
 /* 順位タワーの入れ替わり：中継のように、行を新しい位置まで上下にすべらせる（中身は作り直すが、作り直す前後の位置の差を動きで埋める）。
@@ -23569,13 +23714,14 @@ function qrRender(live){
   if(!Q) return;
   const h = qrHud();
   document.body.classList.add('qMode');
-  if(document.body.classList.contains('showTiming') || !document.body.classList.contains('pcRace')) qrTiming(!live);   // スマホはレース画面の下に常に出す
+  if(document.body.classList.contains('showTiming') || !document.body.classList.contains('pcRace')) qrTiming(!live);
+  try{ wxBoxSync(); }catch(e){}                              // 右上の路面の状態・路面温度   // スマホはレース画面の下に常に出す
   const run = Q.phase === 'run';
   h.classList.toggle('running', run);
   const band = $('#qrBand'), tw = $('#qrTower'), bar = $('#qrBar');
   band.innerHTML = qrBandHtml();
   tw.hidden = !run; if(run) qrTowerSet(tw, qrTowerHtml()); else tw._flipHtml = '';
-  bar.hidden = !run; if(run) bar.innerHTML = qrBarHtml();
+  bar.hidden = !run; if(run){ const bi = $('#qrBarIn'), h = qrBarHtml(); if(bi._h !== h){ bi.innerHTML = h; bi._h = h; } $('#qrCamSlot').hidden = !qrCamOpen; placeCamctl(); }
   $('#stage').style.setProperty('--dockH', (run ? bar.offsetHeight : 0) + 'px');
   qrTel(); qrMsgTick();
   if(!live){ const ov = $('#qrOv'), sk = run && Q.skipOpen; ov.hidden = run && !sk; if(!run || sk) ov.innerHTML = `<div class="qrOvBox">${sk ? qrSkipHtml() : qrOvHtml()}</div>`; }
@@ -23584,7 +23730,7 @@ function qrRender(live){
 function qrWire(h){
   h.addEventListener('pointerdown', e => {
     if(!Q || !Q.cars) return;
-    const b = e.target.closest('[data-qgo],[data-qabort],[data-qset],[data-qauto],[data-qspd],[data-qpause],[data-qend],[data-qskipmenu],[data-qrest],[data-qfollow],[data-qtower]'); if(!b || b.disabled) return;
+    const b = e.target.closest('[data-qgo],[data-qabort],[data-qset],[data-qauto],[data-qspd],[data-qpause],[data-qend],[data-qskipmenu],[data-qrest],[data-qcam],[data-qfollow],[data-qtower]'); if(!b || b.disabled) return;
     e.preventDefault(); e.stopPropagation();
     const find = n => Q.cars.find(c => c.m.name === n);
     if(b.dataset.qtower){ qrTowerOpen = !qrTowerOpen; }
@@ -23592,7 +23738,8 @@ function qrWire(h){
     else if(b.dataset.qpause){ Q.paused = !Q.paused; }
     else if(b.dataset.qend){ qRunToEnd(); qEndSession(); return; }
     else if(b.dataset.qskipmenu){ Q.skipOpen = !Q.skipOpen; Q.paused = Q.skipOpen; qrRender(); return; }
-    else if(b.dataset.qrest){ qSkipAll(); qrRender(); return; }   // 自チームが全車脱落：残りの予選を計算して結果へ
+    else if(b.dataset.qrest){ qSkipAll(); qrRender(); return; }
+    else if(b.dataset.qcam){ qrCamOpen = !qrCamOpen; qrRender(); return; }   // カメラの操作を開く・閉じる   // 自チームが全車脱落：残りの予選を計算して結果へ
     else if(b.dataset.qfollow){ const c = find(b.dataset.qfollow), rc = c && qrRc(c); if(rc) setCam('car', rc.m); }
     else if(b.dataset.qgo){ const c = find(b.dataset.qgo); if(c && qGo(c)){ const rc = qrRc(c); if(rc) setCam('car', rc.m); } }
     else if(b.dataset.qabort){ const c = find(b.dataset.qabort); if(c) qAbort(c); }
@@ -23622,10 +23769,13 @@ function qrWire(h){
   if(tt) tt.addEventListener('click', e => {
     if(!Q || !document.body.classList.contains('qMode')) return;
     if(e.target.closest('.qtSet')){ e.stopPropagation(); return; }   // セッティングのつまみ：カードを選ぶ処理に渡さない
-    if(e.target.closest('[data-qp],.qtGo,.qtAuto')){ if(e.detail === 0) qtPress(e); e.stopPropagation(); e.preventDefault(); }   // detail 0：キーボードで押した
+    if(e.target.closest('[data-qp],.qtGo,.qtAuto,[data-qty]')){ if(e.detail === 0) qtPress(e); e.stopPropagation(); e.preventDefault(); }   // detail 0：キーボードで押した
   }, true);
   const qtPress = e => {
     if(!Q || !document.body.classList.contains('qMode') || e.button > 0) return;
+    const ty = e.target.closest('[data-qty]');
+    if(ty){ e.stopPropagation(); e.preventDefault(); if(ty.disabled) return; const card = ty.closest('.qtc'), qc = card && Q.cars.find(x => x.m.name === card.dataset.qn);
+      if(qc && qc.q && qc.q.st === 'garage'){ qc.comp[Q.sess] = ty.dataset.qty; const rc = qrRc(qc); if(rc) rc.comp = ty.dataset.qty; qrRender(true); } return; }
     const b = e.target.closest('[data-qp],.qtGo,.qtAuto'); if(!b) return;
     e.stopPropagation(); e.preventDefault(); if(b.disabled) return;
     const el = b.closest('.qtc'), c = el && Q.cars.find(x => x.m.name === el.dataset.qn); if(!c) return;
@@ -23675,7 +23825,7 @@ const QP_OFF_EDGE = 4, QP_OFF_GAP = 12, QP_OFF_LOOK = 60, QP_OFF_ATK = 420;   //
 const QP_OUT_V = { warm: 0.70, norm: 0.80, quick: 0.90 }, QP_OUT_TT = { warm: 0.5, norm: 0.2, quick: -0.35 }, QP_COOL_V = 0.62;
 const QP_TT_TAU = 5;
 const QP_PACE = { safe: 'qsafe', norm: 'norm', max: 'push' };   // 攻め具合 → 決勝のペース（速さ・コーナーの攻め方・ミスの起きやすさが一緒に変わる）。安全は予選専用（少しだけ抑える）
-const QP_OFF_T = 0.15;                                     // アタック中にコース外へこの秒数以上出たら、その周のタイムは抹消
+// トラックリミット：アタック中に4輪すべてが白線の外に出たら、その周のタイムは抹消（qpTrack）
 const QP_RED_T = 18;                                       // 赤旗：撤去にかかる時間（秒）。全車がガレージに戻り、これを過ぎたら再開                                      // アウトラップでタイヤ温度を寄せる速さ（秒）
 const qpOnTrack = qc => qc.q && qc.q.st !== 'garage';
 // ガレージから出す：作業エリアに置き、作業を終えた車として走り出させる
@@ -23747,11 +23897,15 @@ function qpTrack(qc, dt = 0){
       r.secs = secs.map(v => v ?? 0); r.shown = 3; r.lap = lap;
       const bs = qc.bestSec[s];
       if(!r.del){ r.secs.forEach((v, k) => { if(v > 0 && (bs[k] == null || v < bs[k])) bs[k] = v; }); if(qc.best[s] == null || lap < qc.best[s]) qc.best[s] = lap; }
-      if(qMine(qc)) Q.msg = r.del ? `${qc.m.name}：走路外走行でタイム抹消` : `${qc.m.name}：${fmt(lap)}${r.held > 0.3 ? `・前の車の後ろで約${r.held.toFixed(1)}秒つかえた` : ''}`;
+      if(qMine(qc)) Q.msg = r.del ? `${qc.m.name}：トラックリミット違反でタイム抹消` : `${qc.m.name}：${fmt(lap)}${r.held > 0.3 ? `・前の車の後ろで約${r.held.toFixed(1)}秒つかえた` : ''}`;
       q.run = null; qpReturn(qc);
     } else {
-      // コース外走行：4輪がコースの外へ（縁石の外まで）出たら、その周のタイムは抹消
-      if(dt && rc.off && !rc.inPit && !r.del){ r.offT = (r.offT || 0) + dt; if(r.offT >= QP_OFF_T){ r.del = true; if(qMine(qc)) Q.msg = `${qc.m.name}：コース外走行。この周のタイムは抹消されます`; } }
+      // トラックリミット違反（実際のF1と同じ）：コースの端の白線を、4輪すべてが越えたら（白線はコース内・縁石はコース外）、その周のタイムは抹消。
+      // 車の中心から車幅の半分を引いても白線の外にいれば、4輪とも外に出ている（時間の長さは問わない）
+      // ミス（オーバーステア・アンダーステア・オーバーラン・スピン）のないときは、ドライバーが白線ぎりぎりで踏みとどまる（車の動きの遅れで少しはみ出す分を戻す）
+      if(dt && !rc.inPit && !r.del){ const mist = rc.spin || (rc.overUntil || 0) > race.t || (rc.underUntil || 0) > race.t || (rc.overrunUntil || 0) > race.t, lim = T.width/2 + CAR_WID/2 - 0.3;
+        if(!mist && Math.abs(rc.lat || 0) > lim){ const pp = T.pts[rc.idx], d = (Math.abs(rc.lat) - lim)*Math.sign(rc.lat); rc.x -= pp.nx*d; rc.y -= pp.ny*d; rc.lat -= d; } }
+      if(dt && !rc.inPit && !r.del && Math.abs(rc.lat || 0) - CAR_WID/2 > T.width/2){ r.del = true; if(qMine(qc)) Q.msg = `${qc.m.name}：トラックリミット違反。この周のタイムは抹消されます`; }
       // 前の遅い車（アウトラップ・クールダウン）のすぐ後ろにいる時間を数える（つかえた時間の目安）
       if(dt && rc.v < rc.vmax*0.97){ for(const o of Q.cars){ const ro = o !== qc && qpOnTrack(o) && o.q.st !== 'push' && o.q.st !== 'wreck' ? qrRc(o) : null; if(!ro || ro.inPit) continue;
         const d = ((ro.idx - rc.idx + T.N) % T.N)*T.sp; if(d > 0 && d < 28 && Math.abs(ro.lat - rc.lat) < 10){ r.held += dt; break; } } }
@@ -23788,10 +23942,11 @@ function qpRedEnd(){
 }
 // セッションを dt 秒進める（走りの計算）。終わったら true
 function qpStep(dt){
-  if(!Q.red) Q.t += dt;                                       // 赤旗のあいだはセッションの時計を止める
+  if(!Q.red) Q.t += dt;
+  if(Q.wet[Q.sess]) qWetApply();                                       // 赤旗のあいだはセッションの時計を止める
   race.t += dt; qDmgTick(dt);
   if(Q.red && race.t >= Q.red.clearAt && qActive(Q.sess).every(qc => !qc.q || qc.q.st === 'garage')) qpRedEnd();
-  if(!Q.red) for(const qc of qActive(Q.sess)){ const q = qc.q; if(!q || q.st !== 'garage') continue; if(qGarageTick(qc)) qpRelease(qc); }
+  if(!Q.red) for(const qc of qActive(Q.sess)){ const q = qc.q; if(!q || q.st !== 'garage') continue; if(qGarageTick(qc)) qGo(qc); }   // qGo を通す（新品ソフトの数・雨のタイヤ選びも同じ）
   const on = qActive(Q.sess).filter(qpOnTrack).map(qrRc).filter(Boolean);
   if(on.length){
     const all = race.cars; race.cars = on;                    // ガレージの車は計算に入れない（ぶつかり判定・前の車の検出も、走っている車だけ）
@@ -23799,9 +23954,10 @@ function qpStep(dt){
     finally{ race.cars = all; }
   }
   for(const qc of qActive(Q.sess)) if(qpOnTrack(qc)) qpTrack(qc, dt);
-  if(qFlag() && !qActive(Q.sess).some(qc => qc.q && qc.q.st === 'push')){ qpParkAll(); return true; }   // チェッカー後、アタック中の車がいなくなったら終わる（ピットに戻るのは待たない）
+  if(qFlag() && !qActive(Q.sess).some(qc => qc.q && qc.q.st === 'push')) return true;   // チェッカー後、アタック中の車がいなくなったら終わり（車をガレージへ戻すのは、終える側で qpParkAll）   // チェッカー後、アタック中の車がいなくなったら終わる（ピットに戻るのは待たない）
   return Q.t > qDur() + 240;                                  // 念のための打ち切り
 }
+const QP_END_WAIT = 3;                                       // 最後の車がチェッカーを受けてから結果画面を出すまで（実際の秒。一時停止中は数えない）
 // セッションの終わり：コースやピットレーンに残っている車を、そのままガレージへ戻す（残骸・回収もここで片付ける）
 function qpParkAll(){
   for(const qc of qActive(Q.sess)){
@@ -25072,8 +25228,25 @@ function makeRealPoints(type){
 }
 { const _renderHQ = renderHQ; renderHQ = function(msg){ _renderHQ(msg); addLeftToArmed($('#hq')); }; }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.1.0';
+const APP_VER = '1.2.0';
 const UPD_LOG = [
+  { v: '1.2.0', items: [
+    ['予選', [
+      '雨の予選：セッション中に濡れ具合が変わる（乾いていく／強くなる／変わらない）。インターとウェットをカードで選べる',
+      '雨のセッションの路面の状態・路面温度を表示。予選と決勝の路面温度をそろえた',
+      'トラックリミット違反（アタック中に4輪すべてが白線を越える）で、その周のタイムを抹消',
+      '出走の締切を左上の時計の横に表示。ドライバーカードを短くし、注意が要るときだけ状態を表示',
+      'カメラの操作を下のバーに格納（カメラのボタンで開く）',
+      '最後の車がチェッカーを受けた3秒後に結果画面を表示',
+    ]],
+    ['本部', [
+      'タブの並びを「概要・マシン開発・ドライバー」の順に',
+      'マシン開発：開発枠をカードの上に表示（PUの枠と、空力・ブレーキ共通の枠）。枠の追加は共通の枠だけ',
+    ]],
+    ['コース', [
+      'オーストラリアGP：コースの内側に湖（アルバートパーク）',
+    ]],
+  ] },
   { v: '1.1.0', items: [
     ['予選', [
       '予選を実際のコースで走らせる方式に変更（Q1〜Q3のノックアウト）。マシンの挙動は決勝と同じ（ミス・スピン・クラッシュ・赤旗・火花）',
@@ -25299,12 +25472,17 @@ function newsHtml(list){
     }
     return _dirEvent(kind, car, ...rest);
   };
+  let ttDay = null;                                    // 今の週末の路面温度（予選と決勝で共有）
   const _setupTrackTemp = setupTrackTemp;
   setupTrackTemp = function(){
     _setupTrackTemp();
-    const rd = careerRace && career && career.calendar[careerRace.round];
+    const ri = careerRace ? careerRace.round : (Q && career ? career.round : null);   // 予選中は careerRace がないので、今戦の番号で
+    const rd = ri != null && career && career.calendar[ri];
     if(rd && rd.tt != null){
-      race.ttBase = Math.round(rd.tt - 2 + Math.random()*4);                       // 予報の前後2℃
+      // その週末の路面温度（晴れたときの温度）は1回だけ決め、予選と決勝で同じ値を使う
+      const key = career.season + ':' + ri;
+      if(!ttDay || ttDay.key !== key) ttDay = { key, base: Math.round(rd.tt - 2 + Math.random()*4) };   // 予報の前後2℃
+      race.ttBase = ttDay.base;
       race.trackT = race.ttBase + (TT_WET - race.ttBase) * clamp(race.wet*1.1, 0, 1);
     }
   };
