@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.2.1 -->
+<!-- レーシングチームマネージャー ver 1.2.2 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.2.1">
-<meta name="build" content="20261113-2">
+<meta name="version" content="1.2.2">
+<meta name="build" content="20261114-1">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -854,7 +854,6 @@ body.guideOpen{overflow:hidden}
 .gLegend>span{display:inline-flex;align-items:center;gap:3px}
 /* ===== 契約 ===== */
 .conLine{margin-top:1px}.conLine.exp{color:var(--hqBad);font-weight:700}
-.bargain{display:inline-block;margin-left:4px;padding:0 6px;border-radius:4px;font-size:10.5px;font-weight:700;background:rgba(31,157,90,.16);color:var(--hqGood)}
 .conSec .cBlk{border-top:1px solid var(--line);padding:9px 0 4px}
 .conSec .cHead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13.5px}
 .conSec .cTag{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:4px;background:var(--tower);color:var(--towerText)}
@@ -911,7 +910,6 @@ body.guideOpen{overflow:hidden}
 .hq{max-width:1180px;margin:0 auto;padding:14px 16px 40px;display:flex;flex-direction:column;gap:14px}
 .hqTop{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .hqTeam{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 260px}
-.livery{width:34px;height:34px;border-radius:8px;flex:none;border:1px solid rgba(0,0,0,.25)}
 .hqTeam b{font-size:17px;display:block;line-height:1.2}
 .hqTeam small,.kick{font:700 10.5px "Chakra Petch","Segoe UI",system-ui,sans-serif;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
 .hqMoney{display:flex;gap:18px;align-items:flex-end}
@@ -932,9 +930,6 @@ body.guideOpen{overflow:hidden}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.12);color:#dfe4ea}
 .chip.wet{background:#2f8fff;color:#0b1220}.chip.mixed{background:#5bc0ff;color:#0b1220}
 .nrDesc{font-size:12.5px;color:#aab0b8;margin:0;line-height:1.55}
-.startTy{display:flex;flex-direction:column;gap:6px;margin-top:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
-.stRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.stRow .who{min-width:3.4em;font:700 13px "Chakra Petch",sans-serif}
 .tySeg{display:inline-flex;gap:4px}
 .tySeg button{min-width:40px;min-height:30px;border-radius:7px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#e9ebee;font:700 12px "Chakra Petch",sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .tySeg button.on{background:#f4f4f2;color:#15171a;border-color:#f4f4f2}
@@ -959,25 +954,16 @@ body.guideOpen{overflow:hidden}
 .skill{display:inline-block;width:70px;height:6px;border-radius:3px;background:var(--btn);vertical-align:1px;overflow:hidden;margin-right:6px}
 .skill i{display:block;height:100%;background:var(--blue)}
 /* 開発 */
-.devRow{display:grid;grid-template-columns:7.8em minmax(0,1fr) 2.6em auto;gap:8px;align-items:center;margin:7px 0}
-.devRow .lab{font-size:13px}
+
 .bar{position:relative;height:10px;border-radius:5px;background:var(--btn);overflow:visible}
 .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--tower)}
 .bar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--red);border-radius:1px}
-.devRow .v{font:700 13px "Chakra Petch",sans-serif;text-align:right;font-variant-numeric:tabular-nums}
 /* 開発の結果（押した行のすぐ下に出す。失敗＝赤・成功＝緑・大成功＝紫） */
-.devRes{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:2px 0 1px;padding:4px 10px;border-radius:7px;font-size:12.5px;border:1px solid}
-.devRes b{font-weight:700;font-size:13.5px}
-.devRes.t0{background:rgba(215,38,61,.08);border-color:rgba(215,38,61,.45);color:#c11f35}
-.devRes.t1{background:rgba(26,154,85,.08);border-color:rgba(26,154,85,.45);color:#13814a}
-.devRes.t2{background:rgba(192,38,211,.09);border-color:rgba(192,38,211,.5);color:#a21cb3}
+
 .devFlash{animation:devFlash 1.2s ease-out}
 .devFlash.t2{animation-name:devFlashG}
 @keyframes devFlash{0%{background:rgba(255,196,0,.35)}100%{background:transparent}}
 @keyframes devFlashG{0%{background:rgba(192,38,211,.3)}100%{background:transparent}}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .devRes.t0{color:#ff6b7d}:root:not([data-theme="light"]) .devRes.t1{color:#3ce08c}:root:not([data-theme="light"]) .devRes.t2{color:#e879f9}}
-:root[data-theme="dark"] .devRes.t0{color:#ff6b7d}:root[data-theme="dark"] .devRes.t1{color:#3ce08c}:root[data-theme="dark"] .devRes.t2{color:#e879f9}
-.devRow button{min-width:6.6em;white-space:nowrap}
 .legend{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend i{display:inline-block;width:12px;height:6px;border-radius:3px;background:var(--tower)}
@@ -1015,17 +1001,13 @@ body.guideOpen{overflow:hidden}
   .fa{grid-template-columns:2.8em minmax(0,1fr);gap:4px 8px}
   .fa .acts{grid-column:1/-1;grid-row:3;display:grid;margin-top:2px;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
   .fa .acts .b{min-height:34px;padding:5px 4px;font-size:12.5px;white-space:nowrap}
-  .fa .abRow{margin-top:3px}
 }
 .note{font-size:12px;color:var(--muted);margin:6px 0 0;line-height:1.55}
-.lastRes{font-size:13px;line-height:1.6}
-.lastRes .big{font:700 15px "Chakra Petch",sans-serif}
 /* 新しいキャリア：チーム選択 */
 .pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .pick button{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:center;text-align:left;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font:inherit;cursor:pointer}
 .pick button:hover{border-color:var(--muted)}
 .pick button.on{border-color:var(--tower);box-shadow:inset 0 -4px 0 var(--signal)}
-.pick .livery{grid-row:span 2;width:30px;height:30px}
 .pick b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pick small{font-size:11.5px;color:var(--muted)}
 /* チームの強さ（マシン・ドライバー・スポンサー）をS〜Gのランクで並べる */
@@ -1058,14 +1040,10 @@ body.career #againBtn{display:none}
 .dst .dl{font-size:12px;color:var(--muted);white-space:nowrap}
 .dst .skill{width:100%;margin:0}
 .dst .dv{font-size:12px;font-weight:700;text-align:right}
-.abList{grid-column:1/-1;list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
-.abList li{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--muted);line-height:1.45}
-.abList .ab{flex:none}
 .ab.rabC{outline:1px dashed currentColor;outline-offset:1px}   /* リザーブ特殊能力（点線の枠で区別） */
-.abList.rabOff{opacity:.6}
+
 .resDemand{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;margin-top:8px;padding:8px 10px;border-radius:9px;background:#fff4cc;color:#5a4500;font-size:12.5px;line-height:1.5}
 .resDemand .row{margin-top:2px}
-.abRow{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .ab{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11.5px;font-weight:700;line-height:1.6;white-space:nowrap;border:1px solid}
 .ab.blue{color:var(--abBlue);background:var(--abBlueBg);border-color:var(--abBlue)}
 .ab.red{color:var(--abRed);background:var(--abRedBg);border-color:var(--abRed)}
@@ -1077,10 +1055,6 @@ body.career #againBtn{display:none}
 .part+.part{border-top:1px solid var(--line)}
 .partHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;margin-bottom:2px}
 .partHead .muted b{color:var(--text)}
-.devRow{row-gap:1px}
-.devRow .dd{grid-column:1/-1;font-size:11px;color:var(--muted);line-height:1.4;margin:-2px 0 2px}
-.hotTag{display:inline-block;margin-left:5px;padding:0 5px;border-radius:4px;background:var(--signal);color:var(--signalText);font-size:10px;font-weight:700;vertical-align:1px}
-.devRow .lab{line-height:1.3}
 /* レース中の特殊能力の発動テロップ */
 .rec.f-abil .rec-ico{background:#2f8fff;color:#fff}
 .rec.f-abil .rec-lab{color:#7fb6ff}
@@ -1315,7 +1289,7 @@ body.phoneRace .lead-txt{min-width:0;flex-wrap:wrap;row-gap:2px}
 body.phoneRace .stage:has(#flag:not(:empty)) #camctl{top:80px}
 .abp{font-size:10px}
 /* オーナー目標とスポンサー契約 */
-.ownerBar,.spLine{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px}
+.spLine{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px}
 .regBar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-radius:12px;padding:9px 14px;font-size:13px;border:1px solid #c98a00;background:linear-gradient(90deg,rgba(255,196,0,.16),rgba(255,196,0,.05))}
 .regBar .kick{color:#b07800}
 .regBar.now{border-color:#1f9d5a;background:linear-gradient(90deg,rgba(31,157,90,.16),rgba(31,157,90,.04))}
@@ -1333,11 +1307,6 @@ body.phoneRace .stage:has(#flag:not(:empty)) #camctl{top:80px}
 .buySlot .muted{font-size:12px}
 /* 開発方針（慎重・標準・攻め）と、結果の確率 */
 .devPol{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
-.devPol .dpLab{font-size:12.5px;font-weight:700}
-.devPol .dpOdds{display:flex;flex-direction:column;gap:2px;flex:1 1 100%;font-size:12px}
-.devPol .dpRow{display:flex;flex-wrap:wrap;gap:2px 10px}.devPol .dpRow b{min-width:7.5em;font-weight:700}.devPol .dpRow i{font-style:normal;font-weight:700}
-.devPol .dpNote{color:var(--muted);font-size:11.5px}
-.ownerBar .trust{display:inline-flex;align-items:center;gap:6px;margin-left:auto;white-space:nowrap}
 .tmeter{display:inline-block;width:90px;height:8px;border-radius:4px;background:var(--btn);overflow:hidden}
 .tmeter i{display:block;height:100%}
 .spLine .muted{font-size:12px}
@@ -1418,7 +1387,6 @@ body.phoneRace .stage:has(#flag:not(:empty)) #camctl{top:80px}
 .qInfo{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .qClock{font:700 20px "Chakra Petch",sans-serif;color:#fff;min-width:3.2em;text-align:right}
 .qMsg{margin:0;background:rgba(255,196,0,.14);color:#ffd55a;border-radius:8px;padding:6px 10px;font-size:13px}
-.qPick .stRow{margin:6px 0}
 /* 予選：天気と路面温度 */
 .qCond{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media (max-width:640px){.qCond{grid-template-columns:1fr}}
@@ -1666,7 +1634,6 @@ body.pcRace .qrCamSlot #camctl.inDock button{min-width:0}
 .qSpd button{min-width:42px;min-height:34px;border:0;border-radius:7px;background:transparent;color:#e9ebee;font:700 13px "Chakra Petch",sans-serif;cursor:pointer}
 .qSpd button.on{background:#ffc400;color:#15171a}
 .qMap g.slow circle{opacity:.45}
-.qmmLeg i.dim{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45)}
 /* 予選：自チームのカードとミニマップ（PCは横に並べ、スマホは縦に積む） */
 .qTblWrap{display:flex;flex-direction:column;gap:10px;min-width:0}
 .qMap g{will-change:transform}
@@ -2066,10 +2033,8 @@ body.career.phoneRace .radioBox{left:calc(var(--mtW,0px) + 14px);max-width:calc(
 .owStart{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}
 .owStart button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;background:transparent;color:var(--text);font:inherit;cursor:pointer}
 .owStart button.on{border-color:var(--tower);box-shadow:inset 0 -3px 0 var(--signal)}
-.owStart b{font-size:13.5px}.owStart small{font-size:11px;color:var(--muted);font-weight:700}
-.owStart small.owRk{display:flex;flex-wrap:wrap;align-items:center;gap:3px 9px}   /* マシン・ドライバー・スポンサーをS〜Gのランクで */
-.owStart small.owRk .gd{margin-left:2px}
-.owStart small.owRk > span{line-height:1.5}.owStart button > span{font-size:11.5px;color:var(--muted);line-height:1.45}   /* 説明文だけ（ランクの札には効かせない） */
+.owStart b{font-size:13.5px}.owStart small{font-size:11px;color:var(--muted);font-weight:700}   /* マシン・ドライバー・スポンサーをS〜Gのランクで */
+.owStart button > span{font-size:11.5px;color:var(--muted);line-height:1.45}   /* 説明文だけ（ランクの札には効かせない） */
 .owSw button:focus-visible,.owSyms button:focus-visible,.owStart button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 /* スポンサー契約の選択画面 */
@@ -2226,10 +2191,6 @@ body.career.pcRace .tc.pre .tcStart{grid-column:1}
 .homeJudge .hjT b{font-size:14.5px}
 .homeJudge .hjT small{font-size:11px;color:var(--muted)}
 .homeMap{flex:none;border-radius:8px;background:var(--tower);display:block}
-.homeStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.homeStats div{display:flex;flex-direction:column;padding:6px 8px;border-radius:8px;background:color-mix(in srgb,var(--muted) 10%,transparent)}
-.homeStats small{font-size:10.5px;color:var(--muted)}
-.homeStats b{font:700 17px "Chakra Petch",sans-serif}
 .homeBar{height:7px;border-radius:4px;background:color-mix(in srgb,var(--muted) 22%,transparent);overflow:hidden}
 .homeBar i{display:block;height:100%;background:var(--signal)}
 .homeTot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 12px;border-radius:10px;background:#1b1f25;color:#f1f3f5}
@@ -2241,9 +2202,6 @@ body.career.pcRace .tc.pre .tcStart{grid-column:1}
 .ch.home{border-color:var(--signal)}
 .ch .chHome{position:absolute;top:3px;right:4px;font:700 9px "Chakra Petch",sans-serif;letter-spacing:.06em;padding:0 4px;border-radius:4px;background:var(--signal);color:#15171a}
 .homeEdBox{border:2px solid var(--signal)!important}
-.homeEdBox .hjRes{display:flex;flex-direction:column;gap:2px}
-.homeEdBox .hjRes b{font-size:15px}
-.homeEdBox .hjRes small{font-size:11.5px;color:var(--muted)}
 .homeEdBox .hjCost{margin-top:6px;font-size:12.5px}
 .homeEdBox .acts{margin-top:8px}
 .homeEdBox .heHead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
@@ -2496,7 +2454,6 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .devSec h2 .kick{display:inline-flex;align-items:center;gap:5px}
 .hotDot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-left:5px;box-shadow:0 0 0 2px rgba(255,196,0,.25);vertical-align:1px}
 .devBar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);margin-bottom:10px}
-.devBar .dbSlots{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .pGroups{display:grid;grid-template-columns:1fr 2fr;gap:10px;align-items:start}
 .pGrp{display:grid;gap:8px;align-content:start}
 .pg-body{grid-template-columns:1fr 1fr}
@@ -2508,12 +2465,6 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .pcSlot b{font-size:15px}
 .pcSlot small{font-size:11px}
 .pcSlot #buySlot{margin-left:auto}
-.devBar .dbSlot{display:inline-flex;align-items:center;gap:6px}
-.devBar .dbSlot small{font-size:11px;color:var(--muted);font-weight:700}
-.devBar .dbSlot b{font-size:16px}
-.devBar .dbSlot.pu small{color:#b07800}
-.devBar .dbPol{display:flex;align-items:center;gap:6px}
-.devBar .dbLab{font-size:11px;color:var(--muted);font-weight:700}
 .devBar .dbOdds{display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;font-size:11.5px;margin-left:auto}
 .devBar .dbOdds i{font-style:normal;font-weight:700;margin-left:4px}
 .devBar .dbOdds b{font-weight:700}
@@ -2733,40 +2684,8 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .resAdd{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;justify-content:center;font-size:12.5px;min-height:90px}
 
 /* ===== 概要タブ（新） ===== */
-.hqBar{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;grid-template-areas:"team owner stats" "team sp stats";gap:6px 22px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
-.hbTeam{grid-area:team;display:flex;align-items:center;gap:10px;min-width:0;padding-right:18px;border-right:1px solid var(--line)}
-.hbTeam b{display:block;font-size:17px;line-height:1.2}
-.hbStats{grid-area:stats;display:flex;gap:18px;align-items:flex-end;padding-left:18px;border-left:1px solid var(--line)}
-.hbStats div{display:flex;flex-direction:column;align-items:flex-end}
-.hbStats b{font:700 22px "Chakra Petch","Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;line-height:1.1}
-.hbStats b.lossT{color:var(--hqBad)}
-.hbOwner,.hbSp{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:13px;min-width:0}
-.hbOwner{grid-area:owner}.hbSp{grid-area:sp}
-.hbOwner .trust{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;margin-left:auto}
+
 .hbNote{flex:1 1 100%;font-size:11px;color:var(--muted);line-height:1.4}
-.hbSp .logo,.hbSp svg{flex:none}
-.hbTerms{flex:1 1 12em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
-.hbPopS{display:none!important}
-.hbPopS i{font-style:normal;font-size:10px;margin-left:2px}.hbPopS i.up{color:var(--hqGood)}.hbPopS i.down{color:var(--hqBad)}
-@media (max-width:760px){
-  .hqBar{grid-template-columns:minmax(0,1fr);grid-template-areas:"team" "stats" "owner" "sp";padding:10px 12px;gap:8px}
-  .hbTeam{border:0;padding:0;gap:8px}
-  .hbTeam small{display:none}
-  .hbTeam b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hbTeam .logo{width:30px;height:30px}
-  .hbStats{border:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:5px}
-  .hbStats > div{align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 2px 5px;min-width:0}
-  .hbStats .kick{font-size:9.5px;letter-spacing:.06em}
-  .hbStats b{font-size:17px;white-space:nowrap}
-  .hbPopS{display:flex!important}
-  .hbOwner,.hbSp{padding-top:7px;border-top:1px dashed var(--line);font-size:12px;gap:4px 8px}
-  .hbOwner .kick,.hbSp .kick{display:none}
-  .hbOwner .trust{gap:4px}.hbOwner .tmeter{width:60px}
-  #hq .hbPop{margin-left:auto}#hq .hbPop > b,#hq .hbPop > i,#hq .hbPop .hpL{display:none}
-  #hq .hbPop small{font-size:11.5px;margin:0;color:var(--text);font-weight:700}
-  .hbTerms{white-space:normal;flex-basis:100%;order:9;font-size:11px;line-height:1.5}
-}
-@media (max-width:380px){ .hbStats b{font-size:15px} }
 .todoL{display:flex;flex-direction:column;gap:5px}
 .todo{display:grid;grid-template-columns:1.6em minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;padding:8px 10px;border:1px solid var(--line);border-left-width:4px;border-radius:8px;background:var(--panel);color:var(--text);font:inherit;font-size:13px;cursor:pointer}
 .todo:hover{background:var(--bg)}
@@ -2868,11 +2787,6 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .loanRow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
 .loanRow .finRow{margin:0}
 
-.hbPop{display:inline-flex;align-items:baseline;gap:4px;font-size:12px;white-space:nowrap;margin-left:auto}
-.hbPop b{font:700 15px "Chakra Petch",sans-serif}
-.hbPop i{font-style:normal;font-size:10.5px;font-weight:700}
-.hbPop i.up{color:var(--hqGood)}.hbPop i.down{color:var(--hqBad)}
-.hbPop small{color:var(--muted);font-size:11px;margin-left:4px}
 #hq .sreqSec{border:2px solid #e0a800;box-shadow:inset 4px 0 0 #e0a800}
 #hq .sreqSec.on{border-color:var(--hqGood);box-shadow:inset 4px 0 0 var(--hqGood)}
 .sreqTxt{margin:0 0 8px;font-size:13px;line-height:1.65}
@@ -2904,7 +2818,7 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .hcNum small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hoGoal{font-size:13px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
 /* オーナーの目標（概要タブ） */
-.ownSec .ogPers{margin:0 0 8px}
+
 .ogList{display:flex;flex-direction:column;gap:4px}
 .ogRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px}
 .ogTag{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px;background:var(--btn);color:var(--muted);white-space:nowrap}
@@ -2998,7 +2912,6 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .pdStyle{margin:0;font-size:12.5px;line-height:1.6}
 .ogGreat{display:block;font-size:10.5px;color:var(--muted);font-weight:400}
 .hoProg{margin-left:6px;font-size:11px;color:var(--muted)}
-.demNote{font-size:11.5px;flex-basis:100%}
 .pdStats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .pdStats div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px;display:flex;flex-direction:column}
 .pdStats small{font-size:10.5px;color:var(--muted)}
@@ -3508,7 +3421,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.2.1</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.2.2</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -3527,7 +3440,6 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 
 <div class="guide" id="guide" hidden role="dialog" aria-modal="true" aria-label="遊び方"></div>
 <section class="hq" id="hq" aria-label="チーム本部"></section>
-<section class="hq" id="quali" aria-label="予選" hidden></section>
 <main hidden>
   <div class="stage" id="stage">
     <canvas id="cv"></canvas>
@@ -4769,6 +4681,11 @@ function camTarget(){
 const DIR = { shot: null, since: 0, labelSince: 0, events: [], cut: false, next: 0, fade: null, fadeA: 0, pan: null, leadSeen: 0 };
 const LEAD_EVERY = 35000;          // トップの車がこの時間（実時間・ミリ秒）映っていなければ、短く映す
 function dirEvent(kind, car, sec, score, label, zk){
+  // キャリアの記録：ミスの回数
+  if(careerRace && car && race.state === 'racing'){
+    if(kind === 'lock' || kind === 'over' || kind === 'under' || kind === 'spin') car.mistN = (car.mistN || 0) + 1;
+    if(kind === 'lock') car.lockN = (car.lockN || 0) + 1;
+  }
   if(mode !== 'race' || !car) return;
   const now = performance.now();
   DIR.events.push({ key: kind + ':' + race.cars.indexOf(car), car, until: now + sec*1000, score, label, zk });
@@ -6945,28 +6862,6 @@ function drawRain(){
 }
 
 /* リタイア車から上がる煙。クラッシュは黒煙、マシントラブルは白煙、バーストは灰色 */
-const SMOKE_COL = { crash:'28,28,32', mech:'238,241,245', burst:'128,130,136' };
-function drawSmoke(c){
-  const col = SMOKE_COL[c.out] || SMOKE_COL.mech;
-  const age = Math.max(0, race.t - (c.outAt || 0));
-  const burst = Math.max(0, 1 - age/3.5);                       // 直後はもうもうと立ち上る
-  const base = 0.50 + 0.32*burst;
-  const n = 10;
-  ctx.save();
-  for(let i=0;i<n;i++){
-    const ph = ((race.t*0.62 + i/n) % 1);                       // 0→1で生まれて消えるループ
-    const r = 5 + ph*(18 + 8*burst);
-    const rise = ph*(30 + 16*burst);
-    const wob = Math.sin(i*2.3 + race.t*1.4) * 7 * ph;
-    const a = base * (1 - ph) * (0.55 + 0.45*Math.sin(Math.PI*ph));
-    if(a <= 0.01) continue;
-    ctx.fillStyle = `rgba(${col},${a.toFixed(3)})`;
-    ctx.beginPath();
-    ctx.arc(c.x - Math.cos(c.h)*5 + wob, c.y - Math.sin(c.h)*5 - rise, r, 0, Math.PI*2);
-    ctx.fill();
-  }
-  ctx.restore();
-}
 
 /* セクター標識：濃い角丸タグに黄色の文字 */
 function drawSecTag(x, y, text){
@@ -7963,7 +7858,12 @@ function makeNetStreet(arch){
 
 let STREET_ARCH = null;                           // 市街地の型（GPの国で決まる。null はランダム）
 let STREET_FORCE_BAY = false;                      // 市街地を必ず海沿いの形で作る（シンガポールGP）
+// キャリアが始まっているか（読み込みの途中で career がまだ用意されていなくても使える）
+function careerOn(){ try{ return !!career; }catch(e){ return false; } }
 function makeRandomPoints(type){
+  // 市街地は道路網から、キャリアのコースは実在のコースを模した作り方から。作れなければ、下の方式で作る
+  if(type === 'street'){ const p = makeNetStreet(STREET_ARCH); if(p) return p; }
+  else if(careerOn()){ const p = makeRealPoints(type); if(p) return p; }
   const cx = W/2, cy = H/2, rx = W*0.42, ry = H*0.40;
   // 広いマップ（S＝1、M＝1.5、L＝2）では、コーナーを大きく流れるように、直線を長くする
   const mk = MAP_SIZES[mapSize], grow = 1 + (mk - 1)*0.35, fs = Math.sqrt(mk);
@@ -8470,6 +8370,10 @@ function pwOptions(){
   sel.innerHTML = '<option value="-1">なし</option>' + machines.map((m, i) => `<option value="${i}">P${i+1} ${esc(m.name)}</option>`).join('');
   sel.value = MY ? machines.indexOf(MY) : -1;
   syncPwButtons();
+  // キャリア：担当を選ぶ欄は自チームの車だけ
+  if(!careerRace || !career) return;
+  sel.innerHTML = machines.map((m, i) => m.team === career.team ? `<option value="${i}">${esc(m.name)}（P${i + 1}スタート）</option>` : '').join('');
+  if(MY) sel.value = machines.indexOf(MY);
 }
 function setMy(i){
   // 担当を切り替えても、それまでの担当に出したBOXの指示は残す（もう1台の自チームのマシンとして、その指示どおりピットに入る）
@@ -8628,7 +8532,7 @@ function syncPwButtons(){
   $('#pwHint').textContent = hint;
   pw.key = '';
 }
-function updatePitWall(){
+function updatePitWallPanel(){
   if(mode !== 'race' || !MY) return;
   const now = performance.now();
   if(now - pw.at < 250) return; pw.at = now;
@@ -8659,6 +8563,12 @@ function updatePitWall(){
   const want = !live || (c && c.inPit);
   const aiP = aiBoxPending(c);
   if(box.disabled !== want || box.classList.contains('on') !== !!(c && (c.userBox || aiP)) || (box.dataset.ai === '1') !== aiP){ box.dataset.ai = aiP ? '1' : ''; syncPwButtons(); }   // AIのBOX（取消できる状態）の出入りも追従
+}
+// ピットウォールの更新：パネルのほかに、キャリアの記録・ドック・ミニマップ・カードもここで合わせる
+let telAt = 0;
+function updatePitWall(){
+  updatePitWallPanel();
+  if(race.state === 'racing'){ race.maxWet = Math.max(race.maxWet || 0, race.wet || 0); for(const c of race.cars){ if(c.defend && !c.defPrev) c.defN = (c.defN || 0) + 1; c.defPrev = c.defend; } } abilityWatch(); syncDock(); drawMiniMap(); const n = performance.now(); if(n - telAt > 200){ telAt = n; syncTel(); }
 }
 // マップ上の担当マシンの目印：順位の札の上に水色の三角
 function drawMyMark(cx, cy){                            // 順位の札のすぐ上（画面の上側）に水色の三角
@@ -8980,12 +8890,6 @@ document.addEventListener('click', e => {
   if(e.target.closest && e.target.closest('#wxFc')){ e.stopPropagation(); pop.hidden = !pop.hidden; if(!pop.hidden) pop.innerHTML = wxPopHtml(); return; }
   if(!pop.hidden && !(e.target.closest && e.target.closest('#wxPop'))) pop.hidden = true;
 }, true);
-function pwWx(){
-  const c = myCar(); if(!c || c.out || c.finish !== null) return;
-  if(race.wTarget > 0.15 && race.rain < 0.08) pwEvt('wx', [[['eng', 'レーダーに雨雲。数周で降り出しそうだ'], ['drv', '了解、教えてくれてありがとう']], [['eng', '雨が近づいてる。タイヤの準備はできてる']]], { pri: true, cd: 60 });
-  else if(race.wTarget === 0 && race.rain > 0.15) pwEvt('wx', [[['eng', '雨はもうすぐ止む。路面は乾いていくぞ']]], { pri: true, cd: 60 });
-  else if(race.wTarget > race.rain + 0.2) pwEvt('wx', [[['eng', '雨がもっと強くなる。気をつけて']]], { pri: true, cd: 60 });
-}
 // 定期チェック：周回遅れの車に引っかかっている／ダーティエアで抜けない
 /* タイヤの温度の無線：熱すぎ・冷えすぎが続いたら報告し、ペースの指示をうながす。ピットアウトでは冷えたタイヤに注意 */
 function pwTemp(c){
@@ -9224,21 +9128,8 @@ const TYRES = {
    ドライタイヤには得意な温度帯（tMin〜tMax）があり、外れるとグリップが少し落ちる（最大2.5%）。
    得意な温度より暑いと摩耗が早まり、寒いと表面が荒れて（グレイニング）少し摩耗が増える。
    雨用タイヤ（I・W）は温度の影響を受けない。濡れた路面ほど温度の影響は小さくなる */
-const TYRE_TEMP = { S: [20, 35], M: [28, 42], H: [35, 50] };
 const TT_MODES = { low: [18, 26], mid: [28, 38], high: [40, 50] };
 const TT_WET = 19;                                   // 雨の路面が落ち着く温度
-function tempOff(comp, T){                           // 得意な温度帯からどれだけ外れているか（正：暑い、負：寒い）
-  const w = TYRE_TEMP[comp]; if(!w || T == null) return 0;
-  return T > w[1] ? T - w[1] : (T < w[0] ? T - w[0] : 0);
-}
-function tempGrip(comp, T, wet){
-  const off = Math.abs(tempOff(comp, T)) * (1 - clamp(wet ?? race.wet, 0, 1));
-  return 1 - Math.min(0.025, off*0.0025);
-}
-function tempWear(comp, T, wet){
-  const o = tempOff(comp, T) * (1 - clamp(wet ?? race.wet, 0, 1));
-  return o > 0 ? 1 + Math.min(0.5, o*0.04) : 1 + Math.min(0.2, -o*0.015);
-}
 /* ---------- タイヤの温度（2026-10 試作） ----------
    1台に1つのタイヤ温度（℃。ゲーム内の目安で、実際のF1の数値ではない）を持たせる。
    コンパウンドごとに「適温の範囲」（TT_WIN）があり、外れるとグリップが落ちる。熱すぎると摩耗も早まり、冷えているとミスが増える。
@@ -9364,11 +9255,22 @@ function stepTyreTemp(c, dt, p, latLoad, braking, traction, scOn){
   if(!c.ttPush && c.tt < w[0] - 3 && !scOn && race.t > 3) c.ttPush = true; else if(c.ttPush && (c.tt > w[0] + 2 || scOn)) c.ttPush = false;
 }
 function ttMode(){ const b = document.querySelector('#trackTempSeg button.on'); return b ? b.dataset.t : 'random'; }
+let ttDay = null;                                      // 今の週末の路面温度（予選と決勝で共有）
 function setupTrackTemp(){
   let m = ttMode();
   const r = m === 'random' ? [18, 50] : TT_MODES[m];
   race.ttBase = Math.round(r[0] + Math.random()*(r[1] - r[0]));          // 晴れていればこの温度に落ち着く
   race.trackT = race.ttBase + (TT_WET - race.ttBase) * clamp(race.wet*1.1, 0, 1);   // 雨のスタートなら冷えた路面から
+  // キャリア：その週末の路面温度（晴れたときの温度）は1回だけ決め、予選と決勝で同じ値を使う
+  const ri = careerRace ? careerRace.round : (Q && career ? career.round : null);   // 予選中は careerRace がないので、今戦の番号で
+  const rd = ri != null && career && career.calendar[ri];
+  if(rd && rd.tt != null){
+    // その週末の路面温度（晴れたときの温度）は1回だけ決め、予選と決勝で同じ値を使う
+    const key = career.season + ':' + ri;
+    if(!ttDay || ttDay.key !== key) ttDay = { key, base: Math.round(rd.tt - 2 + Math.random()*4) };   // 予報の前後2℃
+    race.ttBase = ttDay.base;
+    race.trackT = race.ttBase + (TT_WET - race.ttBase) * clamp(race.wet*1.1, 0, 1);
+  }
 }
 function stepTrackTemp(dt){
   if(race.ttBase == null) return;
@@ -10172,6 +10074,9 @@ function hideRecord(now){
 const FLAG_ICO = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V3.5"/><path d="M5 4h12.5l-2.8 4.5 2.8 4.5H5" fill="currentColor"/></svg>';
 const SC_ICO = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15.5v-3l2.2-4.5h9.3l3.5 4 3 .8v2.7"/><path d="M9.5 6.5h4"/><circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/></svg>';
 function showFlag(kind, label, sub){
+  // キャリアの記録（SC・VSC・赤旗の回数）と、無線の知らせ
+  if(careerRace && race.state === 'racing' && race.ev){ if(kind === 'red') race.ev.red++; else if(label === 'SAFETY CAR' && sub === 'DEPLOYED') race.ev.sc++; else if(label === 'VIRTUAL SAFETY CAR' && sub === 'DEPLOYED') race.ev.vsc++; }
+  if(kind === 'radio'){ showRadio(sub); return; }
   const box = $('#toasts');
   if(!box || (race.state !== 'racing' && race.state !== 'finished' && race.state !== 'quali')) return;   // 予選でもクラッシュ・赤旗の知らせを出す
   if(MY && kind !== 'radio') pwFlag(kind, label, sub);
@@ -10246,7 +10151,7 @@ function startComp(comp){
   if(race.wet > 0.3) return 'I';
   return comp;
 }
-function prepareGrid(keepWx){                         // keepWx：天気と路面温度を決め直さない（スタート前に見せた条件のまま決勝を始める）
+function prepareGridBase(keepWx){                         // keepWx：天気と路面温度を決め直さない（スタート前に見せた条件のまま決勝を始める）
   pwReset(); tcPickFor = null;
   if(race.state === 'idle') race.laps = +lapsSel.value || race.laps;   // スタート前は選んでいる周回数を使う
   race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; race.yellows = []; intT = -99; intCache = new Map();
@@ -10288,6 +10193,14 @@ function prepareGrid(keepWx){                         // keepWx：天気と路�
     race.cars.push(c);
   });
   dirty = true;
+}
+// グリッドを並べたあと、キャリアの車ごとの設定とレースの記録を用意する
+function prepareGrid(){
+  prepareGridBase();
+  for(const c of race.cars){ if(c.m && c.m.wearK){ c.wearMul = c.m.wearK; c.degMul = c.m.degK; } }
+  race.maxWet = race.wet || 0;
+  race.ev = { sc: 0, vsc: 0, red: 0 };
+  race.wxCache = null;                                  // 車ごとの予報の使い回しは、レースごとに作り直す
 }
 /* グリッドの並び（2列の千鳥配置）。車の置き場所と路面の枠線で共通に使う */
 /* グリッドの間隔はコースごとに決める：スタートラインの後ろに使える長さ（直線と、緩いカーブまで）を測り、
@@ -10536,10 +10449,6 @@ function aiNeutralPit(c, remain, rate, k, minWear){
 }
 /* AIの摩耗ペースの見込み。SC・VSCの周は減り方が小さく、そのまま使うと「最後までもつ」と見誤るので、標準の減り方を下限にする */
 function aiWearRate(c){ return Math.max(c.lapWearLast || 0, TYRES[c.comp].wear*1.3*(c.wearMul ?? 1)*tyreLenK()*ttEstWear(c.comp, race.trackT)); }
-function sectorOf(idx){
-  const N = track.N, r = (idx - track.startIdx + N) % N;
-  return Math.min(2, Math.floor(r / (N/3)));
-}
 /* ---------- ミニセクター方式のイエローフラッグ ----------
    1周を MS_N のミニセクター（マーシャルの受け持ち区間）に分ける。事故の起きたミニセクターにダブルイエロー（軽いものはシングル）、
    その1つ手前（近づいてくる側）にシングルイエローを出す。離れた場所の事故は、それぞれ別の区間として同時に出せる。
@@ -12347,7 +12256,6 @@ const TO_GAP = 2.5;                                            // 入れ替え�
 const toSt = id => { race.to = race.to || {}; return race.to[id] || (race.to[id] = { mode: 'free', swap: null, n: 0 }); };
 const isFirstCar = c => c.m && c.m.tcam === 'k';
 const sayTo = (c, who, text) => { if(!careerRace || !career || c.m.team !== career.team) return; if(c.m === MY) pwSay(who, text); else radioLine(c.m, who, text); };
-function toYielding(c){ const S = race.to && race.to[c.m.team], w = S && S.swap; return !!(w && !w.done && !w.refused && w.y === c && race.t >= w.start); }
 function holdBlocks(c, o){                                     // c が後ろ、o が前
   if(!race.to || c.m.team !== o.m.team || !c.m.team) return false;
   const S = race.to[c.m.team]; if(!S) return false;
@@ -13653,7 +13561,7 @@ function resetRace(){
    メインのボタンは状態で役割が変わる：スタート → 一時停止／再開 → （終了後）もう一度 */
 const ICO_PLAY = '<path class="fillme" d="M7 4.5v15l12-7.5z"/>', ICO_PAUSE = '<path class="fillme" d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z"/>';
 let ctlKey = '';
-function updateCtl(){
+function updateCtlBase(){
   const st = race.state, paused = !!race.paused;
   const key = st + '|' + paused + '|' + !!track;
   if(key === ctlKey) return; ctlKey = key;
@@ -13666,7 +13574,12 @@ function updateCtl(){
   btn.disabled = dis; btn.classList.toggle('pause', pause);
   btn.title = st === 'racing' ? 'スペースキーでも一時停止／再開できます' : 'スペースキーでもスタートできます';
 }
+function updateCtl(){
+  updateCtlBase();
+  if(careerRace && careerRace.done && race.state === 'finished' && $('#startLbl').textContent !== 'チーム本部へ'){ $('#startLbl').textContent = 'チーム本部へ'; $('#startBtn').disabled = false; }   // キャリア：レースが終わったら「チーム本部へ」
+}
 function mainAction(){
+  if(careerRace && careerRace.done && race.state === 'finished'){ showHQ(); return; }   // キャリア：レースが終わったら本部へ
   if(race.state === 'racing'){ race.paused = !race.paused; ctlKey = ''; updateCtl(); updateRaceHint(); return; }
   if(race.state === 'idle' || race.state === 'finished'){ sndInit(); startRace(); }
 }
@@ -13763,6 +13676,15 @@ function showResults(){
   resLcShow(false);
   $('#resLc').hidden = !resLc.L.some(c => c.h.length > 1);
   $('#resultModal').classList.add('show');
+  // キャリア：レース後のニュース・本部へのボタン
+  const nb = $('#raceNewsBox'); if(nb) nb.innerHTML = '';
+  { const hb = $('#skipHlBox'); if(hb){ hb.innerHTML = skipHlHtml(skipHl); } skipHl = null; }
+  if(!careerRace) return;
+  recordRace();
+  if(nb && career && career.last) nb.innerHTML = newsHtml(career.last.news);
+  $('#hqBtn').hidden = false;
+  const done = career.round >= career.calendar.length;
+  $('#hqBtn').textContent = done ? 'シーズンの結果を見る' : 'チーム本部へ（次戦の準備）';
 }
 let resLc = null;
 function resLcDraw(){
@@ -13816,7 +13738,6 @@ function updateDense(){
   const n = machines.length, avail = 2*bcPaneH + 14 - 70 - (m.classList.contains('wide') ? 0 : 130);   // 70：操作バー
   m.classList.toggle('dense', 110 + 27*(n+1) > avail);
 }                              // 中継レイアウトに入るときに自動で先頭追従にしたか
-function layoutFits(){ return window.innerWidth >= 1100 && window.innerHeight >= 560; }
 function applyLayout(){
   const want = false;                                           // 中継レイアウトは廃止（PCもスマホと同じ1画面の配置にする）
   const lb = $('#layoutBtn');
@@ -14006,7 +13927,12 @@ const SPONS_K = 1.3;            // 基本スポンサー収入の倍率（資金
 const SPONS_FLAT = 0.5;         // 基本スポンサー収入の定額の上乗せ（どのチームも同じ。2026-10-28：設計責任者の年俸などの出費が増えた分）
 const SPONS_OFFER_K = 1.1;      // スポンサー契約の提示額の倍率（2026-10-28：+10%）
 const DIST_PAY = 1.5;            // 参戦分配金：全チームに毎戦配られる定額（下位チームほど効く底上げ）
-const LOAN = { step: 5, cap: 15, rate: 0.08, pay: 1.0 };   // 借入：$5M単位・残高$15Mまで・借りるときに利息8%を上乗せ・毎戦$1Mずつ自動で返す
+const LOAN = { step: 5, cap: 30, rate: 0.08, rateHi: 0.15, hiAt: 20, pay: 1.0 };   // 借入：$5M単位・借りた元本で$30Mまで・借りるときに利息を上乗せ（借りたあとの元本が$20Mを超えるときは15%、それまでは8%）・毎戦$1Mずつ自動で返す
+// 上限と利息は、借りた元本（返していない分）で決める。元本は、返済のたびに残高と同じ割合で減る
+const loanPrin = L => !L || !(L.bal > 0) ? 0 : (L.prin ?? r1(L.bal/(1 + LOAN.rate)));   // 以前のセーブには元本がないので、残高から見積もる
+const loanRate = L => loanPrin(L) + LOAN.step > LOAN.hiAt + 0.01 ? LOAN.rateHi : LOAN.rate;   // 次に借りるときの利息（借りたあとの元本が$20Mを超えるなら高い利息）
+const loanDue = L => r1(LOAN.step*(1 + loanRate(L)));                                  // 次に借りるときの返済額
+const loanCan = L => loanPrin(L) + LOAN.step <= LOAN.cap + 0.01;
 const SEASON_PRIZE = 2;         // シーズン終了時の賞金：コンストラクターズの順位が1つ上がるごとに$2M（1位$20M〜10位$2M）
 /* ---------- スポンサー契約（シーズンごとに3つの提案から1つ選ぶ） ---------- */
 const SPONSOR_NAMES = ['ミナト重工','ブルーリーフ飲料','ノヴァテック','サンライズ航空','グリッド証券','オーロラ化粧品','ハヤテ運輸','クレスト時計','ネオンゲームス','シーサイド銀行','ホクト電機','ルミナ通信',
@@ -14329,7 +14255,7 @@ function guideHtml(){
     <p>シーズンが終わると、コンストラクターズの順位で来季の基本額が更改されます（1位 +${RENEW_PCT[0]}% 〜 10位 ${RENEW_PCT[9]}%。人気度が高いとさらに上乗せ）。他チームも同じで、基本額はチームの開発の速さにも関わります。</p>
     <p>ときどきスポンサーから<b>依頼</b>が届きます。次戦で条件を達成すると今季の残りは毎戦上乗せ、失敗すると減額です。受けるか断るかを選べます。</p>
     ${sub('loan', '融資（借入）・施設の売却')}
-    <p>足りないときは、マシン開発・ドライバー・施設・移籍市場タブの下にある「融資」で <b>${M(LOAN.step)}ずつ</b>借りられます（残高 ${M(LOAN.cap)} まで、利息 ${Math.round(LOAN.rate*100)}%）。返済は毎戦 ${M(LOAN.pay)} ずつ自動で引かれます。施設タブでは、施設を1段階下げて建設費の半分を受け取れます。資金がマイナスの間は、開発や契約ができません。</p>`)}
+    <p>足りないときは、マシン開発・ドライバー・施設・移籍市場タブの下にある「融資」で <b>${M(LOAN.step)}ずつ</b>借りられます（借りた元本で ${M(LOAN.cap)} まで。利息は ${Math.round(LOAN.rate*100)}%で、借りたあとの元本が ${M(LOAN.hiAt)} を超えるときは ${Math.round(LOAN.rateHi*100)}%）。返済は毎戦 ${M(LOAN.pay)} ずつ自動で引かれます。施設タブでは、施設を1段階下げて建設費の半分を受け取れます。資金がマイナスの間は、開発や契約ができません。</p>`)}
   ${sec('drivers', 'ドライバー', `
     <p>能力は6項目（${DSTATS.map(x => x[1]).join('・')}）。表示は0〜100で、G〜Sのランクで色分けしています。</p>
     <div class="gRanks">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
@@ -14596,7 +14522,6 @@ function settleSreq(order, myCars){
    freight 輸送の遅れ：航空便に切り替え（$1.5M）／そのまま（次戦は2台とも予選が少し遅い +0.3%）
    ・起きる確率は50%。直近2件と同じ種類は出さない。結果で起きるもの（party・critic・extend）は、条件を満たしたときに出やすい */
 const EV_P = 0.5;
-const evTxt = n => (n >= 0 ? '+' : '') + n;
 function makeEvent(){
   if(!career || career.round >= career.calendar.length || career.ev) return;
   const me = myTeam(), D = me.drivers, pick = a => a[Math.floor(Math.random()*a.length)], P = popOf(me);
@@ -14729,15 +14654,17 @@ const evActive = (x, code) => x && career && x.season === career.season && x.rou
 /* ---------- 借入と施設の売却 ---------- */
 function borrow(){
   const L = career.loan || (career.loan = { bal: 0 });
-  if(L.bal + LOAN.step*(1 + LOAN.rate) > LOAN.cap + 0.01) return;
+  if(!loanCan(L)) return;
   if(!confirmTwice('loan', -LOAN.step)) return;
-  career.money = r1(career.money + LOAN.step); L.bal = r1(L.bal + LOAN.step*(1 + LOAN.rate));
-  saveCareer(); renderHQ(`${money(LOAN.step)}を借りました。返済額は${money(LOAN.step*(1 + LOAN.rate))}で、毎戦${money(LOAN.pay)}ずつ自動で返します。`);
+  const due = loanDue(L), rt = loanRate(L);
+  L.prin = r1(loanPrin(L) + LOAN.step);
+  career.money = r1(career.money + LOAN.step); L.bal = r1(L.bal + due);
+  saveCareer(); renderHQ(`${money(LOAN.step)}を借りました（利息${Math.round(rt*100)}%）。返済額は${money(due)}で、毎戦${money(LOAN.pay)}ずつ自動で返します。`);
 }
 function repayAll(){
   const L = career.loan; if(!L || L.bal <= 0 || career.money < L.bal) return;
   if(!confirmTwice('repay', L.bal)) return;
-  career.money = r1(career.money - L.bal); const b = L.bal; L.bal = 0;
+  career.money = r1(career.money - L.bal); const b = L.bal; L.bal = 0; L.prin = 0;
   saveCareer(); renderHQ(`借入を${money(b)}全額返しました。`);
 }
 function sellFac(k){
@@ -15052,8 +14979,6 @@ const resList = t => (t && t.reserves ? t.reserves : []).map(r => r.code);
 const resEntry = (t, code) => (t && t.reserves || []).find(r => r.code === code) || null;
 const isRes = (t, code) => !!resEntry(t, code);
 const resOfRole = (t, role) => { const r = (t && t.reserves || []).find(x => x.role === role); return r ? r.code : null; };
-const rabsOf = t => resList(t).map(c => career.drivers[c] && career.drivers[c].rab).filter(Boolean);
-const rabOf = t => rabsOf(t)[0] || null;
 const devCost = v => r1(1 + v*0.5);
 /* ---------- チームの施設（Lv0〜5） ----------
    建てるとすぐ効く（工期なし）。レベルに応じて毎戦の維持費がかかる。
@@ -15160,8 +15085,6 @@ const regAnnounced = () => !!(career && career.reg && career.season === career.r
 // PUの規則変更では、カスタマー（PUをメーカーから買っているチーム）は先行研究できない。
 // カスタマーのPUはシーズン明けにメーカーのPUへそろえられるので、自分で研究しても効かないため（自社PUを始めるチームも、始める時点のPUは決まった値になる）
 const resBlocked = (t = career && myTeam()) => !!(t && regAnnounced() && career.reg.theme === 'pu' && career.pu && !puWorks(t));
-// 先行研究に使う枠：PUを含む変更なら、ワークスはPU開発枠（空力だけの変更・カスタマーは、空力・ブレーキの開発枠）
-const resUsesPU = (t = career && myTeam()) => !!(t && career.reg && regHasPU(career.reg.theme) && career.pu && puWorks(t));
 /* 先行研究は「PU」と「それ以外（車体）」に分けて行う。全面・空力＋PUの変更では両方、空力だけなら車体だけ、PUだけならPUだけ。
    車体の研究は開発枠、PUの研究はPU開発枠を使う（PUのワークスだけ。カスタマーはPUの研究はできない）。
    career.reg.res[チーム]＝車体の研究、career.reg.resPU[チーム]＝PUの研究 */
@@ -15173,7 +15096,6 @@ const resPartOk = (part, t = myTeam()) => part !== 'pu' || !career.pu || puWorks
 const resPartUsesPU = (part, t = myTeam()) => part === 'pu' && !!career.pu && puWorks(t);
 const resPartSlots = part => resPartUsesPU(part) ? puSlotsLeft() : slotsLeft();
 const resOf = (id, part) => (career && career.reg && (part === 'pu' ? (career.reg.resPU || {})[id] : career.reg.res[id])) || 0;
-const resSlotsLeft = () => Math.max(...resParts().filter(p => resPartOk(p)).map(resPartSlots), 0);
 const regFirstYear = () => !!(career && career.reg && career.reg.cur && career.reg.cur.season === career.season);
 const resBonus = (pts, theme) => REG_THEMES[theme].max*(1 - Math.exp(-pts/RSC_K));
 /* 研究の量（pts）は、戦数の多いシーズンでは1回あたり少なくなる（seasonK）ので小数になる。画面には「回数」（ボタンを押した回数）を出す。
@@ -15287,7 +15209,8 @@ function rollDev(typeKey, level, base){
 /* ---------- 設計責任者の人材（名前・国・顔・タイプ・得意分野・能力・特性・年俸） ---------- */
 const dsSalOf = (lv, trait) => r1(Math.max(0.2, 0.25 + (lv - 3)*0.14 + (trait ? 0.08 : 0)));
 function makeDesigner(lv){
-  const nats = Object.keys(NAME_POOL), nat = nats[Math.floor(Math.random()*nats.length)], P = NAME_POOL[nat];
+  const nats = Object.keys(NAME_POOL); let rn = Math.random()*nats.reduce((a, k) => a + NAME_POOL[k].w, 0);
+  const nat = nats.find(k => (rn -= NAME_POOL[k].w) < 0) || nats[nats.length - 1], P = NAME_POOL[nat];   // 国籍は生まれやすさの重みで決める
   const g = P.g[Math.floor(Math.random()*P.g.length)], s = P.s[Math.floor(Math.random()*P.s.length)][0];
   const r = Math.random(), type = r < 0.27 ? 'safe' : r < 0.61 ? 'bal' : r < 0.88 ? 'inno' : 'gray';   // 鬼才型は少なめ（12%）
   const q = Math.random(), spec = q < 0.3 ? 'aero' : q < 0.5 ? 'pu' : q < 0.7 ? 'brk' : 'all';
@@ -15536,7 +15459,6 @@ const GRAY_IDEAS = {
   bpow:  ['ブレーキダクトのリム冷却', '前後配分を自動で変える仕組み'],
   bstab: ['ハンドルでトーを変える仕組み', '車高を保つ油圧サスペンション']
 };
-const GRAY_OUT = { ban: '即時禁止', next: '来季から禁止', legal: '合法と判断' };
 function grayState(){ if(!career.gray) career.gray = { sus: 0, prop: null, tricks: [], log: [] }; return career.gray; }
 function grayLog(text, cls){ const G = grayState(); G.log.unshift({ s: career.season, r: career.round, text, cls }); G.log.length = Math.min(G.log.length, 6); }
 // 抜け穴を採用する／見送る
@@ -16049,12 +15971,15 @@ const FACE_REGION = {   // skin：肌の色8段階（明→暗）の重み、hai
   east:  { skin: [10,40,34,12,4,0,0,0], hair: [70,20,6,2,1,0,0,3], curl: 0.3 },      // 東アジア
   latam: { skin: [6,18,27,24,14,6,3,2], hair: [40,32,16,6,3,2,1,0], curl: 1.1 },     // 中南米
   brazil:{ skin: [10,16,19,18,14,10,8,5], hair: [35,30,18,8,4,4,1,0], curl: 1.6 },   // ブラジル
-  centralAsia: { skin: [8,30,34,18,6,2,1,1], hair: [55,30,10,3,1,0,1,0], curl: 0.5 }
+  centralAsia: { skin: [8,30,34,18,6,2,1,1], hair: [55,30,10,3,1,0,1,0], curl: 0.5 },
+  southAsia: { skin: [2,8,20,30,24,10,4,2], hair: [80,15,3,1,0,0,0,1], curl: 0.9 },   // 南アジア（インド）
+  seAsia: { skin: [4,20,34,26,12,3,1,0], hair: [75,18,4,1,0,0,0,2], curl: 0.5 },      // 東南アジア（タイ）
+  safrica: { skin: [14,16,12,10,10,12,14,12], hair: [40,24,14,8,5,5,2,2], curl: 1.6 } // 南アフリカ
 };
 const FACE_NAT_REGION = {
-  FI:'north', DK:'north', SE:'north', NL:'north', DE:'north', AT:'north', CH:'north', BE:'north', CZ:'north', PL:'north', HU:'north',
+  FI:'north', DK:'north', SE:'north', NL:'north', DE:'north', AT:'north', CH:'north', BE:'north', CZ:'north', PL:'north', HU:'north', NO:'north', IE:'north',
   IT:'south', ES:'south', PT:'south', BG:'south', AR:'south',
-  GB:'mixed', FR:'mixed', CA:'mixed', AU:'mixed',
+  GB:'mixed', FR:'mixed', CA:'mixed', AU:'mixed', US:'mixed', ZA:'safrica', IN:'southAsia', TH:'seAsia', CN:'east',
   JP:'east', KR:'east', MX:'latam', CL:'latam', BR:'brazil', KZ:'centralAsia'
 };
 function makeFace(rnd = Math.random, nat = ''){
@@ -16195,53 +16120,67 @@ const teamSuit = t => { const p = palOf(t); return [p[0], p[2]]; };
 /* ---------- 新人ドライバーの名前（国ごとの名前の候補） ----------
    国を選び、その国らしい名と姓を組み合わせる。略号（3文字）は姓のローマ字から作る。
    実在のF1ドライバーと同じ組み合わせにならないよう、有名な名前は避けている */
-const NAME_POOL = {   // w：生まれやすさ。どの国も同じ（1）にそろえた
-  JP: { w: 1, g: ['ハルト','ソウタ','ユウト','レン','ミナト','イツキ','アオイ','コウキ','ダイチ','リョウ','タクミ','シン','ユウマ','カイト'],
-        s: [['サクラギ','SAKURAGI'],['ミヤモト','MIYAMOTO'],['フジサワ','FUJISAWA'],['キリシマ','KIRISHIMA'],['タチバナ','TACHIBANA'],['ナルセ','NARUSE'],['イチノセ','ICHINOSE'],['カザマ','KAZAMA'],['ホシノ','HOSHINO'],['アマミヤ','AMAMIYA'],['クジョウ','KUJO'],['シノハラ','SHINOHARA'],['ハルミ','HARUMI'],['タカミ','TAKAMI'],['ヤマセ','YAMASE'],['サトミ','SATOMI']] },
-  IT: { w: 1, g: ['マッテオ','ロレンツォ','ジャコモ','フランチェスコ','アレッサンドロ','トンマーゾ','ダヴィデ','フェデリコ','リッカルド','ステファノ','エンツォ'],
-        s: [['ベルナルディ','BERNARDI'],['コロンボ','COLOMBO'],['リッチ','RICCI'],['マリーニ','MARINI'],['ガッリ','GALLI'],['フォンタナ','FONTANA'],['カルーゾ','CARUSO'],['ヴィターリ','VITALI'],['デ・アンジェリス','DEANGELIS'],['ロンバルディ','LOMBARDI'],['ロッサーノ','ROSSANO'],['モローニ','MORONI']] },
-  FR: { w: 1, g: ['ユーゴ','アントワーヌ','バティスト','クレマン','マキシム','ロマン','ガブリエル','ラファエル','ルイ','テオ'],
-        s: [['ギャルニエ','GARNIER'],['モロー','MOREAU'],['ルロワ','LEROY'],['ボネ','BONNET'],['ルソー','ROUSSEAU'],['フォーレ','FAURE'],['シュヴァリエ','CHEVALIER'],['ブラン','BLANC'],['メルシエ','MERCIER'],['ドラクロワ','DELACROIX'],['リヴィエール','RIVIERE']] },
-  DE: { w: 1, g: ['ヨナス','レオン','フィン','パウル','エリアス','マクシミリアン','ティモ','ヤニック','ファビアン','マックス'],
-        s: [['シュミット','SCHMIDT'],['ホフマン','HOFFMANN'],['ケーニヒ','KOENIG'],['リヒター','RICHTER'],['ツィンマー','ZIMMER'],['ハルトマン','HARTMANN'],['ブラウン','BRAUN'],['ヴォルフ','WOLF'],['シュレーダー','SCHROEDER'],['ベッカー','BECKER'],['クライン','KLEIN'],['エッカート','ECKERT']] },
-  GB: { w: 1, g: ['オリバー','ハリー','ジョージ','ジャック','チャーリー','トーマス','ジェームズ','ウィリアム','アルフィー','ルイス','エドワード'],
-        s: [['ハリントン','HARRINGTON'],['ブレイク','BLAKE'],['フレッチャー','FLETCHER'],['ウォーカー','WALKER'],['ベネット','BENNETT'],['カーター','CARTER'],['ヘイズ','HAYES'],['モーガン','MORGAN'],['エリス','ELLIS'],['クロフォード','CRAWFORD'],['ソーンダース','SAUNDERS']] },
-  ES: { w: 1, g: ['アレハンドロ','パブロ','アルバロ','ハビエル','セルヒオ','アドリアン','ダニエル','イケル','マルコス','ルベン'],
-        s: [['ナバロ','NAVARRO'],['ロメロ','ROMERO'],['ガリード','GARRIDO'],['モレノ','MORENO'],['ドミンゲス','DOMINGUEZ'],['ベガ','VEGA'],['イグレシアス','IGLESIAS'],['ソト','SOTO'],['カブレラ','CABRERA'],['メディナ','MEDINA']] },
-  NL: { w: 1, g: ['ラース','ダーン','セム','ティース','ブラム','ユリアン','ステイン','ヨリス','ルーク','ミルコ'],
-        s: [['デ・フリース','DEVRIES'],['バッケル','BAKKER'],['ヤンセン','JANSEN'],['ファン・ベルク','VANBERG'],['フィッセル','VISSER'],['スミット','SMIT'],['ムルデル','MULDER'],['ボス','BOS'],['デ・ハーン','DEHAAN'],['ヴォス','VOS']] },
-  BR: { w: 1, g: ['ペドロ','エンリケ','カイオ','ヴィニシウス','チアゴ','フェリペ','ブルーノ','ジョアン','グスタヴォ','ルアン'],
-        s: [['サントス','SANTOS'],['オリヴェイラ','OLIVEIRA'],['ソウザ','SOUZA'],['ペレイラ','PEREIRA'],['フェレイラ','FERREIRA'],['ロドリゲス','RODRIGUES'],['バローゾ','BARROSO'],['カルドーゾ','CARDOSO'],['モンテイロ','MONTEIRO'],['アルメイダ','ALMEIDA']] },
-  AU: { w: 1, g: ['ジャクソン','ライリー','クーパー','ブロディ','リアム','ハリソン','ジョシュ','ケイデン','ザック'],
-        s: [['マクレガー','MCGREGOR'],['ドノヴァン','DONOVAN'],['キャンベル','CAMPBELL'],['ヒューズ','HUGHES'],['ケリー','KELLY'],['パーマー','PALMER'],['オコナー','OCONNOR'],['ラング','LANG'],['ブルックス','BROOKS']] },
-  FI: { w: 1, g: ['ユホ','エーロ','ラウリ','オンニ','トゥオマス','ヴィレ','サミ','ヤルノ','ペッテリ','イーロ'],
-        s: [['ヴィルタネン','VIRTANEN'],['コルホネン','KORHONEN'],['マキネン','MAKINEN'],['ニエミ','NIEMI'],['ヘイッキネン','HEIKKINEN'],['ラハティ','LAHTI'],['サロ','SALO'],['ラウタ','RAUTA'],['ヨキネン','JOKINEN']] },
-  MX: { w: 1, g: ['サンティアゴ','エミリアーノ','ロドリゴ','ファン','ウリセス','アルトゥーロ','ハイメ','ラウル','エクトル','フリオ'],
-        s: [['エルナンデス','HERNANDEZ'],['ゲレーロ','GUERRERO'],['フローレス','FLORES'],['サラサール','SALAZAR'],['メンドーサ','MENDOZA'],['アギラール','AGUILAR'],['カスティージョ','CASTILLO'],['ロハス','ROJAS'],['オチョア','OCHOA'],['バルデス','VALDEZ']] },
-  CA: { w: 1, g: ['イーサン','ローガン','ネイサン','ディラン','オーウェン','タイラー','マシュー','サミュエル','ゼイン'],
-        s: [['トランブレ','TREMBLAY'],['ガニョン','GAGNON'],['ブシャール','BOUCHARD'],['ラヴォワ','LAVOIE'],['マクドナルド','MACDONALD'],['フォーティエ','FORTIER'],['ペルティエ','PELLETIER'],['ベランジェ','BELANGER']] },
-  DK: { w: 1, g: ['マグヌス','オスカー','フレデリク','ミケル','ラスムス','カスパー','ソーレン','イェスパー'],
-        s: [['ラーセン','LARSEN'],['ペデルセン','PEDERSEN'],['イェンセン','JENSEN'],['クリステンセン','CHRISTENSEN'],['モーテンセン','MORTENSEN'],['ダール','DAHL'],['ホルム','HOLM']] },
-  SE: { w: 1, g: ['エリック','アクセル','ヴィクトル','ルドヴィグ','ヒューゴ','アルヴィド','オスカル','セバスティアン'],
-        s: [['リンドクヴィスト','LINDQVIST'],['エクストレム','EKSTROM'],['ベリ','BERG'],['サンドベリ','SANDBERG'],['ニーマン','NYMAN'],['ホルムベリ','HOLMBERG'],['ストランド','STRAND']] },
-  AT: { w: 1, g: ['ジモン','ラファエル','ダヴィト','ファビアン','ミヒャエル','クレメンス','ヴァレンティン'],
-        s: [['グルーバー','GRUBER'],['フーバー','HUBER'],['ヴィンクラー','WINKLER'],['アイヒャー','EICHER'],['ライトナー','LEITNER'],['シュタイナー','STEINER']] },
-  BE: { w: 1, g: ['アルノー','シモン','ロビン','ヴァウト','ヤン','ブノワ','セドリック'],
-        s: [['ペータース','PEETERS'],['ヤンセンス','JANSSENS'],['マース','MAES'],['ヴェルメーレン','VERMEULEN'],['デュポン','DUPONT'],['ランベール','LAMBERT']] },
-  PL: { w: 1, g: ['ヤクプ','カツペル','ミハウ','バルトシュ','パヴェウ','シモン','フィリップ'],
-        s: [['ノヴァコフスキ','NOWAKOWSKI'],['ヴィシニェフスキ','WISNIEWSKI'],['マズル','MAZUR'],['クラフチク','KRAWCZYK'],['ヴォイチク','WOJCIK'],['ザヤンツ','ZAJAC']] },
-  PT: { w: 1, g: ['ティアゴ','ルイ','ディオゴ','ゴンサロ','ドゥアルテ','ヌーノ','ベルナルド'],
-        s: [['ピント','PINTO'],['ソアレス','SOARES'],['マトス','MATOS'],['テイシェイラ','TEIXEIRA'],['ヴァスコンセロス','VASCONCELOS'],['ラモス','RAMOS'],['ヴァレンテ','VALENTE']] },
-  CH: { w: 1, g: ['ニルス','ヤニス','ルカ','ラファエル','ティム','マルコ'],
-        s: [['ミュラー','MUELLER'],['メイヤー','MEYER'],['ブルンナー','BRUNNER'],['フライ','FREI'],['ケラー','KELLER'],['ガイザー','GEISER'],['ベルナー','BERNER']] },
-  CZ: { w: 1, g: ['トマーシュ','ヤクプ','オンドジェイ','ルカーシュ','マルティン','ダヴィト'],
-        s: [['ドヴォルザーク','DVORAK'],['スヴォボダ','SVOBODA'],['ノヴォトニー','NOVOTNY'],['ホラーク','HORAK'],['ポコルニー','POKORNY'],['ノヴァク','NOVAK']] },
-  AR: { w: 1, g: ['マティアス','ニコラス','ファクンド','アグスティン','ラウタロ','フランコ'],
-        s: [['ゴメス','GOMEZ'],['フェルナンデス','FERNANDEZ'],['アコスタ','ACOSTA'],['ベニテス','BENITEZ'],['ペラルタ','PERALTA'],['ルセロ','LUCERO'],['ソサ','SOSA']] },
-  KR: { w: 1, g: ['ミンジュン','ソジュン','ドユン','ハジュン','ジホ','ユチャン','テヒョン'],
-        s: [['パク','PARK'],['チェ','CHOI'],['チョン','JUNG'],['カン','KANG'],['ユン','YOON'],['ハン','HAN'],['ソン','SONG']] },
-  HU: { w: 1, g: ['ベンツェ','マーテー','レヴェンテ','ドミニク','バラージュ'],
-        s: [['ナジ','NAGY'],['ホルヴァート','HORVATH'],['サボー','SZABO'],['ヴァルガ','VARGA'],['ゴルディ','GORDI']] }
+const NAME_POOL = {   // w：生まれやすさ（モータースポーツが盛んな国ほど大きい。統計ではなく、おおまかな見立て）
+  JP: { w: 4, g: ['ハルト','ソウタ','ユウト','レン','ミナト','イツキ','アオイ','コウキ','ダイチ','リョウ','タクミ','シン','ユウマ','カイト','ハヤト','ケンタ','ショウタ','リク','ツバサ','ヒロキ','ユウキ','カズマ','ナオキ','タイガ','ソラ','ケイスケ','マサト','リュウセイ','アキラ','ヨシキ'],
+        s: [['サクラギ','SAKURAGI'],['ミヤモト','MIYAMOTO'],['フジサワ','FUJISAWA'],['キリシマ','KIRISHIMA'],['タチバナ','TACHIBANA'],['ナルセ','NARUSE'],['イチノセ','ICHINOSE'],['カザマ','KAZAMA'],['ホシノ','HOSHINO'],['アマミヤ','AMAMIYA'],['クジョウ','KUJO'],['シノハラ','SHINOHARA'],['ハルミ','HARUMI'],['タカミ','TAKAMI'],['ヤマセ','YAMASE'],['サトミ','SATOMI'],['ワタナベ','WATANABE'],['イトウ','ITO'],['タナカ','TANAKA'],['ナカムラ','NAKAMURA'],['カトウ','KATO'],['ヨシダ','YOSHIDA'],['ササキ','SASAKI'],['マツモト','MATSUMOTO'],['キムラ','KIMURA'],['ハヤシ','HAYASHI'],['シミズ','SHIMIZU'],['モリ','MORI'],['イケダ','IKEDA'],['ハシモト','HASHIMOTO']] },
+  IT: { w: 7, g: ['マッテオ','ロレンツォ','ジャコモ','フランチェスコ','アレッサンドロ','トンマーゾ','ダヴィデ','フェデリコ','リッカルド','ステファノ','エンツォ','ガブリエーレ','アンドレア','ルカ','ニコロ','シモーネ','エドアルド','ピエトロ','ミケーレ','ジュゼッペ','マルコ','ダニエーレ','パオロ','エマヌエーレ','クリスティアン','ファビオ','ジョルジョ','ヴァレリオ','サムエーレ','ニコラ'],
+        s: [['ベルナルディ','BERNARDI'],['コロンボ','COLOMBO'],['リッチ','RICCI'],['マリーニ','MARINI'],['ガッリ','GALLI'],['フォンタナ','FONTANA'],['カルーゾ','CARUSO'],['ヴィターリ','VITALI'],['デ・アンジェリス','DEANGELIS'],['ロンバルディ','LOMBARDI'],['ロッサーノ','ROSSANO'],['モローニ','MORONI'],['ルッソ','RUSSO'],['エスポジト','ESPOSITO'],['ロマーノ','ROMANO'],['グレコ','GRECO'],['ブルーノ','BRUNO'],['コンティ','CONTI'],['デ・ルーカ','DELUCA'],['コスタ','COSTA'],['ジョルダーノ','GIORDANO'],['マンチーニ','MANCINI'],['リッツォ','RIZZO'],['レオーネ','LEONE'],['ロンゴ','LONGO'],['ジェンティーレ','GENTILE'],['マルティネッリ','MARTINELLI'],['セッラ','SERRA'],['フェッラーラ','FERRARA'],['ペッレグリーニ','PELLEGRINI']] },
+  FR: { w: 7, g: ['ユーゴ','アントワーヌ','バティスト','クレマン','マキシム','ロマン','ガブリエル','ラファエル','ルイ','テオ','ルーカス','ネイサン','アルチュール','ジュール','レオ','ポール','トマ','ヴァランタン','ニコラ','ジュリアン','セバスチャン','オーギュスタン','マティス','エンゾ','ノア','アドリアン','ギヨーム','フロラン','ヴィクトール','バンジャマン'],
+        s: [['ギャルニエ','GARNIER'],['モロー','MOREAU'],['ルロワ','LEROY'],['ボネ','BONNET'],['ルソー','ROUSSEAU'],['フォーレ','FAURE'],['シュヴァリエ','CHEVALIER'],['ブラン','BLANC'],['メルシエ','MERCIER'],['ドラクロワ','DELACROIX'],['リヴィエール','RIVIERE'],['マルタン','MARTIN'],['ベルナール','BERNARD'],['デュボワ','DUBOIS'],['ロベール','ROBERT'],['リシャール','RICHARD'],['プティ','PETIT'],['デュラン','DURAND'],['ルフェーヴル','LEFEBVRE'],['ジラール','GIRARD'],['アンドレ','ANDRE'],['ゴーティエ','GAUTHIER'],['ペラン','PERRIN'],['モラン','MORIN'],['フランソワ','FRANCOIS'],['ルグラン','LEGRAND'],['フォンテーヌ','FONTAINE'],['ロラン','ROLLAND'],['バロー','BARREAU'],['ラコスト','LACOSTE']] },
+  DE: { w: 7, g: ['ヨナス','レオン','フィン','パウル','エリアス','マクシミリアン','ティモ','ヤニック','ファビアン','マックス','ノア','ベン','フェリックス','ヨハネス','ニクラス','ルーカス','ダニエル','セバスティアン','トビアス','フロリアン','モーリッツ','ユリアン','ドミニク','ミルコ','ラース','シュテファン','マルセル','ケヴィン','オリヴァー','アレクサンダー'],
+        s: [['シュミット','SCHMIDT'],['ホフマン','HOFFMANN'],['ケーニヒ','KOENIG'],['リヒター','RICHTER'],['ツィンマー','ZIMMER'],['ハルトマン','HARTMANN'],['ブラウン','BRAUN'],['ヴォルフ','WOLF'],['シュレーダー','SCHROEDER'],['ベッカー','BECKER'],['クライン','KLEIN'],['エッカート','ECKERT'],['ヴェーバー','WEBER'],['マイヤー','MAYER'],['ヴァーグナー','WAGNER'],['シュルツ','SCHULZ'],['コッホ','KOCH'],['バウアー','BAUER'],['シェーファー','SCHAEFER'],['ノイマン','NEUMANN'],['シュヴァルツ','SCHWARZ'],['クラウゼ','KRAUSE'],['ローレンツ','LORENZ'],['ハーン','HAHN'],['フォークト','VOGT'],['フリードリヒ','FRIEDRICH'],['カイザー','KAISER'],['ハイネ','HEINE'],['ゾマー','SOMMER'],['ヴィンター','WINTER']] },
+  GB: { w: 10, g: ['オリバー','ハリー','ジョージ','ジャック','チャーリー','トーマス','ジェームズ','ウィリアム','アルフィー','ルイス','エドワード','ヘンリー','ノア','オスカー','アーチー','フレディ','レオ','テディ','アーサー','ジョシュア','サミュエル','ダニエル','ベンジャミン','マックス','ジェイコブ','ルーク','ネイサン','カラム','アダム','ジョー'],
+        s: [['ハリントン','HARRINGTON'],['ブレイク','BLAKE'],['フレッチャー','FLETCHER'],['ウォーカー','WALKER'],['ベネット','BENNETT'],['カーター','CARTER'],['ヘイズ','HAYES'],['モーガン','MORGAN'],['エリス','ELLIS'],['クロフォード','CRAWFORD'],['ソーンダース','SAUNDERS'],['スミス','SMITH'],['テイラー','TAYLOR'],['ライト','WRIGHT'],['ロビンソン','ROBINSON'],['トンプソン','THOMPSON'],['ホワイト','WHITE'],['エドワーズ','EDWARDS'],['ターナー','TURNER'],['パーカー','PARKER'],['コリンズ','COLLINS'],['ハリス','HARRIS'],['ワード','WARD'],['フォスター','FOSTER'],['グレイ','GRAY'],['ミルズ','MILLS'],['アトキンソン','ATKINSON'],['ホロウェイ','HOLLOWAY'],['ペンバートン','PEMBERTON'],['ラドクリフ','RADCLIFFE']] },
+  ES: { w: 5, g: ['アレハンドロ','パブロ','アルバロ','ハビエル','セルヒオ','アドリアン','ダニエル','イケル','マルコス','ルベン','ウーゴ','マヌエル','ルカス','マルティン','ダビド','マリオ','ディエゴ','カルロス','ホルヘ','ラウル','ミゲル','アントニオ','ゴンサロ','ビクトル','エンリケ','イバン','オスカル','ラファエル','アルベルト','フェルナンド'],
+        s: [['ナバロ','NAVARRO'],['ロメロ','ROMERO'],['ガリード','GARRIDO'],['モレノ','MORENO'],['ドミンゲス','DOMINGUEZ'],['ベガ','VEGA'],['イグレシアス','IGLESIAS'],['ソト','SOTO'],['カブレラ','CABRERA'],['メディナ','MEDINA'],['ガルシア','GARCIA'],['ロペス','LOPEZ'],['サンチェス','SANCHEZ'],['ゴンサレス','GONZALEZ'],['ムニョス','MUNOZ'],['ヒメネス','JIMENEZ'],['ルイス','RUIZ'],['ディアス','DIAZ'],['アルバレス','ALVAREZ'],['モリーナ','MOLINA'],['オルテガ','ORTEGA'],['デルガド','DELGADO'],['カストロ','CASTRO'],['ラミレス','RAMIREZ'],['ブランコ','BLANCO'],['スアレス','SUAREZ'],['ガジェゴ','GALLEGO'],['パラ','PARRA'],['ソラノ','SOLANO'],['セラーノ','SERRANO']] },
+  NL: { w: 5, g: ['ラース','ダーン','セム','ティース','ブラム','ユリアン','ステイン','ヨリス','ルーク','ミルコ','ティム','ケース','ピーテル','ヘイス','ヨースト','ウェッセル','ルート','ボブ','マルテイン','ヘルト','ウィレム','イェルーン','サンデル','フロリス','ニールス','ジェシー','トマス','ロビン','ステフ','ダミアン'],
+        s: [['デ・ランゲ','DELANGE'],['バッケル','BAKKER'],['ヤンセン','JANSEN'],['ファン・ベルク','VANBERG'],['フィッセル','VISSER'],['スミット','SMIT'],['ムルデル','MULDER'],['ボス','BOS'],['デ・ハーン','DEHAAN'],['ヴォス','VOS'],['ファン・ダイク','VANDIJK'],['デ・ボーア','DEBOER'],['デ・グロート','DEGROOT'],['デ・ヨング','DEJONG'],['ブラウエル','BROUWER'],['デッケル','DEKKER'],['ダイクストラ','DIJKSTRA'],['ファン・レーウェン','VANLEEUWEN'],['デ・ウィット','DEWIT'],['ヘルマンス','HERMANS'],['コーイマン','KOOIMAN'],['ポストマ','POSTMA'],['フークストラ','HOEKSTRA'],['ファン・ダム','VANDAM'],['ブラウンス','BRUINS'],['カイゼル','KEIZER'],['フェルフーフェン','VERHOEVEN'],['ラーマケルス','RAMAKERS'],['ティマース','TIMMERS'],['ウォルタース','WOLTERS']] },
+  BR: { w: 5, g: ['サムエル','エンリケ','カイオ','ヴィニシウス','チアゴ','フェリペ','ブルーノ','ジョアン','グスタヴォ','ルアン','ルーカス','マテウス','ガブリエル','ラファエル','ダニーロ','ロドリゴ','レアンドロ','マルセロ','ディエゴ','ヴィトール','ダヴィ','アルトゥール','エドゥアルド','イゴール','オタヴィオ','ファビオ','レナト','セルジオ','ヴァグネル','ジュリオ'],
+        s: [['サントス','SANTOS'],['オリヴェイラ','OLIVEIRA'],['ソウザ','SOUZA'],['ペレイラ','PEREIRA'],['フェレイラ','FERREIRA'],['ロドリゲス','RODRIGUES'],['バローゾ','BARROSO'],['カルドーゾ','CARDOSO'],['カブラル','CABRAL'],['アルメイダ','ALMEIDA'],['リマ','LIMA'],['ゴメス','GOMES'],['リベイロ','RIBEIRO'],['マルチンス','MARTINS'],['カルヴァーリョ','CARVALHO'],['アラウージョ','ARAUJO'],['バルボーザ','BARBOSA'],['ロシャ','ROCHA'],['メロ','MELO'],['ナシメント','NASCIMENTO'],['クーニャ','CUNHA'],['モウラ','MOURA'],['ヴィエイラ','VIEIRA'],['フレイタス','FREITAS'],['メンデス','MENDES'],['ピメンタ','PIMENTA'],['ブリト','BRITO'],['サンパイオ','SAMPAIO'],['アゼヴェード','AZEVEDO'],['コヘア','CORREA']] },
+  AU: { w: 4, g: ['ジャクソン','ライリー','クーパー','ブロディ','リアム','ハリソン','ジョシュ','ケイデン','ザック','ノア','ジェームズ','ルーカス','マックス','ベン','サム','ネイサン','ブレイク','ミッチェル','ルーク','キャメロン','ディーン','タイソン','ヘイデン','ジェイク','ショーン','コナー','ブラッド','トビー','ネッド','ダニエル'],
+        s: [['マクレガー','MCGREGOR'],['ドノヴァン','DONOVAN'],['キャンベル','CAMPBELL'],['ヒューズ','HUGHES'],['ケリー','KELLY'],['パーマー','PALMER'],['オコナー','OCONNOR'],['ラング','LANG'],['ブルックス','BROOKS'],['ウィルソン','WILSON'],['アンダーソン','ANDERSON'],['ロバートソン','ROBERTSON'],['ライアン','RYAN'],['ホール','HALL'],['ヤング','YOUNG'],['キング','KING'],['グリーン','GREEN'],['アダムズ','ADAMS'],['ベイカー','BAKER'],['マーシャル','MARSHALL'],['ホーキンス','HAWKINS'],['ショー','SHAW'],['フィッシャー','FISHER'],['マクドゥーガル','MCDOUGALL'],['ギブソン','GIBSON'],['ハーヴェイ','HARVEY'],['ネルソン','NELSON'],['ブラッドショー','BRADSHAW'],['ウォレス','WALLACE'],['フィンレイ','FINLAY']] },
+  FI: { w: 3, g: ['ユホ','エーロ','ラウリ','オンニ','トゥオマス','ヴィレ','サミ','ヤルノ','ペッテリ','イーロ','アレクシ','アンッティ','ヨーナス','マッティ','ユッシ','カッレ','トピアス','エリアス','エーメリ','ヴァイノ','アールネ','レオ','ヨウニ','パーヴォ','ヘンリ','ヤンネ','テーム','ペッカ','アルットゥ','ヴェイッコ'],
+        s: [['ヴィルタネン','VIRTANEN'],['コルホネン','KORHONEN'],['マキネン','MAKINEN'],['ニエミ','NIEMI'],['ヘイッキネン','HEIKKINEN'],['ラハティ','LAHTI'],['ソイニネン','SOININEN'],['ラウタ','RAUTA'],['ヨキネン','JOKINEN'],['ハメライネン','HAMALAINEN'],['ラークソネン','LAAKSONEN'],['コスキネン','KOSKINEN'],['ヤルヴィネン','JARVINEN'],['レフトネン','LEHTONEN'],['ヒルヴォネン','HIRVONEN'],['トゥオミネン','TUOMINEN'],['リンナ','LINNA'],['ケットゥネン','KETTUNEN'],['サルミネン','SALMINEN'],['ランタネン','RANTANEN'],['ミエッティネン','MIETTINEN'],['カルヤライネン','KARJALAINEN'],['ヌルミ','NURMI'],['ピトカネン','PITKANEN'],['ハカラ','HAKALA'],['アホネン','AHONEN'],['ライティネン','LAITINEN'],['ティッカネン','TIKKANEN'],['ヴァイニオ','VAINIO'],['ハロネン','HALONEN']] },
+  MX: { w: 3, g: ['サンティアゴ','エミリアーノ','ロドリゴ','ファン','ウリセス','アルトゥーロ','ハイメ','ラウル','エクトル','フリオ','ディエゴ','ルイス','カルロス','ホセ','ミゲル','アレハンドロ','イサック','マウリシオ','ラミロ','イグナシオ','オマール','ヘラルド','フェルナンド','ベニート','アドルフォ','レオナルド','ガエル','イバン','セルヒオ','パトリシオ'],
+        s: [['エルナンデス','HERNANDEZ'],['ゲレーロ','GUERRERO'],['フローレス','FLORES'],['サラサール','SALAZAR'],['メンドーサ','MENDOZA'],['アギラール','AGUILAR'],['カスティージョ','CASTILLO'],['ロハス','ROJAS'],['オチョア','OCHOA'],['バルデス','VALDEZ'],['マルティネス','MARTINEZ'],['トーレス','TORRES'],['クルス','CRUZ'],['レジェス','REYES'],['モラレス','MORALES'],['オルティス','ORTIZ'],['グティエレス','GUTIERREZ'],['チャベス','CHAVEZ'],['バスケス','VAZQUEZ'],['ルナ','LUNA'],['エスピノサ','ESPINOSA'],['コントレラス','CONTRERAS'],['ナバ','NAVA'],['ベラスケス','VELAZQUEZ'],['パディージャ','PADILLA'],['ソリス','SOLIS'],['カマチョ','CAMACHO'],['ロサレス','ROSALES'],['イバラ','IBARRA'],['セルバンテス','CERVANTES']] },
+  CA: { w: 3, g: ['イーサン','ローガン','ネイサン','ディラン','オーウェン','タイラー','マシュー','サミュエル','ゼイン','ノア','リアム','ベンジャミン','ルーカス','ウィリアム','エメリック','ザカリー','ガブリエル','アレクシ','ジャスティン','ブランドン','コール','ハンター','ライアン','エヴァン','ジェレミー','マキシム','ニコラ','オリヴィエ','ジュリアン','ケヴィン'],
+        s: [['トランブレ','TREMBLAY'],['ガニョン','GAGNON'],['ブシャール','BOUCHARD'],['ラヴォワ','LAVOIE'],['マクドナルド','MACDONALD'],['フォーティエ','FORTIER'],['ペルティエ','PELLETIER'],['ベランジェ','BELANGER'],['ロイ','ROY'],['コテ','COTE'],['ブーシェ','BOUCHER'],['ゴスラン','GOSSELIN'],['ポワリエ','POIRIER'],['ルブラン','LEBLANC'],['ラフラム','LAFLAMME'],['マクレーン','MACLEAN'],['フレイザー','FRASER'],['マッケンジー','MCKENZIE'],['タルボット','TALBOT'],['デロッシュ','DESROCHES'],['グラント','GRANT'],['サヴァール','SAVARD'],['ルミュー','LEMIEUX'],['ボードワン','BEAUDOIN'],['ヘンダーソン','HENDERSON'],['オグデン','OGDEN'],['ラングロワ','LANGLOIS'],['ダグラス','DOUGLAS'],['マレー','MURRAY'],['キャラハン','CALLAHAN']] },
+  DK: { w: 3, g: ['マグヌス','オスカー','フレデリク','ミケル','ラスムス','カスパー','ソーレン','イェスパー','ウィリアム','ノア','ルーカス','エミル','ヴィクター','マッズ','ヨナス','アンドレアス','クリスチャン','ニコライ','トビアス','セバスチャン','ヘンリク','トーマス','ラウス','シモン','アスガー','ペーター','ニルス','イサク','クリストファー','カール'],
+        s: [['ラーセン','LARSEN'],['ペデルセン','PEDERSEN'],['イェンセン','JENSEN'],['クリステンセン','CHRISTENSEN'],['モーテンセン','MORTENSEN'],['ダール','DAHL'],['ホルム','HOLM'],['ニールセン','NIELSEN'],['ハンセン','HANSEN'],['アンデルセン','ANDERSEN'],['ソーレンセン','SORENSEN'],['ラスムッセン','RASMUSSEN'],['ヨーゲンセン','JORGENSEN'],['ペーターセン','PETERSEN'],['マドセン','MADSEN'],['クラウセン','CLAUSEN'],['ポウルセン','POULSEN'],['ヨハンセン','JOHANSEN'],['モラー','MOLLER'],['ミケルセン','MIKKELSEN'],['フレデリクセン','FREDERIKSEN'],['ラウアセン','LAURSEN'],['スコウ','SKOU'],['ベック','BECH'],['リンド','LIND'],['ヴェスターゴー','WESTERGAARD'],['ブラント','BRANDT'],['ステフェンセン','STEFFENSEN'],['ダムゴー','DAMGAARD'],['オルセン','OLSEN']] },
+  SE: { w: 2, g: ['エリック','アクセル','ヴィクトル','ルドヴィグ','ヒューゴ','アルヴィド','オスカル','セバスティアン','ウィリアム','リアム','ノア','ルーカス','オリヴァー','エリアス','アダム','フィリップ','アントン','グスタフ','マティアス','ヨハン','アンドレアス','ペール','カール','エミール','イサク','マルクス','ニクラス','ラスムス','アルビン','ヨエル'],
+        s: [['リンドクヴィスト','LINDQVIST'],['エクストレム','EKSTROM'],['ベリ','BERG'],['サンドベリ','SANDBERG'],['ニーマン','NYMAN'],['ホルムベリ','HOLMBERG'],['ストランド','STRAND'],['アンデション','ANDERSSON'],['ヨハンソン','JOHANSSON'],['カールソン','KARLSSON'],['ニルソン','NILSSON'],['ラーション','LARSSON'],['オルソン','OLSSON'],['ペーション','PERSSON'],['スヴェンソン','SVENSSON'],['グスタフソン','GUSTAFSSON'],['ヨンソン','JONSSON'],['リンドベリ','LINDBERG'],['ルンドグレン','LUNDGREN'],['セーデルベリ','SODERBERG'],['ヴィークストレム','WIKSTROM'],['ノルドストレム','NORDSTROM'],['アクセルソン','AXELSSON'],['ヘドルンド','HEDLUND'],['ブロムベリ','BLOMBERG'],['リンドホルム','LINDHOLM'],['オーベリ','ABERG'],['ショーベリ','SJOBERG'],['フォシュベリ','FORSBERG'],['エングストレム','ENGSTROM']] },
+  AT: { w: 2, g: ['ジモン','ラファエル','ダヴィト','ファビアン','ミヒャエル','クレメンス','ヴァレンティン','ルーカス','マクシミリアン','トビアス','ゼバスティアン','フローリアン','パトリック','マティアス','ヤコブ','エリアス','パウル','マルティン','シュテファン','アレクサンダー','ベルンハルト','ゲオルク','ヨハネス','マルクス','ラインハルト','トーマス','レオポルト','ルーペルト','クリストフ','ベネディクト'],
+        s: [['グルーバー','GRUBER'],['フーバー','HUBER'],['ヴィンクラー','WINKLER'],['アイヒャー','EICHER'],['ライトナー','LEITNER'],['シュタイナー','STEINER'],['ピヒラー','PICHLER'],['モーザー','MOSER'],['ホーファー','HOFER'],['レーナー','LEHNER'],['ハスリンガー','HASLINGER'],['エーダー','EDER'],['シュヴァイガー','SCHWEIGER'],['ヴィーザー','WIESER'],['アウアー','AUER'],['フクス','FUCHS'],['ポッシュ','POSCH'],['ホルツァー','HOLZER'],['ヴァルナー','WALLNER'],['ハイダー','HAIDER'],['リントナー','LINDNER'],['ブラントシュテッター','BRANDSTETTER'],['エブナー','EBNER'],['エッガー','EGGER'],['ガスナー','GASSNER'],['ヴィマー','WIMMER'],['ザイドル','SEIDL'],['フィンク','FINK'],['ラーブ','RAAB'],['オーバーマイヤー','OBERMAYER']] },
+  BE: { w: 3, g: ['アルノー','シモン','ロビン','ヴァウト','ヤン','ブノワ','セドリック','ルイ','アルテュール','ジュール','ヴィクトル','ノア','リアム','マキシム','トマ','ニコラ','ローラン','ステファン','ピーテル','ヨナス','ミヒール','ディーター','トム','ケヴィン','グレゴリー','ジョナタン','エリアス','ルーベン','フロリアン','エミール'],
+        s: [['ペータース','PEETERS'],['ヤンセンス','JANSSENS'],['マース','MAES'],['ヴェルメーレン','VERMEULEN'],['デュポン','DUPONT'],['ランベール','LAMBERT'],['クラース','CLAES'],['ワウテルス','WOUTERS'],['ヤーコプス','JACOBS'],['メルテンス','MERTENS'],['ウィレムス','WILLEMS'],['ホーセンス','GOOSSENS'],['デ・スメット','DESMET'],['デ・ウィルデ','DEWILDE'],['ディーリクス','DIERICKX'],['フェルヘイエン','VERHEYEN'],['デクレルク','DECLERCQ'],['ヘンドリクス','HENDRICKX'],['マルシャル','MARCHAL'],['ルジューヌ','LEJEUNE'],['デルヴォー','DELVAUX'],['ジャック','JACQUES'],['ルナール','RENARD'],['ミショー','MICHAUX'],['ゴフィン','GOFFIN'],['ドゥニ','DENIS'],['ファンデンベルヘ','VANDENBERGHE'],['クーネン','COENEN'],['セーヘルス','SEGERS'],['ポレ','POLLET']] },
+  PL: { w: 1, g: ['ヤクプ','カツペル','ミハウ','バルトシュ','パヴェウ','シモン','フィリップ','アントニ','ヤン','アレクサンデル','フランチシェク','ヴォイチェフ','ミコワイ','スタニスワフ','アダム','マテウシュ','ドミニク','クシシュトフ','トマシュ','マチェイ','ピョトル','ウカシュ','グジェゴシュ','マレク','ダヴィド','カロル','イグナツィ','フベルト','コンラト','ラファウ'],
+        s: [['ノヴァコフスキ','NOWAKOWSKI'],['ヴィシニェフスキ','WISNIEWSKI'],['マズル','MAZUR'],['クラフチク','KRAWCZYK'],['ヴォイチク','WOJCIK'],['ザヤンツ','ZAJAC'],['コヴァルスキ','KOWALSKI'],['カミンスキ','KAMINSKI'],['レヴァンドフスキ','LEWANDOWSKI'],['ジェリンスキ','ZIELINSKI'],['シマンスキ','SZYMANSKI'],['ヴォズニャク','WOZNIAK'],['ドンブロフスキ','DABROWSKI'],['コズウォフスキ','KOZLOWSKI'],['ヤンコフスキ','JANKOWSKI'],['クフィアトコフスキ','KWIATKOWSKI'],['カチマレク','KACZMAREK'],['ピョトロフスキ','PIOTROWSKI'],['グラボフスキ','GRABOWSKI'],['ザヴァツキ','ZAWADZKI'],['パヴウォフスキ','PAWLOWSKI'],['ミハルスキ','MICHALSKI'],['クルル','KROL'],['ヴィエチョレク','WIECZOREK'],['ヤブウォンスキ','JABLONSKI'],['ヴルブレフスキ','WROBLEWSKI'],['マイェフスキ','MAJEWSKI'],['オルシェフスキ','OLSZEWSKI'],['ステンピェン','STEPIEN'],['マリノフスキ','MALINOWSKI']] },
+  PT: { w: 1.5, g: ['ティアゴ','ルイ','ディオゴ','ゴンサロ','ドゥアルテ','ヌーノ','ベルナルド','ジョアン','ペドロ','ミゲル','フランシスコ','アフォンソ','トマス','マルティン','ロドリゴ','アンドレ','リカルド','ブルーノ','フィリペ','ルイス','ジョルジェ','パウロ','ヴァスコ','エドゥアルド','ラファエル','ダニエル','セルジオ','エンリケ','ジョゼ','カルロス'],
+        s: [['ピント','PINTO'],['ソアレス','SOARES'],['マトス','MATOS'],['テイシェイラ','TEIXEIRA'],['ヴァスコンセロス','VASCONCELOS'],['ラモス','RAMOS'],['ヴァレンテ','VALENTE'],['シルヴァ','SILVA'],['ゴンサルヴェス','GONCALVES'],['マルケス','MARQUES'],['フォンセカ','FONSECA'],['ノゲイラ','NOGUEIRA'],['カルネイロ','CARNEIRO'],['レイス','REIS'],['ガスパール','GASPAR'],['アントゥネス','ANTUNES'],['ロウレンソ','LOURENCO'],['モレイラ','MOREIRA'],['ゴウヴェイア','GOUVEIA'],['フィゲイレド','FIGUEIREDO'],['トリンダーデ','TRINDADE'],['ペイショト','PEIXOTO'],['エステヴェス','ESTEVES'],['サライヴァ','SARAIVA'],['ベント','BENTO'],['レアル','LEAL'],['セケイラ','SEQUEIRA'],['ネヴェス','NEVES'],['アマラル','AMARAL'],['ブランダン','BRANDAO']] },
+  CH: { w: 2, g: ['ニルス','ヤニス','ルカ','ラファエル','ティム','マルコ','ノア','リアム','レオン','ダヴィド','ヨエル','サミュエル','レヴィン','ジルヴァン','ロマン','ファビオ','シモン','ラース','パスカル','ウルス','ルーカス','ベアト','クリストフ','ダミアン','ステファン','マティアス','アドリアン','ローラン','フロリアン','ドミニク'],
+        s: [['ミュラー','MUELLER'],['メイヤー','MEYER'],['ブルンナー','BRUNNER'],['フライ','FREI'],['ケラー','KELLER'],['ガイザー','GEISER'],['ベルナー','BERNER'],['シュナイダー','SCHNEIDER'],['ゲルバー','GERBER'],['ヴィドマー','WIDMER'],['ツィンマーマン','ZIMMERMANN'],['バウマン','BAUMANN'],['ルッツ','LUTZ'],['ヘス','HESS'],['アマン','AMMANN'],['シュテッフェン','STEFFEN'],['ヴィース','WYSS'],['グラーフ','GRAF'],['ロート','ROTH'],['カウフマン','KAUFMANN'],['シュミート','SCHMID'],['ボンヴァン','BONVIN'],['ロシエ','ROSSIER'],['ファーヴル','FAVRE'],['モネ','MONNET'],['ジロー','GIRAUD'],['ベルナスコーニ','BERNASCONI'],['シュトゥーダー','STUDER'],['ニーダーベルガー','NIEDERBERGER'],['ムーラン','MOULIN']] },
+  CZ: { w: 1, g: ['トマーシュ','ヤクプ','オンドジェイ','ルカーシュ','マルティン','ダヴィト','ヤン','アダム','フィリプ','ヴォイチェフ','ミハル','ペトル','パヴェル','イジー','ヨゼフ','ラデク','ヴァーツラフ','シモン','マテイ','ダニエル','ルドルフ','ミロスラフ','カレル','ヴィクトル','アントニーン','ズデニェク','ヤロスラフ','リボル','ミラン','ドミニク'],
+        s: [['ドヴォルザーク','DVORAK'],['スヴォボダ','SVOBODA'],['ノヴォトニー','NOVOTNY'],['ホラーク','HORAK'],['ポコルニー','POKORNY'],['ノヴァク','NOVAK'],['チェルニー','CERNY'],['プロハースカ','PROCHAZKA'],['クチェラ','KUCERA'],['ヴェセリー','VESELY'],['ニェメツ','NEMEC'],['マレク','MAREK'],['ポスピーシル','POSPISIL'],['ハーイェク','HAJEK'],['イェリーネク','JELINEK'],['クラール','KRAL'],['ルージチカ','RUZICKA'],['ベネシュ','BENES'],['フィアラ','FIALA'],['セドラーチェク','SEDLACEK'],['ドレジャル','DOLEZAL'],['ゼマン','ZEMAN'],['コラーシュ','KOLAR'],['ナヴラーチル','NAVRATIL'],['チェルマーク','CERMAK'],['ヴァニェク','VANEK'],['ウルバン','URBAN'],['ブラジェク','BLAZEK'],['クシーシュ','KRIZ'],['バルトシュ','BARTOS']] },
+  AR: { w: 2, g: ['マティアス','ニコラス','ファクンド','アグスティン','ラウタロ','フランコ','サンティアゴ','ベンハミン','トマス','ホアキン','バレンティン','イグナシオ','ルシアーノ','ゴンサロ','マキシミリアーノ','ブルーノ','ルカス','エセキエル','ラミロ','ガストン','エミリアーノ','レアンドロ','セバスティアン','マルティン','フェデリコ','ダミアン','ヘルマン','パブロ','エステバン','ディエゴ'],
+        s: [['ゴメス','GOMEZ'],['フェルナンデス','FERNANDEZ'],['アコスタ','ACOSTA'],['ベニテス','BENITEZ'],['ペラルタ','PERALTA'],['ルセロ','LUCERO'],['ソサ','SOSA'],['エレーラ','HERRERA'],['アギーレ','AGUIRRE'],['ヌニェス','NUNEZ'],['フアレス','JUAREZ'],['リオス','RIOS'],['ゴドイ','GODOY'],['カリーソ','CARRIZO'],['キロガ','QUIROGA'],['レデスマ','LEDESMA'],['オヘダ','OJEDA'],['ポンセ','PONCE'],['ベラ','VERA'],['ビジャルバ','VILLALBA'],['コロネル','CORONEL'],['カセレス','CACERES'],['アリアス','ARIAS'],['フィゲロア','FIGUEROA'],['マンシージャ','MANSILLA'],['ファリアス','FARIAS'],['リベロ','RIVERO'],['ミランダ','MIRANDA'],['ロルダン','ROLDAN'],['マイダナ','MAIDANA']] },
+  KR: { w: 1, g: ['ミンジュン','ソジュン','ドユン','ハジュン','ジホ','ユチャン','テヒョン','ミンホ','ヒョヌ','ジフン','ソンミン','ジュンソ','ウジン','ヨンジュン','スンミン','ジェウォン','ドンヒョン','テヤン','ジヌ','ヒョンジュン','ミンソク','サンウ','ジョンフン','ソンジュン','ジュノ','ヨンホ','ジェミン','ヒョク','シウ','イェジュン'],
+        s: [['パク','PARK'],['チェ','CHOI'],['チョン','JUNG'],['カン','KANG'],['ユン','YOON'],['ハン','HAN'],['ソン','SONG'],['キム','KIM'],['イ','LEE'],['チョ','CHO'],['イム','LIM'],['シン','SHIN'],['クォン','KWON'],['ファン','HWANG'],['アン','AHN'],['ホン','HONG'],['コ','KOH'],['ムン','MOON'],['ピョン','BYUN'],['ペ','BAE'],['ペク','BAEK'],['ノ','NOH'],['ソ','SEO'],['ナム','NAM'],['リュ','RYU'],['チャン','JANG'],['ユ','YOO'],['ウ','WOO'],['ミン','MIN'],['チュ','JOO']] },
+  HU: { w: 1, g: ['ベンツェ','マーテー','レヴェンテ','ドミニク','バラージュ','ダーニエル','アーダーム','マールク','ベネデク','ゾルターン','アッティラ','ガーボル','ペーテル','ラースロー','イシュトヴァーン','ヤーノシュ','タマーシュ','ノルベルト','ゲルゲイ','ダーヴィド','クリスティアーン','ミクローシュ','ボトンド','シャーンドル','ヴィクトル','ジョンボル','アーコシュ','ロランド','ゲーザ','イムレ'],
+        s: [['ナジ','NAGY'],['ホルヴァート','HORVATH'],['サボー','SZABO'],['ヴァルガ','VARGA'],['ゴルディ','GORDI'],['キシュ','KISS'],['トート','TOTH'],['モルナール','MOLNAR'],['ネーメト','NEMETH'],['ファルカシュ','FARKAS'],['バログ','BALOGH'],['パップ','PAPP'],['タカーチ','TAKACS'],['ユハース','JUHASZ'],['メーサーロシュ','MESZAROS'],['オラー','OLAH'],['ラカトシュ','LAKATOS'],['フェヘール','FEHER'],['シラージ','SZILAGYI'],['テレク','TOROK'],['ラーツ','RACZ'],['フォドル','FODOR'],['ショーシュ','SOOS'],['ケレメン','KELEMEN'],['フェケテ','FEKETE'],['ボドナール','BODNAR'],['ヴェレシュ','VERES'],['ヤカブ','JAKAB'],['ショモジ','SOMOGYI'],['ペーテルフィ','PETERFI']] },
+  CN: { w: 2.5, g: ['ウェイ','ジュン','ハオ','レイ','ジエ','タオ','ボー','ポン','ロン','フェイ','カイ','ミン','ハオラン','ズーハン','ハオユー','ジーハオ','イーチェン','ズーモー','ユーシュエン','ミンハオ','ジアハオ','ユンフェイ','ティエンユー','ウェンボー','シュアン','ジーウェイ','ズーハオ','ジエンミン','チーハン','ルイ'],
+        s: [['ワン','WANG'],['ジャン','ZHANG'],['チェン','CHEN'],['ヤン','YANG'],['ジャオ','ZHAO'],['ホアン','HUANG'],['スン','SUN'],['グオ','GUO'],['リン','LIN'],['ルオ','LUO'],['リアン','LIANG'],['シエ','XIE'],['タン','TANG'],['フォン','FENG'],['ドン','DONG'],['シャオ','XIAO'],['ツァオ','CAO'],['ユエン','YUAN'],['ダン','DENG'],['パン','PAN'],['ジョン','ZHONG'],['ジアン','JIANG'],['ツァイ','CAI'],['ジア','JIA'],['ジン','JIN'],['ティエン','TIAN'],['ジュー','ZHU'],['レン','REN'],['ヤオ','YAO'],['リウ','LIU']] },
+  IN: { w: 1.5, g: ['アルジュン','アーラヴ','ヴィハーン','アディティヤ','ローハン','カラン','ヴィクラム','ラーフル','アミット','スーリヤ','イシャーン','アヤーン','ニキル','プラナヴ','シッダールト','アニルッダ','ヴァルン','ラヴィ','サンジャイ','ディーパク','マニーシュ','ヴィジャイ','クナール','アクシャイ','ハルシュ','ラジーヴ','ヤシュ','デーヴ','ニール','オームカル'],
+        s: [['シャルマ','SHARMA'],['パテル','PATEL'],['シン','SINGH'],['クマール','KUMAR'],['グプタ','GUPTA'],['ヴァルマ','VERMA'],['レッディ','REDDY'],['ナーイル','NAIR'],['アイヤル','IYER'],['ラオ','RAO'],['メータ','MEHTA'],['ジョーシー','JOSHI'],['デサイ','DESAI'],['カプール','KAPOOR'],['マルホトラ','MALHOTRA'],['バット','BHATT'],['チョープラー','CHOPRA'],['ムカルジー','MUKHERJEE'],['バナルジー','BANERJEE'],['ピッライ','PILLAI'],['ナイドゥ','NAIDU'],['クリシュナン','KRISHNAN'],['メノン','MENON'],['サクセナ','SAXENA'],['アガルワル','AGARWAL'],['クルカルニ','KULKARNI'],['ボース','BOSE'],['ミトラ','MITRA'],['セン','SEN'],['ティワリ','TIWARI']] },
+  US: { w: 5, g: ['ジェイデン','メイソン','エイデン','ケイレブ','ブライス','コルトン','チェイス','ギャレット','トラヴィス','ダスティン','ブレント','オースティン','ジャレッド','ウェス','カイル','タナー','ブラッドリー','ジョーダン','スコット','ダコタ','マイケル','アンソニー','ジョーイ','ハドソン','エヴェレット','ウェイロン','ブロック','チャド','デレク','カーソン'],
+        s: [['ジョンソン','JOHNSON'],['ミラー','MILLER'],['デイヴィス','DAVIS'],['ムーア','MOORE'],['マーティン','MARTIN'],['アレン','ALLEN'],['ロバーツ','ROBERTS'],['フィリップス','PHILLIPS'],['エヴァンス','EVANS'],['サンダース','SANDERS'],['モリス','MORRIS'],['ロジャース','ROGERS'],['リード','REED'],['クック','COOK'],['ベル','BELL'],['ベイリー','BAILEY'],['リヴェラ','RIVERA'],['リチャードソン','RICHARDSON'],['コックス','COX'],['ハワード','HOWARD'],['プライス','PRICE'],['ウッド','WOOD'],['バーンズ','BARNES'],['ロス','ROSS'],['コールマン','COLEMAN'],['ジェンキンス','JENKINS'],['ペリー','PERRY'],['パウエル','POWELL'],['パターソン','PATTERSON'],['バトラー','BUTLER']] },
+  ZA: { w: 1, g: ['タボ','シフォ','ルーベン','ヨハン','ヤコ','ディルク','ヘンドリック','シヤボンガ','マンドラ','ルソ','キーガン','ウェイン','ゲルト','シブシソ','テンバ','フランソワ','コーバス','ニール','リアン','マーカス','ティノ','タンド','ボンガニ','レボガン','カギソ','デオン','ヴィリー','エーベン','スティーヴン','ドウェイン'],
+        s: [['ファン・デル・メルヴェ','VANDERMERWE'],['ボタ','BOTHA'],['デュ・プレシー','DUPLESSIS'],['ファン・ヴァイク','VANWYK'],['ヨーステ','JOOSTE'],['ドラミニ','DLAMINI'],['ンドロヴ','NDLOVU'],['ムテンブ','MTHEMBU'],['ヴェンター','VENTER'],['ファン・ニーケルク','VANNIEKERK'],['プレトリウス','PRETORIUS'],['ネル','NEL'],['ステイン','STEYN'],['フィルユーン','VILJOEN'],['クッツェー','COETZEE'],['フーリー','FOURIE'],['デュ・トワ','DUTOIT'],['ルー','ROUX'],['ファン・ゼイル','VANZYL'],['マラン','MALAN'],['ケンプ','KEMP'],['ンコシ','NKOSI'],['ムキゼ','MKHIZE'],['シトホレ','SITHOLE'],['ブテレジ','BUTHELEZI'],['モコエナ','MOKOENA'],['ゲルデンハイス','GELDENHUYS'],['スワルト','SWART'],['ジュベール','JOUBERT'],['クルーガー','KRUGER']] },
+  NO: { w: 1.5, g: ['ヤコブ','エミル','オラフ','シーグル','ハーラル','エスペン','トルビョルン','クヌート','アスビョルン','ステイナル','ルーネ','ビョルン','エイヴィン','オッド','シーヴェルト','ヨルゲン','トール','ホーコン','ヴェガール','スヴェレ','トリグヴェ','ヨン','アーネ','クリスティアン','ダーグ','モルテン','エイリク','ヨアキム','アンデシュ','フレドリク'],
+        s: [['ニルセン','NILSEN'],['クリスティアンセン','KRISTIANSEN'],['カールセン','KARLSEN'],['ヨンセン','JOHNSEN'],['ペッテルセン','PETTERSEN'],['エリクセン','ERIKSEN'],['ハウゲン','HAUGEN'],['ハーゲン','HAGEN'],['ヨハンネセン','JOHANNESSEN'],['アンドレアッセン','ANDREASSEN'],['ハルヴォルセン','HALVORSEN'],['ヘンリクセン','HENRIKSEN'],['ルンド','LUND'],['ヤコブセン','JAKOBSEN'],['モーエン','MOEN'],['グンデルセン','GUNDERSEN'],['イーヴェルセン','IVERSEN'],['ソールベルグ','SOLBERG'],['スヴェンセン','SVENDSEN'],['エイデ','EIDE'],['クヌートセン','KNUTSEN'],['マルティンセン','MARTINSEN'],['バッケン','BAKKEN'],['アムンセン','AMUNDSEN'],['リー','LIE'],['ソールハイム','SOLHEIM'],['ニーゴール','NYGAARD'],['ミューレ','MYHRE'],['ハウグラン','HAUGLAND'],['ビルケラン','BIRKELAND']] },
+  IE: { w: 1, g: ['キリアン','オシーン','ダラ','ローリー','カハル','ドーナル','キアラン','イーモン','ショーン','パドレイグ','コルム','ローナン','ブレンダン','デクラン','フィンタン','ニーアル','エオイン','ディアミッド','シェイマス','コナル','ブライアン','パトリック','ドナカ','フィアクラ','ギャヴィン','ノエル','ジェラード','マーク','エイダン','ティモシー'],
+        s: [['マーフィー','MURPHY'],['オブライエン','OBRIEN'],['バーン','BYRNE'],['オサリヴァン','OSULLIVAN'],['ウォルシュ','WALSH'],['マッカーシー','MCCARTHY'],['オニール','ONEILL'],['ドイル','DOYLE'],['ギャラガー','GALLAGHER'],['オドハティ','ODOHERTY'],['ケネディ','KENNEDY'],['リンチ','LYNCH'],['クイン','QUINN'],['ブレナン','BRENNAN'],['バーク','BURKE'],['ファレル','FARRELL'],['オドネル','ODONNELL'],['ヒーリー','HEALY'],['ドナヒュー','DONOGHUE'],['フラナガン','FLANAGAN'],['ノーラン','NOLAN'],['オライリー','OREILLY'],['ケイシー','CASEY'],['マクナマラ','MCNAMARA'],['ダフィー','DUFFY'],['フィッツジェラルド','FITZGERALD'],['モロニー','MOLONEY'],['キーン','KEANE'],['ディロン','DILLON'],['スウィーニー','SWEENEY']] },
+  TH: { w: 1, g: ['ソムチャイ','ソムサック','アーティット','チャイヤポン','ナタポン','ピヤポン','ウィチャイ','スラサック','ティーラデート','キッティポン','パッタナポン','アヌチャー','シリチャイ','タナコーン','ポンサクン','ナロン','クリット','パンヤー','テーラポン','チャチャイ','サクダー','スティポン','トンチャイ','ウィラット','アピチャート','ナッタウット','ピーラポン','ヨッサポン','ジラーユ','シッティチャイ'],
+        s: [['ウォンサワット','WONGSAWAT'],['シーサワット','SRISAWAT'],['チャイヤサーン','CHAIYASAN'],['ブンミー','BOONMEE'],['チャルーンラット','JAROENRAT'],['ケーオマニー','KAEWMANEE'],['スックサワット','SUKSAWAT'],['ポンピパット','PONGPIPAT'],['シーサワン','SRISAWANG'],['ウォンチャイ','WONGCHAI'],['ラッタナポン','RATTANAPON'],['ブンヤサック','BOONYASAK'],['セーンスック','SAENSUK'],['ティラワット','THIRAWAT'],['チャンタラー','CHANTRA'],['インタラー','INTHARA'],['ナークサワット','NAKSAWAT'],['パンヤサック','PANYASAK'],['ルアンシー','RUANGSRI'],['スワンナポン','SUWANNAPONG'],['プロムマー','PROMMA'],['ペッチャラー','PETCHARA'],['シリポン','SIRIPHON'],['カンチャナー','KANCHANA'],['ソムブーン','SOMBOON'],['タンマサック','THAMMASAK'],['ウドムサック','UDOMSAK'],['ポーティサーン','POTHISAN'],['ケーオカム','KAEWKHAM'],['チュムサーイ','CHUMSAI']] }
 };
 /* 姓のローマ字から、まだ使われていない3文字の略号を作る */
 function rookieCode(rom, used){
@@ -16444,7 +16383,6 @@ const saveCareer = () => { if(career) lsSet(LS_CAREER, career); };
 const teamOf = id => career.teams.find(t => t.id === id);
 const myTeam = () => teamOf(career.team);
 const palOf = t => t.col ? [t.col, t.short || '', t.col2] : PALETTE[t.pal % PALETTE.length];   // オリジナルチームは自分で決めた2色
-const liveryBg = t => { const p = palOf(t); return `linear-gradient(135deg,${p[0]} 58%,${p[2]} 58%)`; };
 
 /* 新しいキャリアの選手（25人）をランダムに作る。国籍・名前・略号・年齢・能力はすべて毎回変わる。
    腕前の幅はこれまでの固定の選手と同じ（DRIVER_POOL の腕前に少しの揺らぎを足す）。
@@ -16604,7 +16542,11 @@ Object.assign(FLAGS, {
   PT: { svg: '<rect width="12" height="20" fill="#006600"/><rect x="12" width="18" height="20" fill="#ff0000"/><circle cx="12" cy="10" r="3.6" fill="#ffcc00"/><circle cx="12" cy="10" r="2" fill="#fff" stroke="#d00" stroke-width=".8"/>', name:'ポルトガル' },
   CH: { svg: '<rect width="30" height="20" fill="#da291c"/><path d="M13.2 4.5h3.6v3.7h3.7v3.6h-3.7v3.7h-3.6v-3.7H9.5V8.2h3.7z" fill="#fff"/>', name:'スイス' },
   SG: { svg: '<rect width="30" height="10" fill="#ef3340"/><rect y="10" width="30" height="10" fill="#fff"/><circle cx="7.2" cy="5" r="3.4" fill="#fff"/><circle cx="8.6" cy="5" r="3.1" fill="#ef3340"/><g fill="#fff"><circle cx="11.2" cy="2.6" r=".55"/><circle cx="9.7" cy="3.8" r=".55"/><circle cx="12.7" cy="3.8" r=".55"/><circle cx="10.3" cy="5.6" r=".55"/><circle cx="12.1" cy="5.6" r=".55"/></g>', name:'シンガポール' },
-  CZ: { svg: '<rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#d7141a"/><path d="M0 0 14 10 0 20z" fill="#11457e"/>', name:'チェコ' }
+  CZ: { svg: '<rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#d7141a"/><path d="M0 0 14 10 0 20z" fill="#11457e"/>', name:'チェコ' },
+  IE: { v: ['#169b62','#fff','#ff883e'], name:'アイルランド' },
+  NO: { svg: '<rect width="30" height="20" fill="#ba0c2f"/><rect x="7" width="7" height="20" fill="#fff"/><rect y="6.5" width="30" height="7" fill="#fff"/><rect x="8.75" width="3.5" height="20" fill="#00205b"/><rect y="8.25" width="30" height="3.5" fill="#00205b"/>', name:'ノルウェー' },
+  IN: { svg: '<rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width=".6"/><circle cx="15" cy="10" r=".6" fill="#000080"/>', name:'インド' },
+  ZA: { svg: '<rect width="30" height="10" fill="#e03c31"/><rect y="10" width="30" height="10" fill="#001489"/><path d="M0 0 15 10H30M0 20 15 10" stroke="#fff" stroke-width="6.6" fill="none"/><path d="M0 0 15 10H30M0 20 15 10" stroke="#007749" stroke-width="4" fill="none"/><path d="M0 1.8 11.6 10 0 18.2z" fill="#ffb612"/><path d="M0 3.4 9.3 10 0 16.6z" fill="#000"/>', name:'南アフリカ' }
 });
 /* 2026年のカレンダーで加わった開催国の国旗（簡略化したデザイン） */
 {
@@ -16657,7 +16599,6 @@ function natFlag(code, h = 11){
   return n ? flagSvg(n, h, 'nflag') : '';
 }
 /* コースの形はそのラウンドを初めて表示するときに作る（ランダム生成は少し時間がかかるため） */
-const COURSE_SIZE = 'M';   // 自動生成するコースのマップの広さ（S＝標準、M＝1.5倍、L＝2倍）。広いほどコースが長い
 // 市街地だけはLで作る（マップが広いほど道幅も広いので、狭い市街地でも道幅を確保できる。そのぶんコースは長くなる）
 function courseSizeFor(rd){ const fx = rd.fixed && GP_FIXED[String(rd.name || '').replace(/GP$/, '')]; if(fx) return fx.s; return rd.type === 'street' || /^シンガポール/.test(rd.name || '') ? 'L' : 'M'; }   // （読み込み直後の作り直しの判定でも使うので、関数の宣言にしておく。M は COURSE_SIZE と同じ）
 function ensureCourse(rd){
@@ -16729,9 +16670,6 @@ function machineFor(team, code){
   return m;
 }
 /* 予選：コースの性格に合わせた1周の見積もり＋わずかなばらつきで並べる */
-function qualify(list){
-  return list.map(m => ({ m, t: estLap(track, m) * (m.qK || 1) * (1 + (Math.random() - 0.5)*0.014*(m.vSpread ? m.vSpread/0.03 : 1)) })).sort((a,b) => a.t - b.t).map(x => x.m);
-}
 /* 予選へ進むとき、今戦の開発枠が残っていて（開発できるお金もあるなら）確認のポップアップを出す。枠は次戦に持ち越せない */
 function devLeftAsk(){
   if(Q) return false;                                       // 予選の途中に戻るときは聞かない
@@ -16958,7 +16896,7 @@ function enterRace(grid){
   sisTechRaceStart();                                    // セカンドチームへの技術提携（このレースの仕様に反映）
 }
 function showRaceView(){
-  $('#hq').hidden = true; $('#quali').hidden = true; document.querySelector('main').hidden = false;
+  $('#hq').hidden = true; document.querySelector('main').hidden = false;
   syncTabs('race'); applyLayout(); phoneLayout(); dirty = true; bgDirty = true;
   window.scrollTo({ top: 0 });
 }
@@ -16997,7 +16935,7 @@ function showHQ(){
   if(homeEd) homeEdLeave(false);
   if(race.state === 'racing' && !race.paused){ race.paused = true; ctlKey = ''; }   // 本部にいる間はレースを止めておく
   if(race.state === 'countdown'){ race.state = 'idle'; setLights(0); $('#cd').style.display = 'none'; setSetupLocked(false); }
-  document.querySelector('main').hidden = true; $('#quali').hidden = true; $('#hq').hidden = false; document.body.classList.remove('phoneRace');
+  document.querySelector('main').hidden = true; $('#hq').hidden = false; document.body.classList.remove('phoneRace');
   $('#resultModal').classList.remove('show');
   syncTabs('hq'); renderHQ(); window.scrollTo({ top: 0 });
   if(career && career.clinchPop){ const cl = career.clinchPop; career.clinchPop = null; saveCareer(); openClinch(cl); }   // 最終戦の前にチャンピオンが決まった知らせ
@@ -17032,7 +16970,7 @@ function recordRace(){
   const goalRes = evalGoals(order, myCars);                         // スポンサー目標
   led.goal = r1(goalRes.filter(g => g.ok).reduce((a, g) => a + g.pay, 0));
   const ln = career.loan; led.loan = ln && ln.bal > 0 ? -Math.min(ln.bal, LOAN.pay) : 0;   // 借入の返済
-  if(ln && ln.bal > 0) ln.bal = r1(ln.bal + led.loan);
+  if(ln && ln.bal > 0){ const p0 = loanPrin(ln), b0 = ln.bal; ln.bal = r1(ln.bal + led.loan); ln.prin = ln.bal > 0 ? r1(p0*ln.bal/b0) : 0; }   // 元本も同じ割合で減らす
   led.home = rd.home && career.home ? HOME_BONUS[career.home.seat || 0] : 0;   // ホームGP：地元スポンサーのボーナス
   let sisInv = null;
   { const S = sisTeam(), tl = career.sister ? (career.sister.techRun || 0) : 0;   // 技術提携：このレースのレベルで費用を払い、レベル3なら調査の判定
@@ -17064,7 +17002,6 @@ function recordRace(){
   // PU：このレースでワークスが使った仕様を、次戦からカスタマーにも届ける（1戦遅れ）
   puLagUpdate(); syncPU();
   // ライバルも開発を進める（スポンサー収入が多いチームほど速い）
-  const devLog = [];
   career.teams.forEach(t => {
     if(t.id === career.team) return;
     const n = 2 + (Math.random() < (t.spons - 2.4)/4 ? 1 : 0) - (Math.random() < 0.5 ? 1 : 0);   // 1〜3項目（平均およそ2）。開発枠の導入に合わせて以前より少し多く
@@ -17172,6 +17109,9 @@ function recordRace(){
   makeSreq();
   makeEvent();                                                      // チームの出来事
   saveCareer();
+  // 選手権の決着とレース後のニュース
+  if(career.last){ try{ const cl = checkClinch(); if(cl){ career.last.clinch = cl; career.clinchPop = cl; } }catch(e){ console.error(e); }
+    try{ career.last.news = makeNews(); saveCareer(); }catch(e){ console.error(e); } }
 }
 /* ---------- 開発・契約 ---------- */
 function upgrade(key){
@@ -17648,13 +17588,6 @@ const PU_FEE = 0.4;                                          // 供給料（1戦
 const puMakerOf = t => (career && career.pu && career.pu.sup[t.id]) || t.id;
 const puWorks = t => puMakerOf(t) === t.id;
 const puCustomers = t => career.teams.filter(x => x.id !== t.id && puMakerOf(x) === t.id);
-// マシン開発タブ：パワーユニットの見出しの札
-function puHeadHtml(me){
-  if(!career.pu) return '';
-  if(puWorks(me)) return `<span class="puWrap"><span class="puTag works">ワークス（自社製）</span><span class="muted puNote">PU開発枠 <b class="num">${puSlotsLeft()}/${puSlots()}</b><span class="slotPips" aria-hidden="true">${Array.from({ length: puSlots() }, (_, i) => `<i class="${i < puUsed() ? 'used' : ''}"></i>`).join('')}</span></span>${aduoOf(me.id) ? `<span class="aduoTag" title="ADUO認定：PU開発枠 +${aduoOf(me.id).slots}・PUの開発費 −${Math.round(aduoOf(me.id).disc*100)}%（今季の残り）">ADUO</span>` : ''}</span>`;
-  const m = teamOf(puMakerOf(me));
-  return `<span class="puWrap"><span class="puTag">カスタマー</span><span class="muted puNote">${teamLogo(m, 14)}${esc(m.name)}製（自分では開発できません）</span>${aduoOf(m.id) ? '<span class="aduoTag" title="供給元がADUOに認定され、PUが伸びやすくなっています">供給元ADUO</span>' : ''}</span>`;
-}
 // マシン開発タブ：PUの契約・自社PU・カスタマーの受け入れ
 function puPanelHtml(me){
   const P = career.pu; if(!P) return '';
@@ -17903,7 +17836,6 @@ function lineupAll(){
   }
   return out;
 }
-const lineupOf = t => lineupAll()[t.id].map(x => x.code);
 function signReserve(code, outCode){
   const t = myTeam(), d = career.drivers[code], rk = resKOf(d); if(rk == null) return;   // 強い選手はリザーブ契約に応じない
   const fee = r1(d.sal*SIGN_K*rk), csal = r1(Math.max(0.2, d.sal*rk));
@@ -18570,17 +18502,6 @@ function pickInfo(i){
     : `PUは${sup ? teamLogo(sup, 14) : ''}${esc(sup ? sup.name : '')}製。PUの開発はできないぶん、空力とブレーキに集中できる`;
   const style = i < 3 ? '勝って当たり前。オーナーの期待が高く、開発枠は少なめ' : i < 7 ? '上位も下位も狙える位置。開発の方針で差がつく' : '予算は少ないが開発枠が多い。少しずつ這い上がる';
   return { d, drv, target, slots, works, sup, feat, style, money: r1(10 + d.spons*1.5), spons: pickSpons(d), dAvg: (ovr(drv[0]) + ovr(drv[1]))/2 };
-}
-function carPreviewSvg(c1, c2, w = 150){
-  return `<svg class="carPv" viewBox="0 0 160 64" width="${w}" aria-hidden="true">
-    <rect x="6" y="6" width="22" height="13" rx="3" fill="#15171a"/><rect x="6" y="45" width="22" height="13" rx="3" fill="#15171a"/>
-    <rect x="112" y="4" width="26" height="15" rx="3" fill="#15171a"/><rect x="112" y="45" width="26" height="15" rx="3" fill="#15171a"/>
-    <rect x="2" y="24" width="16" height="16" rx="2" fill="${c2}"/>
-    <path d="M16 27 L44 25 L60 20 L104 20 L118 24 L144 28 L156 30 L156 34 L144 36 L118 40 L104 44 L60 44 L44 39 L16 37 Z" fill="${c1}" stroke="rgba(0,0,0,.35)" stroke-width="1"/>
-    <rect x="148" y="14" width="10" height="36" rx="2" fill="${c2}"/>
-    <path d="M60 22 L104 22 L100 28 L64 28 Z" fill="${c2}" opacity=".9"/><path d="M60 42 L104 42 L100 36 L64 36 Z" fill="${c2}" opacity=".9"/>
-    <ellipse cx="86" cy="32" rx="11" ry="6" fill="#15171a"/><circle cx="84" cy="32" r="3.6" fill="#f4b400"/>
-  </svg>`;
 }
 function renderNew(msg){
   const el = $('#hq');
@@ -19477,7 +19398,7 @@ function homeEdOpen(kind){
   if(Q){ renderHQ('予選中はコースを作れません。'); return; }
   const src = kind === 'build' ? career.home.course : kind === 'reno' ? (career.homeReno.draft || career.homeReno.course || career.home.course) : (career.homePlan.draft || career.homePlan.course);
   homeEd = { kind };
-  $('#hq').hidden = true; $('#quali').hidden = true; document.querySelector('main').hidden = false; document.body.classList.add('homeEd');
+  $('#hq').hidden = true; document.querySelector('main').hidden = false; document.body.classList.add('homeEd');
   setMode('edit');
   if(src && src.points && src.points.length) loadCourse({ name: '', points: src.points, startPos: src.startPos || 0, closed: src.closed !== false, size: src.size || 'M', type: src.city ? 'street' : undefined, city: src.city || undefined });
   else loadCourse({ name: '', points: [], startPos: 0, closed: false, size: 'M' });
@@ -19715,7 +19636,19 @@ function hqRestore(a){
     return;
   }
 }
+/* チーム本部の描き直し：本体（renderHQView）を描いたあとに、共通の後処理をする。
+   押したボタンの位置を保つ・確定待ちのボタンに残りの資金を書き足す・アップデート情報のボタン・PCの選んだ行の下に詳細を出す */
 function renderHQ(msg){
+  const a = hqAnchor(); if(a){ const hq = $('#hq'); if(hq) hq.style.paddingBottom = ''; }
+  const r = renderHQView(msg);
+  hqRestore(a);
+  if(a){ requestAnimationFrame(() => { hqRestore(a); requestAnimationFrame(() => hqRestore(a)); }); }   // 画像の読み込みなどで、描き直しの直後に高さが変わる分も合わせる
+  addLeftToArmed($('#hq'));
+  hqFootAdd();
+  try{ pcInline(); }catch(e){}
+  return r;
+}
+function renderHQView(msg){
   const el = $('#hq');
   if(career && !career.fired && hqView !== 'new'){ const pm = checkPayDeal(); if(pm) msg = pm + (msg ? ' ' + msg : ''); }
   document.body.classList.toggle('career', !!career);
@@ -20250,10 +20183,10 @@ function renderHQ(msg){
       <div class="msGrid"><div><h3>ドライバー</h3><table class="msT">${dRows}</table></div><div><h3>コンストラクター</h3><table class="msT">${cRows}</table></div></div>
       ${G ? '' : '<p class="note" style="margin:6px 0 0">▲▼は次のレースから表示されます。</p>'}</div>`;
   })();
-  const loanCard = (() => { const L = career.loan || { bal: 0 }, canB = L.bal + LOAN.step*(1 + LOAN.rate) <= LOAN.cap + 0.01, canR = L.bal > 0 && career.money >= L.bal;
-    return `<div class="sec finSec loanSec"><h2>融資<button type="button" class="qm" data-guide="money" aria-label="遊び方を見る">?</button><span class="kick">残高の上限 ${money(LOAN.cap)}・利息${Math.round(LOAN.rate*100)}%</span></h2>
+  const loanCard = (() => { const L = career.loan || { bal: 0 }, canB = loanCan(L), nRt = loanRate(L), canR = L.bal > 0 && career.money >= L.bal;
+    return `<div class="sec finSec loanSec"><h2>融資<button type="button" class="qm" data-guide="money" aria-label="遊び方を見る">?</button><span class="kick">借りた元本の上限 ${money(LOAN.cap)}（いま ${money(loanPrin(L))}）・利息${Math.round(LOAN.rate*100)}%（元本${money(LOAN.hiAt)}を超えると${Math.round(LOAN.rateHi*100)}%）</span></h2>
       <div class="loanRow"><div class="finRow"><div><small class="muted">資金</small><b class="num ${career.money < 0 ? 'lossT' : ''}">${money(career.money)}</b></div><div><small class="muted">借入残高</small><b class="num ${L.bal > 0 ? 'lossT' : ''}">${money(L.bal)}</b></div><div><small class="muted">毎戦の返済</small><b class="num">${L.bal > 0 ? money(Math.min(L.bal, LOAN.pay)) : '—'}</b></div></div>
-      <div class="cActs"><button type="button" class="b sm ${armed.key === 'loan' ? 'go' : ''}" id="loanBtn" ${canB ? '' : 'disabled'}>${armed.key === 'loan' ? 'もう一度押して借りる' : `${money(LOAN.step)}借りる（返済 ${money(LOAN.step*(1 + LOAN.rate))}）`}</button>${L.bal > 0 ? `<button type="button" class="b sm ${armed.key === 'repay' ? 'go' : ''}" id="repayBtn" ${canR ? '' : 'disabled'}>${armed.key === 'repay' ? 'もう一度押して返す' : `全額返す ${money(L.bal)}`}</button>` : ''}</div></div>
+      <div class="cActs"><button type="button" class="b sm ${armed.key === 'loan' ? 'go' : ''}" id="loanBtn" ${canB ? '' : 'disabled'}>${armed.key === 'loan' ? 'もう一度押して借りる' : `${money(LOAN.step)}借りる（返済 ${money(loanDue(L))}${nRt > LOAN.rate ? `・利息${Math.round(nRt*100)}%` : ''}）`}</button>${L.bal > 0 ? `<button type="button" class="b sm ${armed.key === 'repay' ? 'go' : ''}" id="repayBtn" ${canR ? '' : 'disabled'}>${armed.key === 'repay' ? 'もう一度押して返す' : `全額返す ${money(L.bal)}`}</button>` : ''}</div></div>
       <p class="note" style="margin:6px 0 0">返済は毎戦の収支から自動で引かれます。${hqTab === 'fac' ? '施設は1段階下げて、建設費の半分を受け取ることもできます。' : ''}</p></div>`; })();
   el.innerHTML = `
     ${(() => { const o = career.owner, GS = ownerGoalStat(), ok = GS.ok || (GS.g.kind !== 'rank' && GS.g.kind !== 'rival' && GS.pace), tc = o.trust >= 60 ? '#1f9d5a' : o.trust >= 30 ? '#e0a800' : '#d7263d';
@@ -22869,26 +22802,6 @@ function scenePaddockSpots(T){
   }
   return (T.paddock = out);
 }
-function drawPaddock(T){
-  const spots = scenePaddockSpots(T);
-  if(!spots.length) return;
-  ctx.save();
-  // 舗装（パドックの敷地）
-  ctx.lineCap = 'round'; ctx.strokeStyle = '#9aa0a6'; ctx.lineWidth = 50;
-  ctx.beginPath(); spots.forEach((s, i) => { const x = s.x + s.nx*8, y = s.y + s.ny*8; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
-  if(spots.length === 1){ ctx.fillStyle = '#9aa0a6'; ctx.beginPath(); ctx.arc(spots[0].x, spots[0].y, 25, 0, 7); ctx.fill(); }
-  for(const s of spots){
-    const p = palOf(s.team);
-    ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.a);
-    // モーターホーム（チームカラーの屋根、2色目の帯）
-    ctx.fillStyle = 'rgba(0,0,0,.28)'; ctx.fillRect(-12 + 2, -7 + 3, 24, 14);
-    ctx.fillStyle = p[0]; ctx.fillRect(-12, -7, 24, 14);
-    ctx.fillStyle = p[2]; ctx.fillRect(-12, -1.6, 24, 3.2);
-    ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 0.8; ctx.strokeRect(-12, -7, 24, 14);
-    ctx.restore();
-  }
-  ctx.restore();
-}
 /* 広告看板：ストレート沿いのバリアのすぐ外に並べる（契約スポンサーの名前を多めに） */
 function drawBoards(T){
   const dec = decorOf(T), K = T.pts, N = T.N, rnd = sceneRng(T);
@@ -23283,12 +23196,6 @@ function qAheadInfo(c){
   for(const o of Q.cars){ if(o === c || !o.q || !(o.q.st === 'out' || o.q.st === 'push' || o.q.st === 'cool')) continue;
     const d = ((o.q.p - q.p) % 1 + 1) % 1; if(d > 0 && d < gl){ gl = d; best = o; } }
   return best ? { o: best, gap: gl*q.base } : null;
-}
-// ピット出口の前後（いま出たときにまわりにいる車）
-function qExitTraffic(c){
-  let n = 0; for(const o of Q.cars){ if(o === c || !o.q || !(o.q.st === 'out' || o.q.st === 'cool' || o.q.st === 'pitout')) continue;
-    if(o.q.st === 'pitout'){ n++; continue; } const pe = track ? qrProfile(track).pExit : 0, d0 = Math.abs(o.q.p - pe), d = Math.min(d0, 1 - d0); if(d < 0.12) n++; }
-  return n;
 }
 const qClockTxt = sec => `${Math.floor(sec/60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 const qGameToClock = t => Math.max(0, qDur() - t)/qDur()*QS_MIN[Q.sess]*60;   // ゲーム内の秒 → 表示の残り時間
@@ -23990,9 +23897,6 @@ function qGarageTick(c){
 }
 
 /* ---------- 記録の表示 ---------- */
-{ const inner = renderHQ; renderHQ = function(msg){ const a = hqAnchor(); if(a){ const hq = $('#hq'); if(hq) hq.style.paddingBottom = ''; } const r = inner(msg); hqRestore(a);
-  if(a){ requestAnimationFrame(() => { hqRestore(a); requestAnimationFrame(() => hqRestore(a)); }); }   // 画像の読み込みなどで、描き直しの直後に高さが変わる分も合わせる
-  return r; }; }   // 押したボタンの位置を保つ（上の hqAnchor／hqRestore）
 const posTxt = p => p == null ? '—' : p + '位';
 /* 選手権の一覧から開く詳細：ドライバー（能力・戦績）／チーム（マシンの能力・戦績） */
 /* ドライバータブ・移籍市場のカードから開く戦績（記録タブと同じ内容を、画面の上に重ねて出す） */
@@ -25125,7 +25029,6 @@ function suzClear(t, minD){
   return true;
 }
 /* コースの点が、台本のどの区間にあるか：いちばん近い制御点の区間 */
-function suzSectionAt(pts, q){ let b = 0, bd = Infinity; for(const p of pts){ const d = (p.x - q.x)**2 + (p.y - q.y)**2; if(d < bd){ bd = d; b = p.k; } } return b; }
 function makeSuzukaPoints(){
   const width = courseW('flow'), mk = MAP_SIZES[mapSize] || 1.5, cands = [];
   const t0 = performance.now();
@@ -25222,17 +25125,8 @@ function makeRealPoints(type){
   cands.sort((a, b) => b.score - a.score);
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
-{
-  const _oldMake = makeRandomPoints;
-  makeRandomPoints = function(type){
-    if(type === 'street') return makeNetStreet(STREET_ARCH) || _oldMake(type);   // 市街地は道路網から（作れなければ格子の方式）
-    if(!career) return _oldMake(type);
-    return makeRealPoints(type) || _oldMake(type);
-  };
-}
-{ const _renderHQ = renderHQ; renderHQ = function(msg){ _renderHQ(msg); addLeftToArmed($('#hq')); }; }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.2.1';
+const APP_VER = '1.2.2';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25272,51 +25166,46 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.2.2', items: [
+    ['本部', [
+      '融資の上限を30Mに。20Mを超えると利息が上がる',
+      '選手・デザイナーの名前を大幅に追加。国籍に7か国を追加',
+    ]],
+    ['その他', [
+      'プログラムを整理して軽く',
+    ]],
+  ] },
   { v: '1.2.1', items: [
     ['その他', [
-      'ホーム画面に追加したアプリでも、開いたときに最新版へ自動で更新（レース中は知らせだけ出し、本部に戻ったら更新）',
+      'ホーム画面のアプリも自動で最新版に更新',
     ]],
   ] },
   { v: '1.2.0', items: [
     ['予選', [
-      '雨の予選：セッション中に濡れ具合が変わる（乾いていく／強くなる／変わらない）。インターとウェットをカードで選べる',
-      '雨のセッションの路面の状態・路面温度を表示。予選と決勝の路面温度をそろえた',
-      'トラックリミット違反（アタック中に4輪すべてが白線を越える）で、その周のタイムを抹消',
-      '出走の締切を左上の時計の横に表示。ドライバーカードを短くし、注意が要るときだけ状態を表示',
-      'カメラの操作を下のバーに格納（カメラのボタンで開く）',
-      '最後の車がチェッカーを受けた3秒後に結果画面を表示',
+      '雨の予選でインター／ウェットを選べる',
+      'トラックリミット違反でタイム抹消',
+      '画面表示を整理（締切・カメラ・カード）',
     ]],
     ['本部', [
-      'タブの並びを「概要・マシン開発・ドライバー」の順に',
-      'マシン開発：開発枠をカードの上に表示（PUの枠と、空力・ブレーキ共通の枠）。枠の追加は共通の枠だけ',
+      'タブの並びと開発枠の表示を見直し',
     ]],
     ['コース', [
-      'オーストラリアGP：コースの内側に湖（アルバートパーク）',
+      'オーストラリアGPに湖を追加',
     ]],
   ] },
   { v: '1.1.0', items: [
     ['予選', [
-      '予選を実際のコースで走らせる方式に変更（Q1〜Q3のノックアウト）。マシンの挙動は決勝と同じ（ミス・スピン・クラッシュ・赤旗・火花）',
-      'ドライバーカードで攻め具合・コースに出る・おまかせを操作。カードを押すと担当とカメラが切り替わる',
-      '順位タワー（入れ替わりはすべって動き、タイム更新で光る）、タイミング表（スマホは画面の下）、ミニマップのピット出口の混み具合、観戦モード',
-      'アウトラップは最終コーナーの手前から全開。アウトラップ・クールダウンの車は最速ラインを外し、前の車と間隔を空ける',
-      'クラッシュの損傷：激しいときは以降のセッションに出走できず、軽いときは修理が終わりしだい出走',
-      '新品ソフトは予選全体で5セット。使い切って走ると、決勝のソフトがすべて中古（摩耗15%から）になる',
-      'マシンのセッティング（ダウンフォース寄り⇔最高速寄り）。予選のガレージと決勝のスタート前に調整でき、決勝にも持ち越す',
-      'セッションの長さをコースの1周のタイムに合わせて決めるように（Q1 10周・Q2 9周・Q3 8周分）。Q3でも2回アタックできる',
-      'タイム確定の車にチェッカー、ピットの車に「P」。全車のアタックが終わったら次のセッションへ。開始時は×1。開始前の画面は廃止',
+      '実際のコースを走るノックアウト予選（Q1〜Q3）',
+      'タイヤセット数・マシンのセッティングを追加',
+      '順位タワーとタイミング表を表示',
     ]],
     ['決勝', [
-      '順位表の入れ替わりを、行がすべって動く表示に。入れ替わりは2秒続いてから反映',
-      'SC・VSC・赤旗の出る回数を見直し。おまかせのピットが1周目の終わりに入らないように',
-      '再生速度を1回で選べるメニュー。SCが出たら×1に戻す設定',
-      'BOXを押すとタイヤの一覧が開いて選ぶ方式に（おすすめのタイヤに印）。カメラの操作を下の操作エリアに移してコースを広く表示。拡大縮小の幅を広げ、スマホは2本指で拡大縮小',
+      '順位表の入れ替わりをなめらかに',
+      'BOXでタイヤを選ぶ方式に。拡大縮小を改良',
     ]],
-    ['本部・その他', [
-      '本部の「スキップ」で「予選をスキップ」か「予選と決勝をスキップ」を選べる',
-      '自チームが全車脱落したら、予選の結果画面と操作バーに「残りの予選をスキップ」を表示',
-      'ゲーム内のチーム名の前にロゴを表示。ロゴの種類を追加',
-      'スポンサー依頼の金額・天気予報・お金の表示・ニュースの文言・表示の切れなどを修正',
+    ['その他', [
+      'スキップで予選のみ／予選と決勝を選べる',
+      'チームロゴなど表示の改善',
     ]],
   ] },
 ];
@@ -25331,9 +25220,10 @@ function showUpdates(){
   }
   o.hidden = false; const b = o.querySelector('.updBody'); if(b) b.scrollTop = 0;
 }
-{ const _r = renderHQ; renderHQ = function(msg){ const r = _r(msg); const hq = $('#hq');
+// 本部の画面のいちばん下に、アップデート情報のボタンを置く（renderHQ から呼ぶ）
+function hqFootAdd(){ const hq = $('#hq');
     if(hq && !hq.querySelector('.hqFoot')){ const f = document.createElement('div'); f.className = 'hqFoot'; f.innerHTML = `<button type="button" class="updBtn">アップデート情報<small>ver ${APP_VER}</small></button>`; f.querySelector('button').onclick = showUpdates; hq.appendChild(f); }
-    return r; }; }   // 確定待ちのボタンに残りの資金を書き足す
+    }
 /* ---------- レース後のニュース ----------
    結果が決まったあとに、そのレースの出来事（優勝・事故・旗・自チーム・選手権など）から見出しを作る。
    career.last.news に保存して、結果画面とチーム本部の「前戦の結果」に出す。
@@ -25484,81 +25374,7 @@ function newsHtml(list){
 }
 /* ---------- 既存のレース画面とのつなぎ込み ---------- */
 {
-  const _recordRace = recordRace;
-  recordRace = function(){
-    const pending = !!(career && careerRace && !careerRace.done && careerRace.round === career.round);
-    _recordRace();
-    if(pending && career.last){ try{ const cl = checkClinch(); if(cl){ career.last.clinch = cl; career.clinchPop = cl; } }catch(e){ console.error(e); }
-      try{ career.last.news = makeNews(); saveCareer(); }catch(e){ console.error(e); } }
-  };
-  const _showResults = showResults;
-  showResults = function(){
-    _showResults();
-    const nb = $('#raceNewsBox'); if(nb) nb.innerHTML = '';
-    { const hb = $('#skipHlBox'); if(hb){ hb.innerHTML = skipHlHtml(skipHl); } skipHl = null; }
-    if(!careerRace) return;
-    recordRace();
-    if(nb && career && career.last) nb.innerHTML = newsHtml(career.last.news);
-    $('#hqBtn').hidden = false;
-    const done = career.round >= career.calendar.length;
-    $('#hqBtn').textContent = done ? 'シーズンの結果を見る' : 'チーム本部へ（次戦の準備）';
-  };
-  const _prepareGrid = prepareGrid;
-  prepareGrid = function(){
-    _prepareGrid();
-    for(const c of race.cars){ if(c.m && c.m.wearK){ c.wearMul = c.m.wearK; c.degMul = c.m.degK; } }
-    race.maxWet = race.wet || 0;
-    race.ev = { sc: 0, vsc: 0, red: 0 };
-    race.wxCache = null;                                  // 車ごとの予報の使い回しは、レースごとに作り直す
-  };
-  const _dirEvent = dirEvent;
-  dirEvent = function(kind, car, ...rest){
-    if(careerRace && car && race.state === 'racing'){
-      if(kind === 'lock' || kind === 'over' || kind === 'under' || kind === 'spin') car.mistN = (car.mistN || 0) + 1;
-      if(kind === 'lock') car.lockN = (car.lockN || 0) + 1;
-    }
-    return _dirEvent(kind, car, ...rest);
-  };
-  let ttDay = null;                                    // 今の週末の路面温度（予選と決勝で共有）
-  const _setupTrackTemp = setupTrackTemp;
-  setupTrackTemp = function(){
-    _setupTrackTemp();
-    const ri = careerRace ? careerRace.round : (Q && career ? career.round : null);   // 予選中は careerRace がないので、今戦の番号で
-    const rd = ri != null && career && career.calendar[ri];
-    if(rd && rd.tt != null){
-      // その週末の路面温度（晴れたときの温度）は1回だけ決め、予選と決勝で同じ値を使う
-      const key = career.season + ':' + ri;
-      if(!ttDay || ttDay.key !== key) ttDay = { key, base: Math.round(rd.tt - 2 + Math.random()*4) };   // 予報の前後2℃
-      race.ttBase = ttDay.base;
-      race.trackT = race.ttBase + (TT_WET - race.ttBase) * clamp(race.wet*1.1, 0, 1);
-    }
-  };
-  const _updatePitWall = updatePitWall;
-  updatePitWall = function(){ _updatePitWall(); if(race.state === 'racing'){ race.maxWet = Math.max(race.maxWet || 0, race.wet || 0); for(const c of race.cars){ if(c.defend && !c.defPrev) c.defN = (c.defN || 0) + 1; c.defPrev = c.defend; } } abilityWatch(); syncDock(); drawMiniMap(); const n = performance.now(); if(n - telAt > 200){ telAt = n; syncTel(); } };
-  let telAt = 0;
-  const _showFlag = showFlag;
-  showFlag = function(kind, label, sub){
-    if(careerRace && race.state === 'racing' && race.ev){ if(kind === 'red') race.ev.red++; else if(label === 'SAFETY CAR' && sub === 'DEPLOYED') race.ev.sc++; else if(label === 'VIRTUAL SAFETY CAR' && sub === 'DEPLOYED') race.ev.vsc++; }
-    if(kind === 'radio'){ showRadio(sub); return; } _showFlag(kind, label, sub); };
-  const _pwOptions = pwOptions;
-  pwOptions = function(){
-    _pwOptions();
-    if(!careerRace || !career) return;
-    const sel = $('#myCar');
-    sel.innerHTML = machines.map((m, i) => m.team === career.team ? `<option value="${i}">${esc(m.name)}（P${i + 1}スタート）</option>` : '').join('');
-    if(MY) sel.value = machines.indexOf(MY);
-  };
-  const _mainAction = mainAction;
-  mainAction = function(){
-    if(careerRace && careerRace.done && race.state === 'finished'){ showHQ(); return; }
-    _mainAction();
-  };
   $('#startBtn').onclick = () => mainAction();
-  const _updateCtl = updateCtl;
-  updateCtl = function(){
-    _updateCtl();
-    if(careerRace && careerRace.done && race.state === 'finished' && $('#startLbl').textContent !== 'チーム本部へ'){ $('#startLbl').textContent = 'チーム本部へ'; $('#startBtn').disabled = false; }
-  };
   $('#resetBtn').onclick = () => { if(careerRace && careerRace.done) showHQ(); else resetRace(); };
   $('#hqBtn').onclick = showHQ;
   $('#tabHQ').onclick = showHQ;
@@ -25692,7 +25508,6 @@ function pcInline(){
     fit(); setTimeout(fit, 150);                           // 描き終わってから高さが変わることがあるので、少しあとにもう一度
   });
 }
-{ const base = renderHQ; renderHQ = function(...a){ const r = base.apply(this, a); try{ pcInline(); }catch(e){} return r; }; }
 
 /* ---------- チーム名の前に、必ずロゴを付ける（2026-11） ----------
    本部・ニュース・移籍・結果・お知らせなど、画面に出たチームの正式名の前にロゴがなければ、自動でロゴを差し込む。
