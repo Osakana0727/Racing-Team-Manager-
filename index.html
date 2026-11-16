@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.3.0 -->
+<!-- レーシングチームマネージャー ver 1.3.1 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.3.0">
-<meta name="build" content="20261115-1">
+<meta name="version" content="1.3.1">
+<meta name="build" content="20261116-1">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -237,7 +237,7 @@ html,body{max-width:100%;overflow-x:hidden}
   clip-path:polygon(12px 0,100% 0,100% 100%,0 100%)}
 @media (max-width:640px){ .lead-txt{font-size:11.5px;gap:6px;padding:5px 8px 5px 9px} .lead-cap{min-width:28px;font-size:10px;padding:0 6px 0 11px} }
 .warn{background:#fff4cc;color:#5a4500;border-radius:8px;padding:8px 10px;font-size:13px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:12px;overscroll-behavior:contain}
 .modal.show{display:flex}
 .saveIO .box{width:min(560px,100%)}
 .saveIO h4{margin:14px 0 6px;font-size:14px}
@@ -246,7 +246,7 @@ html,body{max-width:100%;overflow-x:hidden}
 .saveIO .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .saveIO .sioMsg{min-height:1.4em;font-size:12.5px;margin:6px 0 0}
 .saveIO .sioMsg.ng{color:#c62f3f}.saveIO .sioMsg.ok{color:#1d8a4e}
-.box{background:var(--panel);color:var(--text);border-radius:14px;padding:16px;width:min(560px,100%);max-height:90vh;overflow:auto}
+.box{background:var(--panel);color:var(--text);border-radius:14px;padding:16px;width:min(560px,100%);max-height:90vh;max-height:90dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}   /* dvh：iPhone のツールバーを除いた高さ。contain：端まで来ても後ろのページへスクロールを渡さない */
 .box h3{margin:0 0 10px;font-size:18px}
 #resultModal .box{width:min(720px,100%)}   /* 使ったタイヤの列（TYRES）まで横スクロールなしで見えるように */
 .res td,.res th{padding:6px 6px;text-align:left;white-space:nowrap}
@@ -2492,6 +2492,7 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .dsChip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:1px 7px;border-radius:6px;background:var(--btn);border:1px solid var(--line);white-space:nowrap}
 .dsChip.tr{border-color:#c58f00;color:#8a6400}
 .dsChip .gd{transform:scale(.9)}
+.tieT{font-size:.72em;font-weight:800;opacity:.75;margin-right:1px}   /* 同点の順位（T5 など） */
 .dsCard .dsTags{margin:4px 0 6px}
 .dsCard .dsDesc{margin:0 0 6px;font-size:12px;color:var(--muted)}
 .dsCard.mine{box-shadow:inset 3px 0 0 #00c8ff}
@@ -3428,7 +3429,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.3.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.3.1</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -13643,6 +13644,33 @@ function updateGridDots(){
 }
 $('#againBtn').onclick = startRace;
 $('#closeResult').onclick = ()=>$('#resultModal').classList.remove('show');
+/* 小窓（.modal）を開いているあいだ、スマホで後ろのページがスクロールしないようにする（2026-11）。
+   iPhone の Safari では overscroll-behavior だけでは止まらないことがあり、小窓の中の表が端まで来たあとや、
+   小窓の外（暗いところ）を触ったときに、指の動きが後ろのページ（レース画面）に渡ってしまい、小窓をスクロールできなくなっていた。
+   ・小窓の外：スクロールさせない
+   ・小窓の中：その向きにまだスクロールできる箱があれば任せ、端なら止める（横向きの動きは表の横スクロールに任せる） */
+{
+  let ty = 0, tx = 0;
+  const openModal = () => { const ms = document.querySelectorAll('.modal.show'); return ms.length ? ms[ms.length - 1] : null; };
+  document.addEventListener('touchstart', e => { if(e.touches.length === 1){ ty = e.touches[0].clientY; tx = e.touches[0].clientX; } }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if(e.touches.length !== 1) return;
+    const m = openModal(); if(!m){ ty = e.touches[0].clientY; tx = e.touches[0].clientX; return; }
+    const dy = e.touches[0].clientY - ty, dx = e.touches[0].clientX - tx;     // 前の動きからの差（途中で向きを変えても正しく判断する）
+    ty = e.touches[0].clientY; tx = e.touches[0].clientX;
+    if(Math.abs(dx) > Math.abs(dy)) return;                                   // 横：表の横スクロール
+    let el = e.target && e.target.nodeType === 1 ? e.target : e.target && e.target.parentElement;
+    if(!el || !m.contains(el)){ e.preventDefault(); return; }
+    for(; el && el !== m; el = el.parentElement){                            // 縦にスクロールできる箱をさがす
+      const st = getComputedStyle(el).overflowY;
+      if((st === 'auto' || st === 'scroll') && el.scrollHeight > el.clientHeight + 1){
+        if((dy > 0 && el.scrollTop > 0) || (dy < 0 && el.scrollTop + el.clientHeight < el.scrollHeight - 1)) return;   // まだ動ける
+        break;
+      }
+    }
+    if(e.cancelable) e.preventDefault();                                      // 端まで来た／動ける箱がない：後ろへ渡さない
+  }, { passive: false });
+}
 
 const lapsTxt = n => `${n} ${n === 1 ? 'LAP' : 'LAPS'}`;   // 周回数の表記
 function showResults(){
@@ -13915,8 +13943,8 @@ const ABIL = {
   ers:    { n:'電力◎', s:'電力◎', blue:true,               d:'ブーストで使うバッテリーが2割少ない' },
   tcool:  { n:'温度◎', s:'温度◎', blue:true,  vs:'theat', d:'タイヤの温度を適温の真ん中に保ちやすい' },
   theat:  { n:'熱ダレ', s:'熱ダレ', blue:false, vs:'tcool', d:'タイヤの温度が上がりすぎやすい' },
-  steady: { n:'調子安定', s:'調子安定', blue:true, vs:'moody', d:'調子が変わりにくい' },
-  moody:  { n:'ムラっ気', s:'ムラっ気', blue:false, vs:'steady', d:'調子が変わりやすく、絶好調・絶不調になりやすい' },
+  steady: { n:'調子安定', s:'調子安定', blue:true, vs:'moody', d:'調子の波が小さく、ゆっくり（絶好調・絶不調になりにくい）' },
+  moody:  { n:'ムラっ気', s:'ムラっ気', blue:false, vs:'steady', d:'調子の波が大きく、速い（絶好調・絶不調になりやすい）' },
   gritty: { n:'逆境○', s:'逆境○', blue:true, d:'レース終盤（残り4分の1）にポイント圏外（11位以下）だと、最高速度とグリップが上がる' }
 };
 const BLUE_IDS = Object.keys(ABIL).filter(k => ABIL[k].blue), RED_IDS = Object.keys(ABIL).filter(k => !ABIL[k].blue);
@@ -14275,7 +14303,7 @@ function guideHtml(){
     <div class="gAbil">${[...blue, ...red].map(([id, a]) => `<div>${abChip(id, false)}<span>${esc(a.d)}</span></div>`).join('')}</div>
     ${sub('form', '調子')}
     <p>ドライバーには5段階の<b>調子</b>があります（${FORM.slice().reverse().map((F, i) => `${formTag({ form: 2 - i })}`).join(' ')}）。調子に応じて6項目すべてが上下します（絶好調 +10・好調 +5・不調 −5・絶不調 −10。絶不調はミスも少し増えます）。</p>
-    <p>調子はレースのたびに変わります。グリッドより順位を上げる・表彰台・予選で上位・チームメイトに先着すると上がりやすく、クラッシュやチームメイトに負けると下がりやすくなります。運もあり、時間がたつと普通に戻っていきます。特殊能力の<b>調子安定</b>・<b>ムラっ気</b>も調子に関係します。他チームの選手の調子も見えます（ドライバーランキングなど）。</p>
+    <p>調子はレースのたびに変わります。レースの結果とは関係なく、選手ごとに<b>調子の波</b>があり、数戦ごとに良くなったり悪くなったりをくり返します。特殊能力の<b>調子安定</b>は波が小さくゆっくり、<b>ムラっ気</b>は波が大きく速くなります。他チームの選手の調子も見えます（ドライバーランキングなど）。</p>
     ${sub('awk', '覚醒')}
     <p>レースのあと、ごくまれにドライバーが<span class="awkTag">覚醒</span>します。初優勝・初表彰台・自己最高位・チームメイトに初めて先着、などがきっかけになりやすく、若いほど起きやすくなります。覚醒すると6項目すべてが上がり（今の能力が低いほど大きく上がる）、赤特を1つ克服するか、青特を1つ覚えます。覚醒はキャリアで1人1回までで、他チームの選手にも起こります。</p>
     <p><span class="brkTag" style="margin-left:0">限界突破</span>は、伸び盛りを過ぎてピークを迎えた選手（普通タイプなら30歳ごろから。早熟なら20代半ばから）に起きます。レースで優勝・表彰台・自己最高位を取ったあとや、シーズンの終わりに活躍した選手に起きやすく、自チームの選手はチーム愛が高いほど起きやすくなります。限界突破すると6項目すべてが上がり（今の能力が低いほど大きく上がる）、成長タイプが1段階遅くなります（衰え始めが2年・引退が1年遅くなる）。もう「晩成」の選手は、タイプが変わらない代わりに大きく上がります。キャリアで1人1回までで、覚醒した選手にも起き、他チームの選手にも起こります。</p>
@@ -14322,7 +14350,7 @@ function guideHtml(){
     <p>強化するとすぐに効きます（工期なし）。強化の費用は ${M(facCost(1))}（Lv1）〜 ${M(facCost(FAC_MAX))}（Lv${FAC_MAX}）。レベルごとに毎戦の維持費がかかり、高いレベルほど急に高くなります（Lv1 ${M(pr(facUpkeep(1)))}〜Lv5 ${M(pr(facUpkeep(5)))}/戦）。Lv4以上の施設は、シーズンの切り替えで「来季、改修が必要」と予告されることがあり（Lv4 25%・Lv5 40%）、予告された施設は次のシーズンの初めに改修する（強化費の半分）か、改修せずに1レベル下げるかを選びます。チームによって最初のレベルが違い、ライバルもシーズンの終わりに強化します。</p>
     ${tbl(['施設', 'Lv1', `Lv${FAC_MAX}`], FACS.map(f => [`<b>${f.n}</b><br><small>${esc(f.d)}</small>`, esc(f.eff(1)), esc(f.eff(FAC_MAX))]))}
     <p><b>ホームGP</b>：施設タブで自チームのサーキットを計画して建設費（$90M〜$180M。コースのタイプと観客席の規模で変わる）を払うと、今季の終わりに完成し、来季から毎シーズン、選んだラウンドがホームGPになります。開催国は、今のGPの開催国とドライバーの出身国から選べます（表示がその国の国旗になり、同じ国のGPとは重なりません）。コースは自動で作るか、コース作成の画面で自分で作れます（自分で作ったコースのタイプは、直線の割合とコーナーの形から自動で判定）。開催費は毎シーズン $5M。ホームGPでは観客席の多くがチームカラーになり、レース後に地元スポンサーのボーナス（$3〜5M）とドライバーのチーム愛 +3 が入ります。マシンの速さには影響しません。完成後は「改修を計画する」で、コース（そのまま／自分で作り直す／自動で作り直す）・観客席の規模・名前・開催国を変えられます（改修費は新しい内容で建てるときの建設費の半分。今季の終わりに工事をして、来季から新しいサーキットで開催。シーズン中なら取り消して全額返金）。開催国は建設を決めたあとは、改修でのみ変えられます。</p>
-    <p><b>セカンドチーム</b>：PUのワークスなら、施設タブで、コンストラクターズの下位3チーム（PUメーカーを除く）から1つを買収して姉妹チームにできます（買収費はチームの強さで $170M〜$200M ほど）。毎戦、運営費 ${M(pr(SIS_OPS))} を払い、姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%を受け取ります。自チームのリザーブを姉妹チームのシートに送り込んで実戦を積ませ（その席の選手は移籍市場へ）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要）。送り込んだ選手の年俸は姉妹チームが払い、ほかのチームに引き抜かれることもありません。姉妹チームには自チームのPUを自動で供給します（供給料など、条件はほかのカスタマーと同じ。来季の受け入れ数には数えません）。開発などの運営はAIが行います。いまの買収費の${Math.round(SIS_SELL*100)}%で売却でき、送り込んでいた選手はそのまま売却先のチームに残ります。<br><b>技術提携</b>：レベル1（${M(pr(SIS_TECH[1].cost))}/戦）でブレーキ、レベル2（${M(pr(SIS_TECH[2].cost))}/戦）で空力も、自チームの1戦前の値から一定の差（ブレーキ−0.5・空力−1.5）まで姉妹チームの値が上がります。レベル3（${M(pr(SIS_TECH[3].cost))}/戦）は空力の差を−1.0まで縮めますが、毎戦${Math.round(SIS_INV_P*100)}%の確率で技術規則の調査が入り、違反と判断されると罰金 ${M(SIS_FINE)}・その戦の姉妹チームのポイント剥奪・今季はレベル1までに制限されます。タイミング表や順位表では、セカンドチームの行をオレンジで示します（自チームは水色）。セカンドチームの選手の人事（契約満了の更改・放出、引退の申し出、ほかのチームからの獲得の申し出、負傷の代役）は、自チームと同じく契約の欄で自分が決めます（決めるまでレースには進めません。費用・年俸は姉妹チームが払います）。移籍市場の選手と、セカンドチームの席で直接契約することもできます。</p>
+    <p><b>セカンドチーム</b>：PUのワークスなら、施設タブで、前年のコンストラクターズの下位3チーム（PUメーカーを除く。1年目は今季の順位）から1つを買収して姉妹チームにできます（買収費はチームの強さで $170M〜$200M ほど）。毎戦、運営費 ${M(pr(SIS_OPS))} を払い、姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%を受け取ります。自チームのリザーブを姉妹チームのシートに送り込んで実戦を積ませ（その席の選手は移籍市場へ）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要）。送り込んだ選手の年俸は姉妹チームが払い、ほかのチームに引き抜かれることもありません。姉妹チームには自チームのPUを自動で供給します（供給料など、条件はほかのカスタマーと同じ。来季の受け入れ数には数えません）。開発などの運営はAIが行います。いまの買収費の${Math.round(SIS_SELL*100)}%で売却でき、送り込んでいた選手はそのまま売却先のチームに残ります。<br><b>技術提携</b>：レベル1（${M(pr(SIS_TECH[1].cost))}/戦）でブレーキ、レベル2（${M(pr(SIS_TECH[2].cost))}/戦）で空力も、自チームの1戦前の値から一定の差（ブレーキ−0.5・空力−1.5）まで姉妹チームの値が上がります。レベル3（${M(pr(SIS_TECH[3].cost))}/戦）は空力の差を−1.0まで縮めますが、毎戦${Math.round(SIS_INV_P*100)}%の確率で技術規則の調査が入り、違反と判断されると罰金 ${M(SIS_FINE)}・その戦の姉妹チームのポイント剥奪・今季はレベル1までに制限されます。タイミング表や順位表では、セカンドチームの行をオレンジで示します（自チームは水色）。セカンドチームの選手の人事（契約満了の更改・放出、引退の申し出、ほかのチームからの獲得の申し出、負傷の代役）は、自チームと同じく契約の欄で自分が決めます（決めるまでレースには進めません。費用・年俸は姉妹チームが払います）。移籍市場の選手と、セカンドチームの席で直接契約することもできます。</p>
   `)}
   ${sec('quali', '予選', `
     <p>Q1（全車）→ Q2 → Q3（上位10台）のノックアウト方式で、Q1とQ2ではそれぞれ下位${qCut(20)}台が脱落します。各セッションの時間の中で、車は決勝と同じレース画面のコースを、決勝と同じ走りの計算で走ってアタックし、いちばん良いタイムが残ります。</p>
@@ -15817,7 +15845,7 @@ const awkAgeK = a => a <= 23 ? 1.4 : a <= 27 ? 1 : a <= 31 ? 0.55 : 0.25;
 const awkAmt = d => clamp(0.35 + (7.5 - ovr(d))*0.13, 0.18, 0.8);     // 内部の1〜10で。総合40なら+8前後、60なら+5前後、80なら+3前後、90なら+2前後（表示）
 /* ---------- 調子（パワプロ風。5段階：絶好調・好調・普通・不調・絶不調） ----------
    d.form：-2〜2（ない選手は普通）。6項目すべてに FORM_K を足して走る（内部の1〜10の値で。表示では ±10・±5）。
-   毎戦のあとに、結果（グリッドからの上下・表彰台・チームメイトとの比較・クラッシュ）と少しの運で上下し、時間がたつと普通に戻っていく */
+   毎戦のあとに、選手ごとの調子の波で上下する（レースの結果とは関係ない） */
 const FORM = [
   { n:'絶不調', c:'#9b5cff', a: 90 }, { n:'不調', c:'#3f8cff', a: 45 }, { n:'普通', c:'#e8c21d', a: 0 }, { n:'好調', c:'#ff8a1f', a: -45 }, { n:'絶好調', c:'#ff3b3b', a: -90 }
 ];
@@ -15826,37 +15854,25 @@ const formOf = d => clamp(Math.round((d && d.form) || 0), -2, 2);
 const formAdd = d => FORM_K[formOf(d) + 2];
 const formTag = (d, small) => { if(!d) return ''; const f = formOf(d), F = FORM[f + 2];
   return `<span class="formTag${small ? ' sm' : ''}" style="--fc:${F.c}" title="調子：${F.n}" aria-label="調子：${F.n}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h9M8 4l4 4-4 4" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(${F.a} 8 8)"/></svg>${small ? '' : `<i>${F.n}</i>`}</span>`; };
-// レース後：全ドライバーの調子を更新する。戻り値：自チームの変化 [{ code, from, to }]
+// レース後：全ドライバーの調子を更新する。結果には一切関係なく、選手ごとの「波」で上下する（パワプロ風）。戻り値：自チームの変化 [{ code, from, to }]
+//   d.fw = [位相, 周期（戦）]。毎戦、位相が進み、波の高さ＋少しの揺らぎで調子が決まる。境目でばたつかないよう、今の段階から0.8以上離れたときだけ動く。
+//   周期はときどき変わる。調子安定：波が小さく長い。ムラっ気：波が大きく短い
+const FORM_WAVE = { amp: 1.6, noise: 0.3, per: [9, 15], hys: 0.8 },
+      FORM_WAVE_STEADY = { amp: 1.0, noise: 0.2, per: [12, 18], hys: 1.0 },
+      FORM_WAVE_MOODY = { amp: 2.0, noise: 0.5, per: [5, 9], hys: 0.6 };
 function formUpdate(order, mineCodes){
-  const out = [], ran = new Set();
-  const byTeam = {}; order.forEach((c, i) => { (byTeam[c.m.team] = byTeam[c.m.team] || []).push({ c, pos: i + 1 }); });
+  const out = [];
   const gauss = () => { let u = 0, v = 0; while(!u) u = Math.random(); while(!v) v = Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
-  const step = (d, sc) => {
-    const ab = d.ab || [], steady = ab.includes('steady'), moody = ab.includes('moody'), f0 = formOf(d);
-    sc += gauss()*(moody ? 1.0 : steady ? 0.4 : 0.6) - f0*0.45;          // 運と、普通に戻ろうとする力
-    const th = steady ? 1.5 : moody ? 0.8 : 1.15;
-    let f = f0; if(sc > th) f++; else if(sc < -th) f--;
-    if(moody && Math.abs(sc) > th*2.2) f += Math.sign(sc);                  // ムラっ気：一気に2段階動くことも
-    f = clamp(f, -2, 2); d.form = f;
+  Object.values(career.drivers).forEach(d => {
+    const ab = d.ab || [], W = ab.includes('steady') ? FORM_WAVE_STEADY : ab.includes('moody') ? FORM_WAVE_MOODY : FORM_WAVE;
+    const per = () => W.per[0] + Math.random()*(W.per[1] - W.per[0]);
+    if(!Array.isArray(d.fw)) d.fw = [Math.random()*2*Math.PI, per()];
+    d.fw[0] = (d.fw[0] + 2*Math.PI/d.fw[1]) % (2*Math.PI);
+    if(Math.random() < 0.1) d.fw[1] = per();
+    const f0 = formOf(d), v = W.amp*Math.sin(d.fw[0]) + gauss()*W.noise;
+    const f = Math.abs(v - f0) > W.hys ? clamp(Math.round(v), -2, 2) : f0;
+    d.form = f;
     if(f !== f0 && mineCodes.includes(d.code)) out.push({ code: d.code, from: f0, to: f });
-  };
-  const S = [];
-  order.forEach((c, i) => {
-    const d = career.drivers[c.m.name]; if(!d) return; ran.add(d.code);
-    const pos = i + 1, fin = c.finish !== null; let sc = 0;
-    if(fin){ sc += clamp((c.grid - pos)/4, -1, 1); if(pos <= 3) sc += 0.6; if(pos === 1) sc += 0.4; }
-    if(c.grid <= 3) sc += 0.3;                                               // 予選で上位
-    const mate = (byTeam[c.m.team] || []).find(x => x.c !== c);
-    if(mate) sc += pos < mate.pos ? 0.4 : -0.4;                               // チームメイトとの比較
-    if(c.out === 'crash') sc -= 1.2; else if(c.out) sc -= 0.2;               // 自分のクラッシュ／マシンの故障
-    S.push([d, sc]);
-  });
-  const avg = S.length ? S.reduce((a, x) => a + x[1], 0)/S.length : 0;      // 全体の平均を引く（リタイアが後ろに回るぶん、完走しただけで上がりやすくなるのを防ぐ）
-  S.forEach(([d, sc]) => step(d, sc - avg));
-  Object.values(career.drivers).forEach(d => {                              // 走らなかった選手：ゆっくり普通に戻る
-    if(ran.has(d.code) || !formOf(d) || Math.random() > 0.35) return;
-    const f0 = formOf(d); d.form = f0 - Math.sign(f0);
-    if(mineCodes.includes(d.code)) out.push({ code: d.code, from: f0, to: d.form });
   });
   return out;
 }
@@ -16492,11 +16508,23 @@ function newCareer(teamId, laps){
   myTeam().drivers.forEach(c => { const d = career.drivers[c]; d.love = 50 + Math.floor(Math.random()*11); d.loveD = 0; });
   career.sponsor = null; career.sponsorOffers = makeSponsorOffers();
   ensureStats();
+  Object.values(career.drivers).forEach(d => { const W = (d.ab || []).includes('steady') ? FORM_WAVE_STEADY : (d.ab || []).includes('moody') ? FORM_WAVE_MOODY : FORM_WAVE;   // 調子の波：開幕から選手ごとにばらばら
+    d.fw = [Math.random()*2*Math.PI, W.per[0] + Math.random()*(W.per[1] - W.per[0])]; d.form = clamp(Math.round(W.amp*Math.sin(d.fw[0])), -2, 2); });
   ensureOwnerGoals();
   saveCareer();
 }
+/* ---------- GPごとの雨（2026-11） ----------
+   [雨の可能性がある確率, そのうち最初から雨になる割合（残りは途中で降る「変わりやすい」）]。
+   気候から見た目安（統計ではなく、おおまかな見立て）。砂漠・乾いた季節のGPはほぼ降らない。夕立の多いところは「変わりやすい」が多め */
+const GP_RAIN = {
+  'アブダビ': [0.03, 0.4], 'カタール': [0.03, 0.4], 'ラスベガス': [0.03, 0.4], 'バーレーン': [0.03, 0.4], 'サウジアラビア': [0.03, 0.4],
+  'メキシコ': [0.1, 0.4], 'スペイン': [0.1, 0.4], 'マドリード': [0.1, 0.4], 'アゼルバイジャン': [0.1, 0.4], 'モナコ': [0.1, 0.4],
+  'オーストラリア': [0.2, 0.4], 'マイアミ': [0.2, 0.2], 'アメリカ': [0.2, 0.4], 'イタリア': [0.2, 0.4], 'オーストリア': [0.2, 0.4], 'ハンガリー': [0.2, 0.4], 'オランダ': [0.2, 0.4],
+  'イギリス': [0.3, 0.5], 'カナダ': [0.3, 0.4], '中国': [0.3, 0.5], '日本': [0.3, 0.5],
+  'ベルギー': [0.4, 0.5], 'ブラジル': [0.4, 0.2], 'シンガポール': [0.4, 0.2]
+};
+const gpRain = rd => GP_RAIN[String((rd && rd.name) || '').replace(/GP$/, '')] || [0.2, 0.4];
 function makeCalendar(){
-  const RAIN_MAX = [2, 3], RAIN_WET = 0.4;   // 1シーズンに雨の可能性がある戦の数（最小・最大）と、そのうち最初から雨の割合（残りは途中で降る「変わりやすい」）
   // 固定コース：開催国ごとにタイプが決まっている。4タイプを1戦ずつ入れ、残りはほかの国から選ぶ（市街地は STREET_MAX 戦まで）。
   // 選んだGPは、実際のカレンダーの順（開幕のオーストラリアから最終戦のアブダビへ）に並べ、3月から12月に月1戦で割り当てる
   const fxOf = t => shuffled(GP_NAMES.filter(n => GP_FIXED[n] && GP_FIXED[n].t === t));
@@ -16509,11 +16537,11 @@ function makeCalendar(){
   }
   names.sort((a, b) => GP_NAMES.indexOf(a) - GP_NAMES.indexOf(b));
   const types = names.map(n => GP_FIXED[n].t);
-  // 雨：1シーズンで雨の可能性がある戦は2〜3戦（RAIN_MAX）。その戦は「変わりやすい」か「雨」、ほかは晴れ
-  const nRain = RAIN_MAX[0] + Math.floor(Math.random()*(RAIN_MAX[1] - RAIN_MAX[0] + 1)), rainy = new Set(shuffled(types.map((_, i) => i)).slice(0, nRain));
+  // 雨：GPごとの確率（GP_RAIN）で、雨の可能性がある戦を決める（シーズンによって数はばらつく）。その戦は「変わりやすい」か「雨」、ほかは晴れ
   const L = types.length, monthOf = i => L > 1 ? Math.round(3 + i*9/(L - 1)) : 3;
   return types.map((type, i) => {
-    const rd = { name: names[i] + 'GP', type, fixed: 1, month: monthOf(i), weather: rainy.has(i) ? (Math.random() < RAIN_WET ? 'wet' : 'mixed') : 'dry', points: null, startPos: 0, res: null };
+    const [rp, rw] = gpRain({ name: names[i] }), rainy = Math.random() < rp;
+    const rd = { name: names[i] + 'GP', type, fixed: 1, month: monthOf(i), weather: rainy ? (Math.random() < rw ? 'wet' : 'mixed') : 'dry', points: null, startPos: 0, res: null };
     ensureForecast(rd);
     return rd;
   });
@@ -16547,7 +16575,8 @@ const isNightGP = rd => !!climateOf(rd)[3];
 function ensureForecast(rd){
   if(rd.tt != null && rd.rainP != null) return;
   const w = rd.weather;
-  rd.rainP = w === 'wet' ? 80 + Math.floor(Math.random()*16) : w === 'mixed' ? 40 + Math.floor(Math.random()*21) : 5 + Math.floor(Math.random()*16);
+  // 晴れの日の予報の雨の確率：そのGPの降りやすさに合わせる（砂漠のGPは0〜3%、スパやシンガポールは12〜40%くらい）
+  { const p = gpRain(rd)[0]*100; rd.rainP = w === 'wet' ? 80 + Math.floor(Math.random()*16) : w === 'mixed' ? 40 + Math.floor(Math.random()*21) : Math.round(p*0.3 + Math.random()*p*0.7); }
   rd.tt = w === 'wet' ? 20 + Math.floor(Math.random()*7) : 22 + Math.floor(Math.random()*25);
   if(rd.month){                                             // 季節：開催月と開催地の気温から（気温＋日差しで温まる分。雨や夜は温まりにくい）
     const air = airTempOf(rd), night = isNightGP(rd), sun = w === 'wet' ? 1 : w === 'mixed' ? (night ? 2 : 7) : (night ? 4 : 13);
@@ -18352,7 +18381,8 @@ function driverTable(){
   const list = [];
   career.teams.forEach(t => t.drivers.forEach(code => list.push({ code, team: t })));
   Object.keys(career.dpts).forEach(code => { if(!list.some(x => x.code === code)) list.push({ code, team: null }); });
-  return list.map(x => ({ ...x, pts: career.dpts[x.code] || 0 })).sort((a, b) => b.pts - a.pts || ovr(career.drivers[b.code]) - ovr(career.drivers[a.code]));
+  const cb = cbCounts(career.season, 'd');
+  return list.map(x => ({ ...x, pts: career.dpts[x.code] || 0, cb: cb[x.code] || [] })).sort((a, b) => b.pts - a.pts || cbCmp(a.cb, b.cb) || ovr(career.drivers[b.code]) - ovr(career.drivers[a.code]));
 }
 /* ---------- ピットのガレージ：同じチームの2台は同じガレージ ----------
    ガレージの並びはコンストラクターズの順位順（シーズン最初はチームの並び順） */
@@ -18370,7 +18400,26 @@ function carBox(T, m, i){
   }
   return ((B[g % B.length] - (s % 2 ? back : 0)) % N + N) % N;   // 2台目は少し手前で止めて重ならないようにする
 }
-function teamTable(){ return career.teams.map(t => ({ id: t.id, t, pts: career.cpts[t.id] || 0 })).sort((a, b) => b.pts - a.pts); }
+function teamTable(){ const cb = cbCounts(career.season, 't');
+  return career.teams.map(t => ({ id: t.id, t, pts: career.cpts[t.id] || 0, cb: cb[t.id] || [] })).sort((a, b) => b.pts - a.pts || cbCmp(a.cb, b.cb)); }
+/* 同点のとき（実際のF1と同じ）：優勝の回数が多いほうが上、同じなら2位の回数、3位の回数…と順に比べる（カウントバック）。
+   cbCounts(season, kind)：そのシーズンの各戦の結果から、ドライバー（'d'）／チーム（'t'、2台とも数える）ごとに、順位ごとの回数 [_, 1位の回数, 2位の回数, …] */
+function cbCounts(season, kind){
+  const out = {};
+  for(const L of career.raceLog || []){ if(L.season !== season || !L.res) continue;
+    for(const [code, team, pos] of L.res){ if(!pos) continue; const k = kind === 't' ? team : code; if(k == null) continue; (out[k] = out[k] || [])[pos] = ((out[k] || [])[pos] || 0) + 1; } }
+  return out;
+}
+function cbCmp(a, b){ const n = Math.max(a.length, b.length); for(let p = 1; p < n; p++){ const d = (b[p] || 0) - (a[p] || 0); if(d) return d; } return 0; }
+// 同点の順位（タイ）：点数もカウントバックも同じときだけ同じ順位（T）。全員0点（開幕前）はタイにしない。
+// sn・kind を渡すと、そのシーズンの結果でカウントバックを比べる（記録の表など、行に cb がないとき）
+function tieRanks(rows, sn, kind){ const allZero = rows.every(x => !x.pts), cb = sn ? cbCounts(sn, kind || 't') : null;
+  const cbOf = x => x.cb || (cb && cb[kind === 'd' ? x.code : x.id]) || [];
+  const same = (x, y) => x.pts === y.pts && !cbCmp(cbOf(x), cbOf(y));
+  return rows.map((x, i) => { if(allZero) return { pos: i + 1, tie: false };
+    let j = i; while(j > 0 && same(rows[j - 1], x)) j--;
+    return { pos: j + 1, tie: rows.some((y, k) => k !== i && same(y, x)) }; }); }
+const tiePos = r => r.tie ? `<span class="tieT">T</span>${r.pos}` : `${r.pos}`;
 
 /* ---------- 描画 ---------- */
 function drawMini(canvas, rd){
@@ -18773,8 +18822,16 @@ const sisTeam = () => career && career.sister ? (teamOf(career.sister.id) || nul
 const isSis = id => !!(career && career.sister && career.sister.id === id);
 const isLoan = code => { const S = sisTeam(), d = career && career.drivers[code]; return !!(S && d && d.loan && S.drivers.includes(code)); };
 function sisCost(t){ const avg = CAR_KEYS.reduce((a, k) => a + t.car[k], 0)/CAR_KEYS.length; return Math.round(80 + avg*15 + (t.spons || 3)*10); }
-// 買収できるチーム：いまのコンストラクターズの下位3チーム（自チーム・PUメーカーを除く）
-function sisCands(){ const tbl = teamTable(), n = tbl.length; return tbl.filter((x, i) => i >= n - 3 && x.id !== career.team && !puWorks(x.t)).map(x => x.t); }
+// 買収できるチーム：前年のコンストラクターズの下位3チーム（自チーム・PUメーカーを除く）。
+// 前年の記録がない（キャリア1年目）ときは、今季の順位で。sisRank(t)：候補の順位と「昨季／今季」
+function sisRanks(){
+  const S = career.season, n = career.teams.length, st = career.stats && career.stats.teams;
+  const prev = t => { const x = st && st[t.id] && st[t.id].seasons && st[t.id].seasons[S - 1]; return x && x.pos ? x.pos : 0; };
+  if(S > 1 && career.teams.every(t => prev(t) > 0)) return { last: true, pos: Object.fromEntries(career.teams.map(t => [t.id, prev(t)])) };
+  const tbl = teamTable(); return { last: false, pos: Object.fromEntries(tbl.map((x, i) => [x.id, i + 1])) };
+}
+function sisCands(){ const R = sisRanks(), n = career.teams.length;
+  return career.teams.filter(t => R.pos[t.id] > n - 3 && t.id !== career.team && !puWorks(t)).sort((a, b) => R.pos[a.id] - R.pos[b.id]); }
 const sisBusy = () => !!(careerRace && !careerRace.done) || !!Q;   // レース・予選の途中は動かせない
 function sisBuy(id){
   const t = teamOf(id); if(career.sister || !t || !sisCands().includes(t) || !puWorks(myTeam())) return;
@@ -19138,13 +19195,13 @@ function sisCard(me){
     </div>`;
   }
   if(!S){
-    const C = sisCands(), tbl = teamTable();
+    const C = sisCands(), R = sisRanks();
     return `<div class="facCard sisCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">下位のチームを買収して、姉妹チームにする</div></div></div>
-      <p class="facD">コンストラクターズの下位3チーム（PUメーカーを除く）から1つを買収できます。姉妹チームには自チームのPUを自動で供給します（条件はほかのカスタマーと同じ）。開発などの運営はそのままAIが行います。</p>
+      <p class="facD">${R.last ? '<b>前年</b>の' : ''}コンストラクターズの下位3チーム（PUメーカーを除く）から1つを買収できます${R.last ? '' : '（1年目は今季の順位で）'}。姉妹チームには自チームのPUを自動で供給します（条件はほかのカスタマーと同じ）。開発などの運営はそのままAIが行います。</p>
       <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
-      <div class="sisList">${C.length ? C.map(t => { const cost = sisCost(t), on = armed.key === 'sisbuy' + t.id, poor = career.money < cost, pos = tbl.findIndex(x => x.id === t.id) + 1;
-        return `<div class="sisRow">${teamLogo(t, 22)}<div class="sisNm"><b>${esc(t.name)}</b><small class="muted">今季${pos}位・${t.drivers.join(' / ')}</small></div><button class="b sm ${on ? 'go' : ''}" type="button" data-sisbuy="${t.id}" ${poor || sisBusy() ? 'disabled' : ''}>${poor ? `資金が足りません（${money(cost)}）` : on ? 'もう一度押して確定' : `買収する ${money(cost)}`}</button></div>`; }).join('') : '<p class="muted" style="font-size:12px;margin:0">いま買収できるチームはありません（下位3チームがPUメーカーのときなど）。</p>'}</div>
+      <div class="sisList">${C.length ? C.map(t => { const cost = sisCost(t), on = armed.key === 'sisbuy' + t.id, poor = career.money < cost, pos = R.pos[t.id];
+        return `<div class="sisRow">${teamLogo(t, 22)}<div class="sisNm"><b>${esc(t.name)}</b><small class="muted">${R.last ? '昨季' : '今季'}${pos}位・${t.drivers.join(' / ')}</small></div><button class="b sm ${on ? 'go' : ''}" type="button" data-sisbuy="${t.id}" ${poor || sisBusy() ? 'disabled' : ''}>${poor ? `資金が足りません（${money(cost)}）` : on ? 'もう一度押して確定' : `買収する ${money(cost)}`}</button></div>`; }).join('') : '<p class="muted" style="font-size:12px;margin:0">いま買収できるチームはありません（下位3チームがPUメーカーのときなど）。</p>'}</div>
     </div>`;
   }
   const tbl = teamTable(), pos = tbl.findIndex(x => x.id === S.id) + 1, rs = resList(me), L = career.last && career.last.led, busy = sisBusy();
@@ -20074,16 +20131,16 @@ function renderHQView(msg){
     const cardsHtml = `<div class="pGroups"><div class="pGrp pg-pu">${puSlotHtml}${cards[0]}</div><div class="pGrp pg-body">${bodySlotHtml}${cards.slice(1).join('')}</div></div>`;
     return `<div class="sec devSec">
       <h2>マシン開発<button type="button" class="qm" data-guide="machine" aria-label="遊び方を見る">?</button>${rd ? `<span class="kick"><span class="hotDot"></span>次戦の${esc(COURSE_TYPES[rd.type].short)}コースで効きやすい</span>` : ''}</h2>
-      ${bar}
       ${grayCardHtml()}
       <div class="devInfo">${puSum1}${reg}</div>
       ${cardsHtml}
+      ${bar}<!-- 設計責任者と開発の確率：開発ボタンまでのスクロールを減らすため、いちばん下に（2026-11） -->
       <p class="devFoot muted">数字の右は、ライバルの最高値との差です。項目名を押すと説明が出ます。開発の仕組みは「?」から。</p>
     </div>`;
   })();
   const tbl = standView === 'drivers'
     ? `<table class="stand"><tr><th>POS</th><th>ドライバー</th><th>チーム</th><th style="text-align:right">PTS</th></tr>${driverTable().map((x, i) => `<tr class="${x.team && x.team.id === career.team ? 'mine' : x.team && isSis(x.team.id) ? 'sis' : ''}"><td class="n" style="text-align:left">${i + 1}</td><td><button type="button" class="recLink" data-spk="d:${x.code}">${natFlag(x.code)}<b>${x.code}</b>${x.team ? formTag(career.drivers[x.code], true) : ''} <span class="muted">${esc(career.drivers[x.code].name)}</span></button></td><td>${x.team ? `<button type="button" class="recLink" data-spk="t:${x.team.id}">${teamLogo(x.team, 18)}${esc(x.team.name)}</button>` : '<span class="muted">—</span>'}</td><td class="n">${x.pts}</td></tr>`).join('')}</table>`
-    : `<table class="stand"><tr><th>POS</th><th>チーム</th><th>ドライバー</th><th style="text-align:right">PTS</th></tr>${cons.map((x, i) => `<tr class="${x.id === career.team ? 'mine' : isSis(x.id) ? 'sis' : ''}"><td class="n" style="text-align:left">${i + 1}</td><td><button type="button" class="recLink" data-spk="t:${x.id}">${teamLogo(x.t, 18)}${esc(x.t.name)}${isSis(x.id) ? '<span class="sisTag">姉妹</span>' : ''}</button></td><td class="muted">${x.t.drivers.map(c => `<button type="button" class="recLink" data-spk="d:${c}">${c}</button>`).join(' / ')}</td><td class="n">${x.pts}</td></tr>`).join('')}</table>`;
+    : `<table class="stand"><tr><th>POS</th><th>チーム</th><th>ドライバー</th><th style="text-align:right">PTS</th></tr>${(() => { const TR = tieRanks(cons); return cons.map((x, i) => `<tr class="${x.id === career.team ? 'mine' : isSis(x.id) ? 'sis' : ''}"><td class="n" style="text-align:left">${tiePos(TR[i])}</td><td><button type="button" class="recLink" data-spk="t:${x.id}">${teamLogo(x.t, 18)}${esc(x.t.name)}${isSis(x.id) ? '<span class="sisTag">姉妹</span>' : ''}</button></td><td class="muted">${x.t.drivers.map(c => `<button type="button" class="recLink" data-spk="d:${c}">${c}</button>`).join(' / ')}</td><td class="n">${x.pts}</td></tr>`).join(''); })()}</table>`;
   const stand = `
     <div class="sec">
       <h2>選手権<button type="button" class="qm" data-guide="hq" aria-label="遊び方を見る">?</button><div class="seg2"><button type="button" data-sv="drivers" class="${standView === 'drivers' ? 'on' : ''}">ドライバー</button><button type="button" data-sv="teams" class="${standView === 'teams' ? 'on' : ''}">コンストラクター</button></div></h2>
@@ -24281,11 +24338,11 @@ function recStand(D){
   }
   if(!D.tms.length) return '<p class="note">このシーズンの記録がありません。</p>';
   const lead = D.tms[0].pts;
-  return `<table class="stand rcStand"><tr><th>POS</th><th>チーム</th><th class="opt">ドライバー</th><th class="n">優勝</th><th class="n">表彰台</th><th class="n">PTS</th><th class="n opt">差</th></tr>${D.tms.map(x => {
-    const t = teamAt(x.id, D.sn);
-    return `<tr class="${x.id === career.team ? 'mine' : ''}"><td class="rcPos"><span class="rcP ${rcMedal(x.pos)}">${x.pos ?? '—'}</span>${recChg(x.pos, recPrev('t', x.id, D.sn), hasPrev)}</td>
+  return `<table class="stand rcStand"><tr><th>POS</th><th>チーム</th><th class="opt">ドライバー</th><th class="n">優勝</th><th class="n">表彰台</th><th class="n">PTS</th><th class="n opt">差</th></tr>${(() => { const TR = tieRanks(D.tms, D.sn, 't'); return D.tms.map((x, i) => {
+    const t = teamAt(x.id, D.sn), tp = x.pos != null ? TR[i] : null;
+    return `<tr class="${x.id === career.team ? 'mine' : ''}"><td class="rcPos"><span class="rcP ${rcMedal(tp ? tp.pos : x.pos)}">${tp ? tiePos(tp) : '—'}</span>${recChg(x.pos, recPrev('t', x.id, D.sn), hasPrev)}</td>
       <td>${t ? `<button type="button" class="recLink" data-rp="t:${x.id}">${teamLogo(t, 18)}${esc(t.name)}</button>` : '—'}</td>
-      <td class="muted opt">${(x.drivers || []).join(' / ')}</td><td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n rcPts">${x.pts}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join('')}</table>`;
+      <td class="muted opt">${(x.drivers || []).join(' / ')}</td><td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n rcPts">${x.pts}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join(''); })()}</table>`;
 }
 /* C：戦ごとの結果（縦にドライバー／チーム、横にラウンド） */
 const rgCls = p => p == null ? 'dnf' : p === 1 ? 'p1' : p === 2 ? 'p2' : p === 3 ? 'p3' : p <= 10 ? 'pt' : '';
@@ -25347,7 +25404,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.3.0';
+const APP_VER = '1.3.1';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25387,6 +25444,22 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.3.1', items: [
+    ['ドライバー', [
+      '調子が結果と関係なく、波で上下するように',
+    ]],
+    ['天気', [
+      'GPごとに雨の降りやすさを設定（砂漠のGPはほぼ晴れ）',
+    ]],
+    ['本部', [
+      '同点の順位は実際のF1と同じ決め方に',
+      'セカンドチームの候補は前年の下位3チームに',
+      '開発タブの設計責任者を下へ移動',
+    ]],
+    ['その他', [
+      'スマホで結果画面がスクロールできなくなる問題を修正',
+    ]],
+  ] },
   { v: '1.3.0', items: [
     ['ドライバー', [
       '調子（絶好調〜絶不調）を追加。能力が上下する',
