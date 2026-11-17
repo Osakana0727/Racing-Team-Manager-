@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.3.1 -->
+<!-- レーシングチームマネージャー ver 1.4.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.3.1">
-<meta name="build" content="20261116-1">
+<meta name="version" content="1.4.0">
+<meta name="build" content="20261117-1">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -2492,6 +2492,8 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .dsChip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:1px 7px;border-radius:6px;background:var(--btn);border:1px solid var(--line);white-space:nowrap}
 .dsChip.tr{border-color:#c58f00;color:#8a6400}
 .dsChip .gd{transform:scale(.9)}
+.lcLeg{font-weight:500;font-size:10px;opacity:.65;letter-spacing:0;margin-left:6px}
+.sisPuW{display:block;color:#f0b34a;font-size:11px;margin-top:1px}
 .tieT{font-size:.72em;font-weight:800;opacity:.75;margin-right:1px}   /* 同点の順位（T5 など） */
 .dsCard .dsTags{margin:4px 0 6px}
 .dsCard .dsDesc{margin:0 0 6px;font-size:12px;color:var(--muted)}
@@ -3429,7 +3431,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.3.1</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.4.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -3617,7 +3619,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
         <span class="winGrip" aria-hidden="true"></span>
       </div>
       <div class="sec tower" id="lapChartWrap" hidden>
-        <div class="chartHead winHead"><span>LAP CHART</span><button type="button" class="winReset" aria-label="窓の配置と大きさを元に戻す">↺</button></div>
+        <div class="chartHead winHead"><span>LAP CHART <small class="lcLeg">● ピットイン（色はタイヤ）</small></span><button type="button" class="winReset" aria-label="窓の配置と大きさを元に戻す">↺</button></div>
         <canvas id="lapChart"></canvas>
         <span class="winGrip" aria-hidden="true"></span>
       </div>
@@ -3732,7 +3734,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
     <div class="myRes" id="myRes" hidden></div>
     <div id="skipHlBox"></div>
     <div class="wrapx"><table class="res" id="resultTable" style="width:100%;border-collapse:collapse"></table></div>
-    <div class="resLc" id="resLc"><button type="button" class="b sm resLcBtn" id="resLcBtn" aria-expanded="false">ラップチャートを見る</button><div class="resLcBox" id="resLcBox" hidden><canvas id="resLcCv" aria-label="周回ごとの順位の推移"></canvas><p class="muted resLcNote">太い線が自チーム。× はリタイア</p></div></div>
+    <div class="resLc" id="resLc"><button type="button" class="b sm resLcBtn" id="resLcBtn" aria-expanded="false">ラップチャートを見る</button><div class="resLcBox" id="resLcBox" hidden><canvas id="resLcCv" aria-label="周回ごとの順位の推移"></canvas><p class="muted resLcNote">太い線が自チーム。× はリタイア。● はピットイン（中の色は履いたタイヤ）</p></div></div>
     <div class="row" style="margin-top:12px;justify-content:flex-end">
       <button class="b" id="closeResult">閉じる</button>
       <button class="b go" id="againBtn">もう一度走る</button>
@@ -7011,7 +7013,7 @@ function drawSCBody(ctx, t, lightsOn){
 }
 /* layer：0＝橋の下（橋より先に描く）、1＝橋の上。立体交差のないコースではlayer 1でだけ描く */
 function drawSCCar(layer = 1){
-  const s = race.scCar; if(!s) return;
+  const s = race.scCar; if(!s || Q) return;                  // 予選の画面では出さない
   if((s.idx != null && onBridge(s.idx) ? 1 : 0) !== layer) return;
   ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.h); ctx.scale(0.5, 0.5);
   drawSCBody(ctx, race.t, !s.parked || s.v > 0);
@@ -10162,7 +10164,7 @@ function startComp(comp){
 function prepareGridBase(keepWx){                         // keepWx：天気と路面温度を決め直さない（スタート前に見せた条件のまま決勝を始める）
   pwReset(); tcPickFor = null;
   if(race.state === 'idle') race.laps = +lapsSel.value || race.laps;   // スタート前は選んでいる周回数を使う
-  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; race.yellows = []; intT = -99; intCache = new Map();
+  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
   race.bestLap = null; race.bestSplits = null; race.lapDone = []; race.sparks = []; race.dust = []; race.spray = []; race.smoke = []; race.debris = []; race.recov = []; race.wind = null; race.skids = []; race.greenUntil = 0; race.greenSec = -1; race.greens = []; race.red = null; race.form = null; race.redSkip = false; hideRecord(); clearFlags(); race.leader = null; race.leadCand = null;
   DIR.events = []; DIR.shot = null; DIR.next = 0; DIR.fade = null; DIR.fadeA = 0; DIR.pan = null;
   RP.buf = []; RP.pbuf = []; RP.lastRec = -1; RP.pending = null; stopReplay();
@@ -11108,15 +11110,27 @@ function stepUnlap(){
 }
 /* ---------- セーフティカー（実車） ---------- */
 /* SCの出動：ピットレーンの停車位置から走り出し、ピット出口で先頭車の前に合流する */
-function scParkIdx(T){ return (T.pit.entry + T.pit.ramp + Math.max(1, Math.round(20/T.sp))) % T.N; }
 function scHoldIdx(T){ return ((T.pit.exit - (T.pit.rampOut || T.pit.ramp) - Math.max(1, Math.round(12/T.sp))) % T.N + T.N) % T.N; }
+/* SCの待機場所（2026-11）：実際のF1と同じく、ピット出口側（最後のガレージより先。制限速度の区間の終わりより手前）。
+   解除されたSCはピットレーンを走り抜けてここに止まり、次の出動はここから（先頭車が近づくまでその場で待つ）。レースの開始前からここに置いておく */
+function scParkIdx(T){
+  const pl = T.pit, N = T.N, span = (pl.exit - pl.entry + N) % N, rel = i => (i - pl.entry + N) % N;
+  const B = (pl.boxes || [pl.entry + pl.ramp]).map(rel).sort((a, b) => a - b), last = B[B.length - 1];
+  const gap = B.length > 1 ? Math.round((last - B[0])/(B.length - 1)) : Math.round(26/T.sp);   // ガレージの間隔：最後のガレージの「次の枠」に止める
+  const hold = rel(scHoldIdx(T)), hi = span - (pl.limOut || 0) - 2;
+  return (pl.entry + Math.max(1, Math.min(last + Math.max(3, gap), Math.max(hold, hi)))) % N;
+}
+// SCが止まる横の位置：ピットレーン（ファストレーン・作業エリア）から外れた、ガレージの並びの位置（最後のガレージの次の枠）
+const SC_PARK_LAT = PIT_GARAGE_LAT;
+function scPlace(){                                          // レース前：SCを待機場所に止めておく
+  const T = track; if(!T || !T.pit) return;
+  const idx = scParkIdx(T), p = T.pts[idx], o = pitOff(T, idx) + SC_PARK_LAT, pp = pitPos(T, idx, 0, SC_PARK_LAT);
+  race.scCar = { x:pp[0], y:pp[1], h:p.a, v:0, idx, lastIdx:idx, lat:o*pitSide(T), lane:o*pitSide(T), leftAt:0, leaving:true, pitIn:true, parked:true };
+}
 function spawnSC(){
   const T = track, N = T.N;
   let s = race.scCar;
-  if(!s){                                                    // 初回は停車位置に置いてから出す
-    const idx = scParkIdx(T), p = T.pts[idx], o = pitOff(T, idx) + 5, pp = pitPos(T, idx, 0, 5);
-    s = race.scCar = { x:pp[0], y:pp[1], h:p.a, v:0, idx, lastIdx:idx, lat:o*pitSide(T), lane:o*pitSide(T), leftAt:0 };
-  }
+  if(!s){ scPlace(); s = race.scCar; }                      // 待機場所にいなければ、置いてから出す
   Object.assign(s, { leaving:false, parked:false, pitIn:true, deploying:true, waitFrom:race.t });
 }
 /* バーチャル・セーフティカー：時間が来たら「VSC ENDING」を出し、数秒後にグリーン */
@@ -11172,8 +11186,8 @@ function stepSC(dt){
   const po = pitOff(T, best);
   const dEntry = ((T.pit.entry - best + N) % N) * T.sp;
   const approach = s.leaving && !s.pitIn && dEntry < 220;              // 入口の手前でピット側へ寄せる
-  // 停車位置：ピットレーンに入りきったところ（入口のカーブの先、ガレージより手前）。レーンの外寄りに止める
-  const parkIdx = (T.pit.entry + T.pit.ramp + Math.max(1, Math.round(20/T.sp))) % N;
+  // 停車位置：ピット出口側の待機場所（scParkIdx）。ピットレーンを制限速度で走り抜けてから、レーンの外寄りに止める
+  const parkIdx = scParkIdx(T);
   const dPark = s.pitIn ? laneDist(T, best, parkIdx) : ((parkIdx - best + N) % N) * T.sp;
   if(s.leaving && s.pitIn && !s.parked && (passedIdx(s.lastIdx, best, parkIdx, N) || dPark < 60)) s.parked = true;
   // 隊列の後ろから追いつく途中などで車を抜くときは、その車と反対側に寄って横を抜ける
@@ -11189,18 +11203,21 @@ function stepSC(dt){
   }
   s.dodge = dodge;
   const laneT = approach ? (T.width/2 - 7)*pitSide(T) : (dodge ? (dodge.lat >= 0 ? -1 : 1) * (T.width/2 - 5) : 0);
-  if(s.pitIn) s.lane = (po + (s.parked ? Math.min(6, po*0.2) : 0))*pitSide(T);     // ピットレーン内はレーンの形にぴったり沿う
+  const bayK = s.parked ? clamp(1 - (dPark - 4)/70, 0, 1) : 0;        // 待機場所の手前70から、ピットレーンの外（ガレージの並び）へ寄せる
+  const bayLat = SC_PARK_LAT*bayK*bayK*(3 - 2*bayK);
+  if(s.pitIn) s.lane = (po + bayLat)*pitSide(T);     // ピットレーン内はレーンの形にぴったり沿う
   else s.lane += (laneT - s.lane) * Math.min(1, dt*(dodge ? 5 : 3));
   const look = s.pitIn ? Math.max(2, Math.round((12 + s.v*0.1)/T.sp)) : Math.max(3, Math.round((22 + s.v*0.16)/T.sp));
   const li = (best+look)%N, tp = T.pts[li];
   const onPath = s.pitIn || (approach && pitOff(T, li) > 0);          // 入口の手前でも先にハンドルを切り始める
-  const tl = onPath ? (pitOff(T, li) + (s.parked ? 5 : 0))*pitSide(T) : s.lane;   // 停車するときはレーンの外寄り（ガレージ側）に寄せる
-  const gp = onPath ? pitPos(T, li, 0, s.parked ? 5 : 0) : [tp.x + tp.nx*tl, tp.y + tp.ny*tl];
+  const lk = s.parked ? (() => { const dl = Math.max(0, dPark - look*T.sp), k = clamp(1 - (dl - 4)/70, 0, 1); return SC_PARK_LAT*k*k*(3 - 2*k); })() : 0;   // 先を見る点も、待機場所に向けて外へ
+  const tl = onPath ? (pitOff(T, li) + lk)*pitSide(T) : s.lane;
+  const gp = onPath ? pitPos(T, li, 0, lk) : [tp.x + tp.nx*tl, tp.y + tp.ny*tl];
   const diff = wrapAng(Math.atan2(gp[1] - s.y, gp[0] - s.x) - s.h);
   // ハンドルで曲がれる量は、コーナーの制限速度の計算（SC_GRIP）より余裕を持たせる。そうしないと速度に対して曲がりきれず外へ膨らむ
   const maxYaw = (onPath ? 900 : SC_GRIP*1.6) / Math.max(s.v, 40);
   s.h += clamp(diff*(onPath ? 10 : 5), -maxYaw, maxYaw) * dt;
-  let vt = s.pitIn ? 120 : (s.leaving ? SC_END_PACE : SC_PACE);       // ピットレーンでは減速。解除後はピット入口まで急いで戻る
+  let vt = s.pitIn ? (s.leaving ? PIT_LIM*0.9 : 120) : (s.leaving ? SC_END_PACE : SC_PACE);   // ピットレーンでは減速（戻るときは制限速度の少し下で待機場所まで）。解除後はピット入口まで急いで戻る
   if(s.parked) vt = dPark > 400 ? 0 : Math.min(vt, Math.sqrt(2*200*Math.max(0, dPark - 1)));   // 停車位置で止まる
   if(s.deploying){
     // 出口の手前で待ち、先頭車が近づいてきたら（すぐ前に合流できるタイミングで）走り出す
@@ -11212,6 +11229,7 @@ function stepSC(dt){
       const behind = lead ? ((holdIdx - lead.idx + N) % N) * T.sp : Infinity;   // 先頭車が待機位置の何手前にいるか
       // 待ち方は以前のまま：先頭車が待機位置の40〜260手前に来たら出る（最長45秒待つ）
       if(!lead || (behind > 40 && behind < 260) || race.t - s.waitFrom > 45) s.go = true;
+      else if(s.pitIn && ((best - T.pit.entry + N) % N) >= ((holdIdx - T.pit.entry + N) % N)) vt = 0;   // 待機場所が待機位置より先：その場で待つ
       else vt = Math.min(vt, Math.sqrt(2*200*Math.max(0, dHold - 1)));
     }
     if(s.go) vt = s.pitIn ? PIT_LIM : 200;
@@ -11457,6 +11475,7 @@ function stepCar(c, dt){
     } else if(c.inPit && !c.served && (c.forceServe || passedIdx(c.lastIdx, best, c.boxIdx, N))){
       c.forceServe = false;
       c.served = true; c.pits++; SFX.pit(c);
+      (c.pitL = c.pitL || []).push({ l: c.laps.length, comp: c.nextComp });   // ラップチャートの印：ピットに入った周（その周回を終えた点に）
       c.comp = c.nextComp; c.wear = c.wearLapStart = fitWear(c.m, c.comp); noteTyre(c, c.comp); c.tt = TT_BLANKET[c.comp] ?? 80; c.ttSave = false; c.ttOut = race.t;   // タイヤウォーマーから出した温度
       // ダブルスタック：チームメイトの作業中なら、それが終わって少し間を置くまで待つ
       const busy = (race.pitBusy && race.pitBusy[c.pitTeam]) || 0;
@@ -13457,11 +13476,11 @@ function drawLapChart(force){
   // （中継レイアウトでも高さは枠に合わせて広げず、標準レイアウトと同じ固定の行間で描く）
   // PCの窓：窓の高さいっぱいに描く
   if(document.body.classList.contains('pcRace')){ const hd = wrap.querySelector('.chartHead'); fitH = Math.max(120, wrap.clientHeight - (hd ? hd.offsetHeight + 4 : 20) - 22); }
-  const key = `${cssW}|${fitH}|${n}|${maxLap}|` + cars.map(c=>c.posHist.length + (c.out ? 'x' : '')).join(',');
+  const key = `${cssW}|${fitH}|${n}|${maxLap}|` + cars.map(c=>c.posHist.length + (c.out ? 'x' : '') + 'p' + (c.pitL ? c.pitL.length : 0)).join(',');
   if(!force && key === lapKey) return;
   lapKey = key;
 
-  paintLapChart(lapCv, lapG, cars.map(c => ({ h: c.posHist, out: c.out, col: c.m.color, name: c.m.name })), n, maxLap, cssW, fitH);
+  paintLapChart(lapCv, lapG, cars.map(c => ({ h: c.posHist, out: c.out, col: c.m.color, name: c.m.name, pits: c.pitL })), n, maxLap, cssW, fitH);
 }
 // ラップチャートを描く（レース中の窓と、結果画面の両方で使う）。L：{ h: 順位の推移, out, col, name, hl: 強調 }
 function paintLapChart(lapCv, lapG, L, n, maxLap, cssW, fitH, opt){
@@ -13521,6 +13540,16 @@ function paintLapChart(lapCv, lapG, L, n, maxLap, cssW, fitH, opt){
     g.font = '700 9px "Chakra Petch",sans-serif'; g.textAlign = 'left'; g.textBaseline = 'middle';
     g.fillStyle = col;
     g.fillText(c.name, Math.min(lx+6, cssW-padR+6), ly);
+  }
+  // ピットイン：その周回を終えた点に丸（中の色は履いたタイヤ）。線の上に描く
+  for(const c of cars.slice().sort((a, b) => (a.hl ? 1 : 0) - (b.hl ? 1 : 0))){
+    if(!c.pits || !c.pits.length || !c.h || !c.h.length) continue;
+    g.globalAlpha = emph && !c.hl ? 0.45 : 1;
+    const r = rowH < 10 ? 2.8 : 3.6;
+    for(const P of c.pits){ const l = Math.min(P.l, c.h.length - 1), x = px(l), y = py(c.h[l]);
+      g.beginPath(); g.arc(x, y, r + 1.4, 0, Math.PI*2); g.fillStyle = chartColor(c.col); g.fill();          // 外側：チームの色
+      g.beginPath(); g.arc(x, y, r, 0, Math.PI*2); g.fillStyle = (TYRES[P.comp] && TYRES[P.comp].color) || '#fff'; g.fill();
+      g.lineWidth = 1; g.strokeStyle = 'rgba(0,0,0,.55)'; g.stroke(); }
   }
   g.globalAlpha = 1;
 }
@@ -13707,7 +13736,7 @@ function showResults(){
       bt.onclick = () => { hide.forEach(r => r.classList.remove('rFold')); bt.remove(); }; $('#resultTable').parentElement.after(bt); } }
   pwResult(order);
   // 結果画面のラップチャート：今のレースの順位の推移を写しておく（閉じて開き直しても同じものを描く）
-  resLc = { laps: race.laps, n: race.cars.length, L: race.cars.map(c => ({ h: (c.posHist || []).slice(), out: !!c.out && c.finish === null, col: c.m.color, name: c.m.name, hl: isTeamCar(c) })) };
+  resLc = { laps: race.laps, n: race.cars.length, L: race.cars.map(c => ({ h: (c.posHist || []).slice(), out: !!c.out && c.finish === null, col: c.m.color, name: c.m.name, hl: isTeamCar(c), pits: (c.pitL || []).slice() })) };
   resLcShow(false);
   $('#resLc').hidden = !resLc.L.some(c => c.h.length > 1);
   $('#resultModal').classList.add('show');
@@ -14313,7 +14342,7 @@ function guideHtml(){
     <p><b>引退の申し出</b>：自チームの選手（リザーブを含む）が引退の時期を迎えると、シーズンの終わりに引退を申し出てきます。ただし、契約が来季も残っている間は申し出ません（契約が切れるシーズンの終わりから申し出るようになります。セカンドチームの選手も同じです）。「契約」の欄で、受け入れる（レギュラーは移籍市場かリザーブから後任を選ぶ。契約金なし）か、引き止めるかを決めます。引き止めの成功率は、チーム愛が高いほど上がり、年齢と引き止めた回数が多いほど下がります。能力が著しく高い選手（総合80以上）は、まだ戦えるので引退を申し出にくく（総合85で約6割、90で約4割の起きやすさ）、引き止めにも応じやすくなります（総合85で+25%、87以上で+30%）。失敗したら引退が決まります。決めるまでレースには進めません。ほかのチームの選手は自動で引退し、移籍市場の選手と入れ替わります。</p>
     ${sub('pu', 'パワーユニット（PU）')}
     <p><b>ADUO</b>：シーズンの1/3と2/3が終わった時点で、PUメーカーの性能指数（出力50%・ドライバビリティ30%・信頼性20%）を比べます。トップから${ADUO_LV[1].min}%以上遅れたメーカーは、今季の残りでPU開発枠+1・PUの開発費−15%、${ADUO_LV[2].min}%以上なら+2・−30%になります（ライバルのメーカーにも効き、カスタマーのPUにも届きます）。</p>
-    <p>PUを自分で作る「ワークス」は4チームだけです。ほかのチームはワークスからPUを買う「カスタマー」で、PUの性能はメーカーと同じになります。カスタマーはPUを開発できず、毎戦 ${money(pr(PU_FEE))} の供給料を払います。ワークスはPU専用の開発枠でPUを開発でき、カスタマーの数だけ供給料を受け取ります。新しい仕様はワークスが先に使い、カスタマーには1戦遅れで届きます。シーズンの終わりに、カスタマーは来季の供給元を選び直します（強いメーカーは前年の順位が良くないと供給してくれません）。資金を払えば、来季から自社PUのワークスにもなれます（参入1年目はPU開発枠が1つ増えます。PUが遅れているあいだは、ADUOの認定も受けられます）。ワークスは来季に受け入れるカスタマーの数（0〜3）を決められます。施設タブの「PUワークス」から、ワークスを撤退することもできます（来季から。工場の設備の売却で $${PU_QUIT_REFUND}M。セカンドチームを持っている間はできません）。</p>
+    <p>PUを自分で作る「ワークス」は最初は4チームです。下位に2年続けて沈んだワークスは撤退することがあり、AIのワークスが${PU_AI_MAX}社より少ないと、ワークスでないチームが新しく参入することがあります（成績の良いチームほど参入しやすい。自チームは数に関係なく、いつでも自社PUを始められます）（残り3戦の時点でニュースで伝わり、シーズンの終わりに決まります。メーカーが${PU_MIN}社を下回る撤退はありません）。ほかのチームはワークスからPUを買う「カスタマー」で、PUの性能はメーカーと同じになります。カスタマーはPUを開発できず、毎戦 ${money(pr(PU_FEE))} の供給料を払います。ワークスはPU専用の開発枠でPUを開発でき、カスタマーの数だけ供給料を受け取ります。新しい仕様はワークスが先に使い、カスタマーには1戦遅れで届きます。シーズンの終わりに、カスタマーは来季の供給元を選び直します（強いメーカーは前年の順位が良くないと供給してくれません）。資金を払えば、来季から自社PUのワークスにもなれます（参入1年目はPU開発枠が1つ増えます。PUが遅れているあいだは、ADUOの認定も受けられます）。ワークスは来季に受け入れるカスタマーの数（0〜3）を決められます。施設タブの「PUワークス」から、ワークスを撤退することもできます（来季から。工場の設備の売却で $${PU_QUIT_REFUND}M。セカンドチームを持っている間はできません）。</p>
     ${sub('contract', '契約・更改・引き抜き')}
     <p>契約には年数があります。満了したら、更改金（年俸の${RENEW_K}倍）を払って更改するか、移籍市場で入れ替えます。リザーブも同じく、満了したらシーズンの初めに更改するか放出するかを選びます（強く育ってリザーブを嫌がったり、チーム愛が低いと断られることがあります）。ライバルがリザーブをレギュラーとして引き抜きに来ることもあり、受けると違約金が入ります。決めるまでレースに進めません。成長した選手ほど、更改のときの年俸が上がります。シーズンの終わりに、ライバルが有望な選手の引き抜きを申し出ることがあり、違約金を受け取って放出するか断るかを選べます。放出するときは、移籍市場の選手（相手チームが代わりに放出する選手も含む）か自チームのリザーブから後任を選べます。</p>
     <p><b>他チームからの引き抜き</b>：シーズンの最初（第1戦の前）だけ、移籍市場の「他チーム（引き抜き）」から、ライバルのドライバーに移籍を申し込めます。相手チームに違約金（年俸×（3＋契約の残り年数））を払い、本人には市場価値に上乗せした年俸（標準110%・厚遇125%・破格145%）を出します。来てくれるかは確率で、自チームの前年の順位が相手より上・ファーストの席・年俸の上乗せで上がり、相手チームのファースト・前年の上位3チーム・33歳以上で下がります。断られたとき（本人が断る／相手チームが引き止める）はお金はかかりませんが、同じ選手には今季はもう申し込めません。成功はオフシーズンに1人までです。相手の空いた席は移籍市場の選手で埋まります。セカンドチームの選手は対象外です。</p>
@@ -14350,7 +14379,7 @@ function guideHtml(){
     <p>強化するとすぐに効きます（工期なし）。強化の費用は ${M(facCost(1))}（Lv1）〜 ${M(facCost(FAC_MAX))}（Lv${FAC_MAX}）。レベルごとに毎戦の維持費がかかり、高いレベルほど急に高くなります（Lv1 ${M(pr(facUpkeep(1)))}〜Lv5 ${M(pr(facUpkeep(5)))}/戦）。Lv4以上の施設は、シーズンの切り替えで「来季、改修が必要」と予告されることがあり（Lv4 25%・Lv5 40%）、予告された施設は次のシーズンの初めに改修する（強化費の半分）か、改修せずに1レベル下げるかを選びます。チームによって最初のレベルが違い、ライバルもシーズンの終わりに強化します。</p>
     ${tbl(['施設', 'Lv1', `Lv${FAC_MAX}`], FACS.map(f => [`<b>${f.n}</b><br><small>${esc(f.d)}</small>`, esc(f.eff(1)), esc(f.eff(FAC_MAX))]))}
     <p><b>ホームGP</b>：施設タブで自チームのサーキットを計画して建設費（$90M〜$180M。コースのタイプと観客席の規模で変わる）を払うと、今季の終わりに完成し、来季から毎シーズン、選んだラウンドがホームGPになります。開催国は、今のGPの開催国とドライバーの出身国から選べます（表示がその国の国旗になり、同じ国のGPとは重なりません）。コースは自動で作るか、コース作成の画面で自分で作れます（自分で作ったコースのタイプは、直線の割合とコーナーの形から自動で判定）。開催費は毎シーズン $5M。ホームGPでは観客席の多くがチームカラーになり、レース後に地元スポンサーのボーナス（$3〜5M）とドライバーのチーム愛 +3 が入ります。マシンの速さには影響しません。完成後は「改修を計画する」で、コース（そのまま／自分で作り直す／自動で作り直す）・観客席の規模・名前・開催国を変えられます（改修費は新しい内容で建てるときの建設費の半分。今季の終わりに工事をして、来季から新しいサーキットで開催。シーズン中なら取り消して全額返金）。開催国は建設を決めたあとは、改修でのみ変えられます。</p>
-    <p><b>セカンドチーム</b>：PUのワークスなら、施設タブで、前年のコンストラクターズの下位3チーム（PUメーカーを除く。1年目は今季の順位）から1つを買収して姉妹チームにできます（買収費はチームの強さで $170M〜$200M ほど）。毎戦、運営費 ${M(pr(SIS_OPS))} を払い、姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%を受け取ります。自チームのリザーブを姉妹チームのシートに送り込んで実戦を積ませ（その席の選手は移籍市場へ）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要）。送り込んだ選手の年俸は姉妹チームが払い、ほかのチームに引き抜かれることもありません。姉妹チームには自チームのPUを自動で供給します（供給料など、条件はほかのカスタマーと同じ。来季の受け入れ数には数えません）。開発などの運営はAIが行います。いまの買収費の${Math.round(SIS_SELL*100)}%で売却でき、送り込んでいた選手はそのまま売却先のチームに残ります。<br><b>技術提携</b>：レベル1（${M(pr(SIS_TECH[1].cost))}/戦）でブレーキ、レベル2（${M(pr(SIS_TECH[2].cost))}/戦）で空力も、自チームの1戦前の値から一定の差（ブレーキ−0.5・空力−1.5）まで姉妹チームの値が上がります。レベル3（${M(pr(SIS_TECH[3].cost))}/戦）は空力の差を−1.0まで縮めますが、毎戦${Math.round(SIS_INV_P*100)}%の確率で技術規則の調査が入り、違反と判断されると罰金 ${M(SIS_FINE)}・その戦の姉妹チームのポイント剥奪・今季はレベル1までに制限されます。タイミング表や順位表では、セカンドチームの行をオレンジで示します（自チームは水色）。セカンドチームの選手の人事（契約満了の更改・放出、引退の申し出、ほかのチームからの獲得の申し出、負傷の代役）は、自チームと同じく契約の欄で自分が決めます（決めるまでレースには進めません。費用・年俸は姉妹チームが払います）。移籍市場の選手と、セカンドチームの席で直接契約することもできます。</p>
+    <p><b>セカンドチーム</b>：PUのワークスなら、施設タブで、前年のコンストラクターズの下位3チーム（1年目は今季の順位）から1つを買収して姉妹チームにできます。シーズンの途中に買収を決めると、運営が変わるのは来季からです（開幕前ならすぐに。今季のあいだは予約を取り消せます）。PUメーカーを買うと、そのPU部門は撤退し、カスタマーはほかのメーカーへ移ります（買収費はチームの強さで $170M〜$200M ほど）。毎戦、運営費 ${M(pr(SIS_OPS))} を払い、姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%を受け取ります。自チームのリザーブを姉妹チームのシートに送り込んで実戦を積ませ（その席の選手は移籍市場へ）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要）。送り込んだ選手の年俸は姉妹チームが払い、ほかのチームに引き抜かれることもありません。姉妹チームには自チームのPUを自動で供給します（供給料など、条件はほかのカスタマーと同じ。来季の受け入れ数には数えません）。開発などの運営はAIが行います。いまの買収費の${Math.round(SIS_SELL*100)}%で売却でき、送り込んでいた選手はそのまま売却先のチームに残ります。<br><b>技術提携</b>：レベル1（${M(pr(SIS_TECH[1].cost))}/戦）でブレーキ、レベル2（${M(pr(SIS_TECH[2].cost))}/戦）で空力も、自チームの1戦前の値から一定の差（ブレーキ−0.5・空力−1.5）まで姉妹チームの値が上がります。レベル3（${M(pr(SIS_TECH[3].cost))}/戦）は空力の差を−1.0まで縮めますが、毎戦${Math.round(SIS_INV_P*100)}%の確率で技術規則の調査が入り、違反と判断されると罰金 ${M(SIS_FINE)}・その戦の姉妹チームのポイント剥奪・今季はレベル1までに制限されます。タイミング表や順位表では、セカンドチームの行をオレンジで示します（自チームは水色）。セカンドチームの選手の人事（契約満了の更改・放出、引退の申し出、ほかのチームからの獲得の申し出、負傷の代役）は、自チームと同じく契約の欄で自分が決めます（決めるまでレースには進めません。費用・年俸は姉妹チームが払います）。移籍市場の選手と、セカンドチームの席で直接契約することもできます。</p>
   `)}
   ${sec('quali', '予選', `
     <p>Q1（全車）→ Q2 → Q3（上位10台）のノックアウト方式で、Q1とQ2ではそれぞれ下位${qCut(20)}台が脱落します。各セッションの時間の中で、車は決勝と同じレース画面のコースを、決勝と同じ走りの計算で走ってアタックし、いちばん良いタイムが残ります。</p>
@@ -17204,6 +17233,7 @@ function recordRace(){
   { const R = aduoCheck(); if(R && career.last) career.last.aduo = R; }   // ADUOの判定（シーズンの1/3・2/3）
   makeSreq();
   makeEvent();                                                      // チームの出来事
+  try{ if(career.pu && career.round === career.calendar.length - 3) puPlanMake(); }catch(e){ console.error(e); }   // 残り3戦：PUメーカーの参入・撤退の検討
   saveCareer();
   // 選手権の決着とレース後のニュース
   if(career.last){ try{ const cl = checkClinch(); if(cl){ career.last.clinch = cl; career.clinchPop = cl; } }catch(e){ console.error(e); }
@@ -17762,6 +17792,59 @@ const PU_CAP = 3;                                            // 1社が受け入
 const PU_SELF_COST = 25;                                     // 自社PUを始める費用（来季から）
 const puSum = t => PU_KEYS.reduce((a, k) => a + t.car[k], 0);
 const puMakers = () => career.teams.filter(t => puWorks(t));
+/* ---------- PUメーカーの参入と撤退（2026-11） ----------
+   ・AIのメーカー（自チームを除く）は最大 PU_AI_MAX 社。足りない枠1つにつき PU_ENTER_P の確率で、ワークスでないチームが参入（順位が良いほど選ばれやすい）。
+     自チームは枠に関係なく、いつでも自社PUを始められる
+   ・ワークスで、コンストラクターズの下位3チームが2年続いたチームは、PU_EXIT_P の確率で撤退。ただしメーカーが PU_MIN 社を下回る撤退はしない
+   ・残り3戦の時点で決め（ニュースで「検討」）、シーズンの終わりに正式に実施（そのときも条件を満たしていれば）。P.plan = { season, enter:[id], exit:[id] } */
+const PU_AI_MAX = 4, PU_MIN = 3, PU_ENTER_P = 0.3, PU_EXIT_P = 0.25;
+const puAiMakers = () => puMakers().filter(t => t.id !== career.team);
+function puBottom3(id, season){                                     // そのシーズン（今季は今の順位）にコンストラクターズの下位3チームか
+  const n = career.teams.length;
+  if(season === career.season){ const tbl = teamTable(); return tbl.findIndex(x => x.id === id) >= n - 3; }
+  const x = career.stats && career.stats.teams && career.stats.teams[id] && career.stats.teams[id].seasons && career.stats.teams[id].seasons[season];
+  return !!(x && x.pos && x.pos > n - 3);
+}
+function puPlanMake(){                                              // 残り3戦：参入・撤退を決めて、ニュースで「検討」
+  const P = career.pu; if(!P || (P.plan && P.plan.season === career.season)) return;
+  const me = myTeam(), sis = career.sister ? career.sister.id : null, n = career.teams.length, tbl = teamTable();
+  const plan = { season: career.season, enter: [], exit: [] };
+  // 撤退（自チームは自分で決めるので除く）
+  let left = puMakers().length - (P.quitNext ? 1 : 0);
+  puMakers().filter(t => t !== me && puBottom3(t.id, career.season) && puBottom3(t.id, career.season - 1)).forEach(t => {
+    if(left - 1 >= PU_MIN && Math.random() < PU_EXIT_P){ plan.exit.push(t.id); left--; } });
+  // 参入：AIのメーカーの足りない枠1つにつき1回判定
+  const slots = PU_AI_MAX - (puAiMakers().length - plan.exit.length);
+  for(let s = 0; s < slots; s++){
+    if(Math.random() >= PU_ENTER_P) continue;
+    const C = tbl.filter(x => x.t !== me && x.id !== sis && !puWorks(x.t) && !plan.enter.includes(x.id) && !plan.exit.includes(x.id));
+    if(!C.length) break;
+    const w = C.map(x => { const pos = tbl.indexOf(x) + 1; return (n - pos + 1)**2; });   // 順位が良いほど選ばれやすい（1位は10位の約10倍＝10チームのとき100：1ではなく、2乗の比）
+    let r = Math.random()*w.reduce((a, b) => a + b, 0); const k = w.findIndex(v => (r -= v) < 0);
+    plan.enter.push(C[k < 0 ? C.length - 1 : k].id);
+  }
+  P.plan = plan; P.planNews = career.round;                         // このレースのあとのニュースで伝える
+}
+function puPlanApply(){                                             // シーズンの終わり：検討していた参入・撤退を実施。戻り値：{ enter:[名前], exit:[名前], move:[文] }
+  const P = career.pu, out = { enter: [], exit: [], move: [] };
+  if(!P || !P.plan || P.plan.season !== career.season){ if(P) delete P.plan; return out; }
+  const me = myTeam(), sis = career.sister ? career.sister.id : null, plan = P.plan; delete P.plan; delete P.planNews;
+  plan.exit.forEach(id => { const t = teamOf(id);
+    if(!t || !puWorks(t) || t === me || puMakers().length - 1 < PU_MIN || !puBottom3(id, career.season)) return;   // 最後の順位で下位3チームを抜け出したら撤退しない
+    const others = puMakers().filter(m => m !== t), capOf = mid => mid === me.id ? P.cap : PU_CAP, load = mid => career.teams.filter(x => x.id !== mid && P.sup[x.id] === mid).length;
+    const pickM = () => others.slice().sort((a, b) => (load(a.id) >= capOf(a.id)) - (load(b.id) >= capOf(b.id)) || puSum(b) - puSum(a))[0];
+    puCustomers(t).forEach(c => { const m = pickM(); if(m){ P.sup[c.id] = m.id; P.fee[c.id] = puFeeFor(m.id); out.move.push(`${c.name}→${m === me ? '自チーム' : m.name}`); } });
+    const m = pickM(); if(m){ P.sup[id] = m.id; P.fee[id] = puFeeFor(m.id); out.move.push(`${t.name}→${m === me ? '自チーム' : m.name}`); }
+    delete P.lag[id]; out.exit.push(t.name);
+  });
+  plan.enter.forEach(id => { const t = teamOf(id);
+    if(!t || puWorks(t) || t === me || id === sis || puAiMakers().length >= PU_AI_MAX) return;
+    const ms = puMakers();
+    PU_KEYS.forEach(k => { const av = ms.reduce((a, m) => a + m.car[k], 0)/ms.length; t.car[k] = r1(clamp(av - (k === 'rel' ? 1.1 : 0.7), 1, 10)); });   // 自社PUを始めたときと同じく、平均より少し低く
+    delete P.sup[id]; delete P.fee[id]; out.enter.push(t.name);
+  });
+  return out;
+}
 // 供給料：PUが強いメーカーほど高い（1戦あたり）
 function puFeeFor(mid){
   const ms = puMakers().sort((a, b) => puSum(b) - puSum(a)), r = ms.findIndex(t => t.id === mid);
@@ -17816,6 +17899,7 @@ function usePuSlot(){ career.puUsed = { s: career.season, r: career.round, n: pu
 function puOffseason(){
   const P = career.pu, me = myTeam();
   if(!P) return;
+  try{ const mv = puPlanApply(); if(career.offseason && (mv.enter.length || mv.exit.length)) career.offseason.puMove = mv; }catch(e){ console.error(e); }   // AIのメーカーの参入・撤退
   // 自社PU：来季から自チームがワークスに。最初はほかのメーカーより弱く、信頼性も低い
   if(P.selfNext){
     const ms = puMakers();
@@ -17857,6 +17941,7 @@ function puQuitBlock(){
   const me = myTeam(), P = career.pu;
   if(!P || !puWorks(me)) return 'ワークスではありません';
   if(career.sister) return 'セカンドチームを持っている間は撤退できません（先に売却が必要です）';
+  if(career.sisNext) return 'セカンドチームの買収を予約している間は撤退できません（先に予約の取り消しが必要です）';
   if(puMakers().filter(t => t !== me).length < 1) return 'ほかにPUメーカーがないため撤退できません';
   if(careerRace && !careerRace.done) return 'レース中は決められません';
   return '';
@@ -18348,6 +18433,7 @@ function nextSeason(){
   resFix(myTeam());                                              // 引退したリザーブを外す
   rep.carPrev = carPrev; rep.myDrv = myTeam().drivers.slice();
   career.offseason = rep;
+  try{ const sm = sisApplyNext(); if(sm) rep.sisNew = sm; }catch(e){ console.error(e); }   // 予約していたセカンドチームの買収（来季から運営）
   puOffseason();                                                    // PU：自社PUの開始・カスタマーの乗り換え・供給元の選び直し
   syncPU();                                                         // 規則変更などで変わったメーカーのPUを、カスタマーにも
   if(career.sister) career.sister.lag = carSnap(myTeam());          // 技術提携の基準も、規則変更などのあとの値に
@@ -18807,7 +18893,7 @@ function renderSponsorPick(msg){
   };
 }
 /* ---------- セカンドチーム（姉妹チーム） ----------
-   ・自チームがPUワークスのときだけ、施設タブで、コンストラクターズの下位3チーム（PUメーカーを除く）から1つを買収できる（シーズン中いつでも。レース中を除く）
+   ・自チームがPUワークスのときだけ、施設タブで、コンストラクターズの下位3チームから1つを買収できる（PUメーカーを買うとPU部門は撤退）（シーズン中いつでも。レース中を除く）
    ・姉妹チームには自チームのPUを自動で供給する（条件はほかのカスタマーと同じ：供給料・1戦遅れの仕様。来季の受け入れ数には数えない）
    ・売却：いまの買収費の SIS_SELL で売れる。送り込んでいた選手は、そのまま売却先のチームの選手になる
    ・買収費：$80M＋マシンの平均×$15M＋基本スポンサー料×$10M（下位チームでおよそ$170M〜$200M）
@@ -18822,7 +18908,7 @@ const sisTeam = () => career && career.sister ? (teamOf(career.sister.id) || nul
 const isSis = id => !!(career && career.sister && career.sister.id === id);
 const isLoan = code => { const S = sisTeam(), d = career && career.drivers[code]; return !!(S && d && d.loan && S.drivers.includes(code)); };
 function sisCost(t){ const avg = CAR_KEYS.reduce((a, k) => a + t.car[k], 0)/CAR_KEYS.length; return Math.round(80 + avg*15 + (t.spons || 3)*10); }
-// 買収できるチーム：前年のコンストラクターズの下位3チーム（自チーム・PUメーカーを除く）。
+// 買収できるチーム：前年のコンストラクターズの下位3チーム（自チームを除く）。PUメーカーも買える（買うとPU部門は撤退：sisBuy）。
 // 前年の記録がない（キャリア1年目）ときは、今季の順位で。sisRank(t)：候補の順位と「昨季／今季」
 function sisRanks(){
   const S = career.season, n = career.teams.length, st = career.stats && career.stats.teams;
@@ -18831,18 +18917,54 @@ function sisRanks(){
   const tbl = teamTable(); return { last: false, pos: Object.fromEntries(tbl.map((x, i) => [x.id, i + 1])) };
 }
 function sisCands(){ const R = sisRanks(), n = career.teams.length;
-  return career.teams.filter(t => R.pos[t.id] > n - 3 && t.id !== career.team && !puWorks(t)).sort((a, b) => R.pos[a.id] - R.pos[b.id]); }
+  return career.teams.filter(t => R.pos[t.id] > n - 3 && t.id !== career.team).sort((a, b) => R.pos[a.id] - R.pos[b.id]); }
 const sisBusy = () => !!(careerRace && !careerRace.done) || !!Q;   // レース・予選の途中は動かせない
+/* セカンドチームの買収（2026-11）：シーズンの途中は「予約」だけで、運営が変わるのは来季から（career.sisNext に残し、シーズンの終わりに sisTakeover）。
+   開幕前（その年のレースをまだ1つも走っていない）なら、その場で買収して今季から運営する。代金は決めたときに払い、予約はシーズン中なら取り消せる（全額返金） */
 function sisBuy(id){
-  const t = teamOf(id); if(career.sister || !t || !sisCands().includes(t) || !puWorks(myTeam())) return;
+  const t = teamOf(id); if(career.sister || career.sisNext || !t || !sisCands().includes(t) || !puWorks(myTeam())) return;
   if(sisBusy()){ renderHQ('レースの途中は買収できません。レースが終わってから買収してください。'); return; }
   const cost = sisCost(t); if(career.money < cost) return;
   if(!confirmTwice('sisbuy' + id, cost)) return;
   career.money = r1(career.money - cost);
-  career.sister = { id, since: career.season, round: career.round, paid: cost };
-  const P = career.pu, prev = P && teamOf(P.sup[id]), mine = !!P && P.sup[id] === career.team;
+  if(career.round > 0){                                                       // シーズンの途中：来季から
+    career.sisNext = { id, season: career.season, paid: cost };
+    saveCareer(); renderHQ(`${t.name}の買収を決めました（${money(cost)}）。来季からセカンドチームとして運営します。今季のあいだは予約を取り消せます（全額返金）。`); return;
+  }
+  const msg = sisTakeover(t, cost);
+  saveCareer(); renderHQ(msg);
+}
+function sisCancelNext(){
+  const N = career.sisNext; if(!N) return;
+  if(!confirmTwice('siscancel', -N.paid)) return;
+  career.money = r1(career.money + N.paid); const t = teamOf(N.id); delete career.sisNext;
+  saveCareer(); renderHQ(`${t ? t.name : 'チーム'}の買収の予約を取り消しました（+${money(N.paid)}）。`);
+}
+// シーズンの終わり：予約していた買収を実行（来季から運営）。条件が合わなくなっていたら返金。戻り値：まとめに出す文
+function sisApplyNext(){
+  const N = career.sisNext; if(!N) return '';
+  delete career.sisNext;
+  const t = teamOf(N.id);
+  if(career.sister || !t || t.id === career.team || !puWorks(myTeam())){ career.money = r1(career.money + N.paid);
+    return `${t ? t.name : 'チーム'}の買収は${!puWorks(myTeam()) ? '自チームがPUワークスでなくなったため' : ''}取りやめ、代金（${money(N.paid)}）は戻りました。`; }
+  return sisTakeover(t, N.paid, career.season + 1);
+}
+function sisTakeover(t, cost, since = career.season){
+  const id = t.id;
+  career.sister = { id, since, round: since === career.season ? career.round : 0, paid: cost };
+  const P = career.pu, works = !!P && puWorks(t), prev = P && !works && teamOf(P.sup[id]), mine = !!P && P.sup[id] === career.team;
+  // PUメーカーを買ったとき：そのPU部門は撤退する。カスタマーは、受け入れ枠に空きがあるメーカー（自チームも含む）のうち、PUの強いところへ乗り換える
+  let moved = [];
+  if(works){
+    const me = myTeam(), cus = puCustomers(t), load = mid => career.teams.filter(x => x.id !== id && x.id !== mid && P.sup[x.id] === mid).length;
+    P.sup[id] = career.team; delete P.lag[id];
+    const capOf = mid => mid === me.id ? P.cap : PU_CAP;
+    cus.forEach(c => { const ms = puMakers().filter(m => m.id !== id);
+      const m = ms.slice().sort((a, b) => (load(a.id) >= capOf(a.id)) - (load(b.id) >= capOf(b.id)) || puSum(b) - puSum(a))[0];
+      if(m){ P.sup[c.id] = m.id; P.fee[c.id] = puFeeFor(m.id); moved.push(`${c.name}→${m.id === me.id ? '自チーム' : m.name}`); } });
+  }
   if(P){ P.sup[id] = career.team; P.fee[id] = puFeeFor(career.team); syncPU(); }   // 自チームのPUを供給する（条件はほかのカスタマーと同じ）
-  saveCareer(); renderHQ(`${t.name}を買収し、セカンドチームにしました（${money(cost)}）。${mine ? '' : `PUは${prev ? prev.name + '製から' : ''}自チームのPUに切り替わります。`}次のレースから、運営費の支払いと賞金の分配が始まります。`);
+  return `${t.name}を買収し、セカンドチームにしました（${money(cost)}）。${works ? `${t.name}のPU部門は撤退し、自チームのPUに切り替わります。${moved.length ? `カスタマーのPU：${moved.join('、')}。` : ''}` : mine ? '' : `PUは${prev ? prev.name + '製から' : ''}自チームのPUに切り替わります。`}次のレースから、運営費の支払いと賞金の分配が始まります。`;
 }
 /* 姉妹チームのチーム名・略称・ロゴの変更（買収している間だけ）。元の名前などは career.sister.orig に残し、売却や「元に戻す」で戻す */
 let sisEd = null;                                       // 編集中の下書き { name, short, sym, inv }
@@ -19194,14 +19316,23 @@ function sisCard(me){
       <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
     </div>`;
   }
+  if(!S && career.sisNext){                                     // 買収を予約中（来季から運営）
+    const N = career.sisNext, t = teamOf(N.id), on = armed.key === 'siscancel';
+    return `<div class="facCard sisCard">
+      <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">来季から運営（買収を予約中）</div></div></div>
+      <div class="sisList"><div class="sisRow">${t ? teamLogo(t, 22) : ''}<div class="sisNm"><b>${t ? esc(t.name) : '—'}</b><small class="muted">代金 ${money(N.paid)}（支払い済み）・シーズンの終わりにセカンドチームになります</small></div>
+        <button class="b sm ${on ? 'go' : ''}" type="button" id="sisCancel">${on ? 'もう一度押して取り消し' : '予約を取り消す（全額返金）'}</button></div></div>
+      <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
+    </div>`;
+  }
   if(!S){
     const C = sisCands(), R = sisRanks();
     return `<div class="facCard sisCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">下位のチームを買収して、姉妹チームにする</div></div></div>
-      <p class="facD">${R.last ? '<b>前年</b>の' : ''}コンストラクターズの下位3チーム（PUメーカーを除く）から1つを買収できます${R.last ? '' : '（1年目は今季の順位で）'}。姉妹チームには自チームのPUを自動で供給します（条件はほかのカスタマーと同じ）。開発などの運営はそのままAIが行います。</p>
+      <p class="facD">${R.last ? '<b>前年</b>の' : ''}コンストラクターズの下位3チームから1つを買収できます。シーズンの途中に決めた買収は、<b>来季から</b>運営が変わります（開幕前ならすぐに）。PUメーカーを買うと、そのPU部門は撤退します${R.last ? '' : '（1年目は今季の順位で）'}。姉妹チームには自チームのPUを自動で供給します（条件はほかのカスタマーと同じ）。開発などの運営はそのままAIが行います。</p>
       <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
       <div class="sisList">${C.length ? C.map(t => { const cost = sisCost(t), on = armed.key === 'sisbuy' + t.id, poor = career.money < cost, pos = R.pos[t.id];
-        return `<div class="sisRow">${teamLogo(t, 22)}<div class="sisNm"><b>${esc(t.name)}</b><small class="muted">${R.last ? '昨季' : '今季'}${pos}位・${t.drivers.join(' / ')}</small></div><button class="b sm ${on ? 'go' : ''}" type="button" data-sisbuy="${t.id}" ${poor || sisBusy() ? 'disabled' : ''}>${poor ? `資金が足りません（${money(cost)}）` : on ? 'もう一度押して確定' : `買収する ${money(cost)}`}</button></div>`; }).join('') : '<p class="muted" style="font-size:12px;margin:0">いま買収できるチームはありません（下位3チームがPUメーカーのときなど）。</p>'}</div>
+        return `<div class="sisRow">${teamLogo(t, 22)}<div class="sisNm"><b>${esc(t.name)}</b><small class="muted">${R.last ? '昨季' : '今季'}${pos}位・${t.drivers.join(' / ')}</small>${puWorks(t) ? `<small class="sisPuW">PUメーカー：買うとPU部門は撤退${puCustomers(t).length ? `（カスタマー${puCustomers(t).length}チームはほかのメーカーへ）` : ''}</small>` : ''}</div><button class="b sm ${on ? 'go' : ''}" type="button" data-sisbuy="${t.id}" ${poor || sisBusy() ? 'disabled' : ''}>${poor ? `資金が足りません（${money(cost)}）` : on ? 'もう一度押して確定' : career.round > 0 ? `来季から買収 ${money(cost)}` : `買収する ${money(cost)}`}</button></div>`; }).join('') : '<p class="muted" style="font-size:12px;margin:0">いま買収できるチームはありません。</p>'}</div>
     </div>`;
   }
   const tbl = teamTable(), pos = tbl.findIndex(x => x.id === S.id) + 1, rs = resList(me), L = career.last && career.last.led, busy = sisBusy();
@@ -19244,6 +19375,7 @@ function sisTechHtml(S, me, busy){
 function sisBind(el){
   el.querySelectorAll('[data-sistech]').forEach(b => b.onclick = () => sisSetTech(+b.dataset.sistech));
   el.querySelectorAll('[data-sisbuy]').forEach(b => b.onclick = () => sisBuy(b.dataset.sisbuy));
+  { const sc = el.querySelector('#sisCancel'); if(sc) sc.onclick = sisCancelNext; }
   el.querySelectorAll('[data-sissend]').forEach(b => b.onclick = () => { const [c, s] = b.dataset.sissend.split(':'); sisSend(c, +s); });
   el.querySelectorAll('[data-sisswap]').forEach(b => b.onclick = () => { const y = window.scrollY; const [c, s] = b.dataset.sisswap.split(':'); sisSwap(c, +s); window.scrollTo(0, y); });
   el.querySelectorAll('[data-sisswr]').forEach(b => b.onclick = () => { const y = window.scrollY; const [c, s] = b.dataset.sisswr.split(':'); sisSwapRes(c, +s); window.scrollTo(0, y); });
@@ -19945,6 +20077,8 @@ function renderHQView(msg){
       return `<div class="osBlk"><span class="osLab">マシン<small>規則の見直しで、各チームの差は毎年少し縮まります</small></span>
         ${off.reg ? (() => { const R = off.reg, th = REG_THEMES[R.theme], mine = R.teams[career.team] || { pts: 0, b: 0, avg: 0 }, rv = Object.entries(R.teams).filter(([id]) => id !== career.team).sort((a, b) => b[1].avg - a[1].avg)[0];
           return `<div class="regBar now" style="margin-bottom:8px"><span class="kick">NEW REGULATIONS</span><span><b>${esc(th.n)}の大規則変更</b>。自チームの先行研究 ${mine.parts && Object.keys(mine.parts).length > 1 ? Object.entries(mine.parts).map(([p, x]) => `${p === 'pu' ? 'PU' : '車体'}${x.n ?? Math.round(x.pts)}回（+${x.b.toFixed(1)}）`).join('・') : `${mine.n ?? Math.round(mine.pts)}回`} → ${esc(th.n)}の項目は平均 <b>${mine.avg.toFixed(1)}</b> から（研究の効果 平均+${mine.b.toFixed(1)}）。${rv ? `ライバル最高は${esc((teamOf(rv[0]) || {}).name || '')}の${rv[1].avg.toFixed(1)}。` : ''}</span></div>`; })() : ''}
+        ${off.sisNew ? `<div class="regBar" style="margin-bottom:8px"><span class="kick">SECOND TEAM</span><span>${esc(off.sisNew)}</span></div>` : ''}
+        ${off.puMove ? `<div class="regBar" style="margin-bottom:8px"><span class="kick">POWER UNIT</span><span>${off.puMove.exit.length ? `<b>${off.puMove.exit.map(esc).join('・')}</b>がPU開発から撤退。` : ''}${off.puMove.enter.length ? `<b>${off.puMove.enter.map(esc).join('・')}</b>が来季から自社PUで参戦（最初は性能・信頼性とも低め）。` : ''}${off.puMove.move.length ? `<small class="muted" style="display:block">PUの乗り換え：${off.puMove.move.map(esc).join('、')}</small>` : ''}</span></div>` : ''}
         <div class="osCars"><div class="osCar osCarH"><span>部品</span><span>値（平均）</span><span>全チームの中の順位</span></div>${rows}</div></div>`; })();
     // チームの移籍（ライバル）：表にして、たたんでおく
     const mv = [];
@@ -24944,7 +25078,7 @@ function drawMiniMap(){
     }
   }
   // セーフティカー
-  if(race.scCar){ g.fillStyle = '#ffc400'; g.fillRect(X(race.scCar.x) - 2.5, Y(race.scCar.y) - 2.5, 5, 5); }
+  if(race.scCar && !race.scCar.parked && !Q){ g.fillStyle = '#ffc400'; g.fillRect(X(race.scCar.x) - 2.5, Y(race.scCar.y) - 2.5, 5, 5); }
   // フリーカメラ：いま映している範囲
   if(cam.mode === 'free'){
     const hw = VW/(2*cam.z), hh = viewH()/(2*cam.z), x0 = X(cam.x - hw), y0 = Y(cam.y - hh), w = hw*2*G.k, h = hh*2*G.k;
@@ -25404,7 +25538,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.3.1';
+const APP_VER = '1.4.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25444,6 +25578,19 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.4.0', items: [
+    ['PU', [
+      'AIのPUメーカーが参入・撤退するように（最大4社）',
+      'PUメーカーもセカンドチームとして買収できる（PU部門は撤退）',
+    ]],
+    ['本部', [
+      'シーズン途中のセカンドチーム買収は来季から運営',
+    ]],
+    ['決勝', [
+      'ラップチャートにピットインを表示',
+      'SCはピット出口側のガレージの隣で待機',
+    ]],
+  ] },
   { v: '1.3.1', items: [
     ['ドライバー', [
       '調子が結果と関係なく、波で上下するように',
@@ -25675,6 +25822,11 @@ function makeNews(){
   if(L.aduo){ const A = L.aduo, nm = id => (teamOf(id) || {}).name || '';
     if(A.granted.length) add('ADUO', 'good', A.granted.some(x => x.id === me) ? 92 : 70, `FIA、${A.granted.map(x => nm(x.id)).join('と')}にADUOを認定`, `第${A.round}戦のあとのPU性能の判定で、トップから${A.granted.map(x => `${nm(x.id)}は${x.gap}%`).join('、')}の遅れ。今季の残りはPUの開発の機会が増え、開発費も軽くなる。`);
     else add('ADUO', '', 40, 'ADUOの判定、新たな認定はなし', `第${A.round}戦のあとのPU性能の判定では、${ADUO_LV[1].min}%以上遅れたメーカーはなかった。`); }
+  { const P = career.pu;                                             // PUメーカーの参入・撤退の検討（残り3戦の時点）
+    if(P && P.plan && P.planNews === career.round){
+      P.plan.exit.forEach(id => { const t = teamOf(id); if(t) add('PU', '', 70, `${t.name}、PU開発からの撤退を検討`, `2年続けてコンストラクターズの下位に沈む${t.name}が、来季限りでパワーユニットの開発から手を引くことを検討していると伝えられた。シーズンの終わりまでに正式に決める見込み。`); });
+      P.plan.enter.forEach(id => { const t = teamOf(id); if(t) add('PU', '', 70, `${t.name}、来季から自社PUを検討`, `${t.name}が、来季から自社製のパワーユニットで戦うことを検討していると伝えられた。`); });
+    } }
   N.sort((a, b) => b.w - a.w);
   return N.slice(0, 9).map(({ tag, cls, h, b }) => ({ tag, cls, h, b }));
 }
