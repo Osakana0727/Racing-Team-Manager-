@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.4.0 -->
+<!-- レーシングチームマネージャー ver 1.4.1 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,9 +29,9 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.4.0">
-<meta name="build" content="20261117-1">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="version" content="1.4.1">
+<meta name="build" content="20261118-1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -130,6 +130,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 input[type=range]{width:100%;accent-color:var(--red)}
 input[type=text],select,textarea{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
 input[type=text]{min-width:0;flex:1}
+/* iPhone/iPad：画面の拡大を防ぐ（2026-11）
+   ・ダブルタップで拡大しない（manipulation：スクロールはそのまま。キャンバスなどの touch-action:none はそのまま効く）
+   ・文字が16px未満の入力欄を触ると Safari が自動で拡大するので、iPhone/iPad では入力欄を16pxにする */
+html{touch-action:manipulation}
+@supports (-webkit-touch-callout: none){
+  input[type=text], input[type=number], input[type=search], input:not([type]), select, textarea{font-size:16px !important}
+}
 .muted{color:var(--muted);font-size:12px}
 .list{display:flex;flex-direction:column;gap:4px;margin-top:8px;max-height:220px;overflow:auto}
 .item{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
@@ -3431,7 +3438,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.4.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.4.1</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -3650,13 +3657,13 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
             <span class="eta num" id="ttRange"></span>
           </div>
         </div>
-        <p class="ttNote">タイヤには得意な路面温度があります。ソフト 20〜35℃・ミディアム 28〜42℃・ハード 35〜50℃。外れるとグリップが少し落ち、暑すぎると摩耗が早まります。</p>
+        <p class="ttNote">得意な路面温度：ソフト 20〜35℃・ミディアム 28〜42℃・ハード 35〜50℃。外れるとグリップが落ちます。</p>
         <details class="more" id="moreSet">
           <summary><span class="sumHead">詳細設定</span><span class="sumTxt" id="moreSum"></span></summary>
           <div class="moreBody optList">
             <label class="sw2"><input type="checkbox" id="drsOn" checked><span class="knob"></span><span class="swTxt">OTモード・ブースト<small>検知地点で前車と1秒以内ならOTモード。バッテリーを使うブーストで攻防</small></span></label>
             <label class="sw2"><input type="checkbox" id="pitOn" checked><span class="knob"></span><span class="swTxt">タイヤ摩耗とピットイン<small>タイヤが減り、交換のためにピットに入る</small></span></label>
-            <label class="sw2 child" id="ruleRow"><input type="checkbox" id="ruleOn" checked><span class="knob"></span><span class="swTxt">タイヤ規定<small>1回以上ピットに入り、2種類以上のドライタイヤを使う。守れなければ30秒加算（雨用タイヤを使ったら免除・2周以下のレースは対象外・赤旗中の交換も数える）</small></span></label>
+            <label class="sw2 child" id="ruleRow"><input type="checkbox" id="ruleOn" checked><span class="knob"></span><span class="swTxt">タイヤ規定<small>ドライタイヤを2種類以上使う。守れなければ30秒加算（雨用タイヤを使ったら免除）</small></span></label>
             <label class="sw2"><input type="checkbox" id="crashOn" checked><span class="knob"></span><span class="swTxt">クラッシュとセーフティカー<small>事故・黄旗・SC・赤旗が起きる</small></span></label>
             <div class="subRow child" id="crashRateRow">
               <label class="subLab" for="crashRate">事故の起きやすさ</label>
@@ -7150,8 +7157,9 @@ cv.addEventListener('lostpointercapture', e=>{ if(ptrs.has(e.pointerId)) endPoin
 // iPhone/iPad の Safari では、レース画面でスクロール可にしたあと touch-action を戻しても効かないことがあるため、
 // コース作成中はキャンバス上のタッチでページがスクロールしないよう、ここでも止めておく
 cv.addEventListener('touchstart', e=>{ if(mode === 'edit') e.preventDefault(); }, { passive: false });
-// iPhone/iPad の Safari：レース画面のコースの上での2本指の操作で、ページ全体が拡大しないようにする
-for(const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => { if(mode === 'race' && e.target && e.target.closest && e.target.closest('canvas')) e.preventDefault(); }, { passive: false });
+// iPhone/iPad の Safari：2本指の操作でページ全体が拡大しないようにする（2026-11：レース画面のコースの上だけでなく、どこでも）。
+// コースの拡大縮小はキャンバスがタッチで自分で処理するので影響しない。もし何かの拍子にページが拡大されていたら、縮めて戻せるよう止めない
+for(const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => { if(window.visualViewport && visualViewport.scale > 1.01) return; e.preventDefault(); }, { passive: false });
 cv.addEventListener('touchmove', e=>{ if(mode === 'edit') e.preventDefault(); }, { passive: false });
 document.addEventListener('keydown', e=>{ if(e.code === 'Space' && mode === 'edit' && !/^(input|textarea|select|button)$/i.test(e.target.tagName || '')){ e.preventDefault(); if(!spaceDown){ spaceDown = true; edCursor(); } } });
 document.addEventListener('keyup', e=>{ if(e.code === 'Space'){ spaceDown = false; edCursor(); } });
@@ -15461,7 +15469,7 @@ function dsRvHtml(){
       <div class="pchSlot"><div class="mkRow"><span class="pchP pch-${cls}">脈あり：${lab}</span></div>
         ${ch.why.length ? `<ul class="pchWhy">${ch.why.map(([w, v]) => `<li class="${v > 0 ? 'up' : 'dn'}">${v > 0 ? '＋' : '−'} ${esc(w)}</li>`).join('')}</ul>` : ''}
         <div class="mkRow pchBtns"><button type="button" class="b sm ${on ? 'go' : ''}" data-dpch="${d.id}" ${why ? `disabled title="${esc(why)}"` : ''}>${on ? 'もう一度押して申し込む' : cur ? `申し込む（${esc(cur.name.split('・').pop())}は移籍市場へ）` : '申し込む'}</button></div></div>
-      <p class="muted pchNote">契約年数は「設計責任者」の表示で選べます。断られたときはお金はかかりません。</p>` : '';
+      <p class="muted pchNote">断られたときは費用はかかりません。</p>` : '';
     return `<div class="dCard dsCard pchCard${isOpen ? ' open' : ''}${tried ? ' tried' : ''}">
       <div class="dcHead">${dsFace(d, 48, teamSuit(t))}<div class="dcName">${flagSvg(d.nat, 13, 'nflag')}<b>${esc(d.name)}</b><small>${ageNow(d)}歳 ・ ${teamLogo(t, 13)} ${esc(t.name)}</small></div>${tried ? '<span class="cTag">申し込み済み</span>' : ''}</div>
       <div class="dsTags">${dsTagsHtml(d, sc)}</div>
@@ -15470,7 +15478,7 @@ function dsRvHtml(){
       <div class="dcActs"><button type="button" class="b sm ghost" data-dpchopen="${d.id}" aria-expanded="${isOpen}" ${tried || S.done ? 'disabled' : ''}>${isOpen ? '閉じる' : '交渉の内容を見る'}</button></div></div>`;
   }).join('');
   const status = !open ? '' : S.done ? `<p class="note" style="margin:0 0 10px">今季の設計責任者の引き抜きは済んでいます（${esc(S.done)}が加入）。</p>`
-    : '<p class="note" style="margin:0 0 10px">ドライバーとは別に、オフシーズンに<b>1人まで</b>引き抜けます。成功すると、今の設計責任者は移籍市場に移ります。</p>';
+    : '<p class="note" style="margin:0 0 10px">オフシーズンに<b>1人まで</b>引き抜けます。</p>';
   return `<h3 class="pchDsH">設計責任者</h3>${status}<div class="drvGrid faGrid pchGrid">${cards || '<p class="muted">引き抜ける設計責任者はいません。</p>'}</div>`;
 }
 // シーズンの終わり：年齢・能力の変化、契約年数、AIの入れ替え、引退と新人
@@ -15628,7 +15636,7 @@ function grayCardHtml(){
       : d && d.type === 'gray' ? '<p class="muted gcNone">いまは提案がありません。レースのあとに、ときどき新しい案を持ってきます。</p>' : ''}
     ${live.length ? `<div class="gcList">${live.map(T => `<span class="gcTrick"><b>${esc(T.name)}</b><span>${esc(carKeyName(T.key))} +${T.gain.toFixed(1)}</span><i class="${stTag[T.st][1]}">${stTag[T.st][0]}</i></span>`).join('')}</div>` : ''}
     ${G.log.length ? `<div class="gcLog">${G.log.slice(0, 3).map(x => `<div class="${x.cls || ''}"><small>${SY(x.s)}・R${x.r + 1}</small>${esc(x.text)}</div>`).join('')}</div>` : ''}
-    <p class="note gcNote">採用中の抜け穴は、毎戦「指摘」を受けることがあります（疑惑度が高いほど、表彰台に上がるほど受けやすい）。結果は、即時禁止（伸びた分の1.2倍下がる）・来季から禁止（シーズンの終わりに下がる）・合法（ライバルもまねをして半分ほど追いつく）のどれかです。ポイントの剥奪や罰金はありません。</p>
+    <p class="note gcNote">抜け穴は毎戦「指摘」を受けることがあり、禁止（性能が下がる）か合法（ライバルがまねる）になります。</p>
   </div>`;
 }
 const inProgressHQ = () => !!(careerRace && careerRace.round === career.round && !careerRace.done && race.state !== 'idle');
@@ -15651,9 +15659,9 @@ function marketDsHtml(viewSeg){
     <h2>移籍市場<button type="button" class="qm" data-guide="market" aria-label="遊び方を見る">?</button><span class="kick">契約金 = 年俸×${SIGN_K}</span></h2>
     ${viewSeg}
     <div class="row" style="margin:0 0 8px;gap:8px"><span class="muted">契約年数</span><div class="seg2">${[1, 2, 3].map(y => `<button type="button" data-dsy="${y}" class="${dsSignYrs === y ? 'on' : ''}">${y}年</button>`).join('')}</div><span class="muted">50歳未満は短い契約、50歳以上は長い契約のほうが年俸が安くなります</span></div>
-    ${cur ? `<div class="drvGrid faGrid dsCur">${card(cur, true)}</div>` : '<p class="warn" style="margin:0 0 10px">いまは設計責任者がいません。技術陣で開発を回しているため、失敗しやすくなっています。</p>'}
+    ${cur ? `<div class="drvGrid faGrid dsCur">${card(cur, true)}</div>` : '<p class="warn" style="margin:0 0 10px">設計責任者がいないため、開発が失敗しやすくなっています。</p>'}
     <div class="drvGrid faGrid">${list.map(d => card(d, false)).join('') || '<p class="muted">いま市場にいる設計者はいません。</p>'}</div>
-    <p class="note">設計責任者は1チームに1人です。タイプで開発の失敗・成功・大成功の確率が決まり、能力が高いほど・得意分野の部品ほど失敗しにくくなります。交代すると、今の設計責任者は移籍市場に移ります（違約金はかかりません）。年俸は毎戦の収支から引かれます。${sc ? 'スカウト部門（Lv4以上）の調査で、能力の数値まで分かっています。' : '能力はランクで表示しています（スカウト部門をLv4にすると数値が分かります）。'}</p>
+    <p class="note">タイプと能力で開発の成功率が決まります。${sc ? '' : '能力の数値はスカウト部門Lv4で分かります。'}</p>
   </div>`;
 }
 /* ---------- リザーブのシミュレーター作業 ----------
@@ -17564,7 +17572,7 @@ function marketRvHtml(viewSeg){
   }).join('')).join('');
   const status = !open ? `<p class="warn" style="margin:0 0 10px">引き抜きができるのは、シーズンの最初（第1戦の前）だけです。いまは候補の確認だけできます。</p>`
     : S.done ? `<p class="note" style="margin:0 0 10px">今季の引き抜きは済んでいます（${S.done}が加入）。次のオフシーズンにまた申し込めます。</p>`
-    : `<p class="note" style="margin:0 0 10px">オフシーズンに<b>1人まで</b>引き抜けます。成功は確率で、断られてもお金はかかりませんが、同じ選手には今季はもう申し込めません。</p>`;
+    : `<p class="note" style="margin:0 0 10px">オフシーズンに<b>1人まで</b>引き抜けます。断られても費用はかかりません。</p>`;
   return `<div class="sec">
     <h2>移籍市場<button type="button" class="qm" data-guide="contract" aria-label="遊び方を見る">?</button><span class="kick">他チームからの引き抜き</span></h2>
     ${viewSeg}${status}
@@ -17727,14 +17735,14 @@ function puPanelHtml(me){
       ${P.quitNext ? '<div class="ppRow"><span class="puTag">撤退予定</span><span class="muted">今季の終わりでワークスから撤退します（施設タブで取り消せます）</span></div>' : ''}
       <div class="ppRow"><span class="muted">カスタマー</span><span>${cs.length ? cs.map(t => `${teamLogo(t, 14)}${esc(t.name)}`).join('、') : 'なし'}</span><span class="muted">供給料 ${cs.length ? '+' + money(pr(puLedger(me))) + '/戦' : '—'}</span></div>
       <div class="ppRow"><span class="muted">来季の受け入れ</span><div class="seg2" role="radiogroup" aria-label="来季に受け入れるカスタマーの数">${[0, 1, 2, 3].map(n => `<button type="button" data-pucap="${n}" class="${P.cap === n ? 'on' : ''}" aria-checked="${P.cap === n}">${n}チーム</button>`).join('')}</div></div>
-      <p class="note" style="margin:4px 0 0">PUの開発はPU専用の開発枠で行います（空力・ブレーキの枠とは別）。新しい仕様は自チームが先に使い、カスタマーには1戦遅れで届きます。受け入れると供給料が入りますが、ライバルも同じPUで速くなります。</p></div>`;
+      <p class="note" style="margin:4px 0 0">PUはPU専用の開発枠で開発します。カスタマーには1戦遅れで届き、供給料が入ります。</p></div>`;
   }
   const m = teamOf(puMakerOf(me)), fee = P.fee[me.id] ?? PU_FEE, poor = career.money < PU_SELF_COST, on = armed.key === 'puself';
   return `<div class="puPanel"><div class="ppHead"><b>パワーユニット：カスタマー</b></div>
     <div class="ppRow"><span class="muted">供給元</span><span>${teamLogo(m, 14)}${esc(m.name)}製</span><span class="muted">供給料 ${money(pr(fee))}/戦</span></div>
     ${aduoRowHtml(m.id, false)}
-    <p class="note" style="margin:4px 0 6px">PUの性能はメーカーと同じで、メーカーの新しい仕様は1戦遅れで届きます。供給元はシーズンの終わりに選び直せます。</p>
-    ${P.selfNext ? '<div class="ppRow"><span class="puTag works">来季から自社PU</span><span class="muted">準備中です。来季の最初はメーカーの平均より少し低い性能（信頼性はもう少し低め）から始まります。参入1年目はPU開発枠が1つ増えます（PUが遅れているあいだは、ADUOの認定も受けられます）。</span></div>'
+    <p class="note" style="margin:4px 0 6px">メーカーの新しい仕様は1戦遅れで届きます。供給元はシーズンの終わりに選び直せます。</p>
+    ${P.selfNext ? '<div class="ppRow"><span class="puTag works">来季から自社PU</span><span class="muted">準備中。最初は平均より少し低い性能から始まり、1年目はPU開発枠が1つ増えます。</span></div>'
       : `<div class="cActs"><button type="button" class="b sm ${on ? 'go' : ''}" id="puSelf" ${poor || inProg ? 'disabled' : ''}>${on ? `もう一度押して確定（${money(PU_SELF_COST)}）` : `自社PUを始める（来季から・${money(PU_SELF_COST)}）`}</button>${poor ? '<span class="muted" style="font-size:12px">資金が足りません</span>' : ''}</div>`}</div>`;
 }
 // PU供給の一覧（開発タブのPUの欄）：ワークスごとに、PUの強さと供給先のチーム
@@ -18145,7 +18153,7 @@ function openIncome(){
     <h4>スポンサー契約</h4>
     <p>${sp ? `<b style="color:var(--text)">${esc(sp.name)}</b>（${esc(SPONSOR_TYPES[sp.type].n)}）：${sponsorTerms(sp)}` : 'まだ契約していません。'}</p>
     <h4>人気度</h4>
-    <p>今は <b style="color:var(--text)">${Math.round(P*100)}</b>${pd ? `（前戦 ${pd > 0 ? '+' : '−'}${Math.abs(Math.round(pd*1000)/10)}）` : ''}。100が基準で、${Math.round(POP_MIN*100)}〜${Math.round(POP_MAX*100)}の間で動きます。毎戦の成績で上下し（優勝 +3・表彰台 +1.5・入賞 +0.4・ポールポジション +0.8・入賞圏外 −0.3・リタイア −1。2台ぶん）、少しずつ100に戻ります。基本スポンサー収入に掛かり、来季のスポンサー料の見直しにも効きます。</p>
+    <p>今は <b style="color:var(--text)">${Math.round(P*100)}</b>${pd ? `（前戦 ${pd > 0 ? '+' : '−'}${Math.abs(Math.round(pd*1000)/10)}）` : ''}（基準100）。成績で上下し、基本スポンサー収入に掛かります。</p>
     ${inc.length ? `<h4>前戦の収入</h4><table class="ledger">${inc.map(([a, v]) => row(a, sg(v))).join('')}${row('収入の合計', money(r1(inc.reduce((s, x) => s + x[1], 0))), 'sum')}</table><p>支出も含めた収支は、概要の「この戦いの収支」で見られます。</p>` : ''}`;
   const m = $('#incModal'); m.classList.add('show'); $('#incClose').focus();
 }
@@ -18738,7 +18746,7 @@ function renderNew(msg){
   el.innerHTML = `
   <div class="sec pickSec">
     <div class="row" style="justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">チームを選ぶ</h2><button class="b sm ghost" type="button" id="saveIONew">セーブを読み込む</button></div>
-    <p class="hqIntro">あなたはチーム代表です。全${ROUNDS}戦のシーズンを戦い、資金をやりくりしてマシンを開発し、ドライバーと契約します。強豪チームは勝って当たり前、下位チームは少ない予算で這い上がる戦いになります。</p>
+    <p class="hqIntro">あなたはチーム代表です。資金をやりくりしてマシンを開発し、全${ROUNDS}戦のシーズンを戦います。</p>
     <div class="pkLayout">
       <div class="pkList">${groups}${ownCard}${own ? ownEditorHtml() : ''}</div>
       ${own ? '' : `<aside class="pkSide">${detail}</aside>`}
@@ -18871,7 +18879,7 @@ function renderSponsorPick(msg){
   </div>
   <div class="sec spPick spGate">
     <h2>スポンサー契約を選ぶ<span class="kick">SEASON ${SY(career.season)}</span></h2>
-    <p class="note" style="margin:0 0 10px">今シーズンの契約を1つ選んでください。シーズン中は変更できません。契約すると、チーム本部とレースの準備に進めます。</p>
+    <p class="note" style="margin:0 0 10px">今シーズンの契約を1つ選んでください（シーズン中は変更できません）。</p>
     <div class="spOpts">${offers.map((o, i) => `<button type="button" class="spOpt ${i === spPickSel ? 'on' : ''}" role="radio" aria-checked="${i === spPickSel}" data-sp="${i}"><span class="tier${isPaySp(o) ? ' payT' : ''}">${SPONSOR_TYPES[o.type].n}${o.renew ? '・継続' : ''}</span>${sponsorLogo(o.name, 34)}${isPaySp(o) ? payDrvMini(o.drv) : ''}<span class="sd">${esc(SPONSOR_TYPES[o.type].d)}</span><span class="st">${sponsorTerms(o)}</span></button>`).join('')}</div>
     ${spPickSel >= 0 && isPaySp(offers[spPickSel]) ? payChoiceHtml(offers[spPickSel]) : ''}
     <div class="row" style="margin-top:12px;gap:10px;justify-content:flex-end">
@@ -19035,7 +19043,7 @@ function sisBrandHtml(S){
     <div class="owRow"><label>サブカラー</label>${sw('col2', d.col2)}</div>
     <div class="owRow"><label>ロゴ</label><div class="owSyms" role="radiogroup">${Object.entries(OWN_SYM).map(([k, sy]) => `<button type="button" role="radio" aria-checked="${k === d.sym}" data-sbsym="${k}" class="${k === d.sym ? 'on' : ''}" title="${sy.n}">${ownLogoSvg({ ...prev, logo: { sym: k, inv: !!d.inv } }, 34)}</button>`).join('')}</div></div>
     <div class="owRow"><label></label><label class="owChk"><input type="checkbox" id="sbInv" ${d.inv ? 'checked' : ''}> ロゴの地と図の色を入れ替える</label></div>
-    <p class="muted" style="margin:2px 0 6px;font-size:11.5px">メインカラー・サブカラーは、マシン・ロゴ・表の色に使われます（マシンは次のレースから）。売却すると、元のチーム名・色・ロゴに戻ります。</p>
+    <p class="muted" style="margin:2px 0 6px;font-size:11.5px">色はマシン・ロゴ・表に使われます。売却すると元に戻ります。</p>
     <div class="cActs"><button type="button" class="b sm go" data-sbsave="1">変更する</button><button type="button" class="b sm" data-sbcancel="1">やめる</button>${career.sister.orig ? `<button type="button" class="b sm ghost ${armed.key === 'sisreset' ? 'go' : ''}" data-sbreset="1">${armed.key === 'sisreset' ? 'もう一度押して元に戻す' : `元の名前（${esc(career.sister.orig.name)}）に戻す`}</button>` : ''}</div>
   </div>`;
 }
@@ -19308,11 +19316,11 @@ function sisSetTech(lv){
 }
 function sisCard(me){
   const S = sisTeam(), ico = '<span class="facIco"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 20V10l5-3v13M10 20V7l5 3v10M15 20v-7l4-2v9"/></svg></span>';
-  const eff = `毎戦、運営費 <b>${money(pr(SIS_OPS))}</b> を払い、姉妹チームの賞金（ポイント・完走）の <b>${Math.round(SIS_SHARE*100)}%</b> と、基本スポンサー収入の <b>${Math.round(SIS_SPONS*100)}%</b> を受け取ります。シーズンの終わりには、姉妹チームのシーズン賞金の <b>${Math.round(SIS_SEASON*100)}%</b> も受け取ります。自チームのリザーブを送り込んで、実戦を積ませられます`;
+  const eff = `運営費 <b>${money(pr(SIS_OPS))}</b>/戦・賞金の <b>${Math.round(SIS_SHARE*100)}%</b>・スポンサー収入の <b>${Math.round(SIS_SPONS*100)}%</b>・シーズン賞金の <b>${Math.round(SIS_SEASON*100)}%</b> を受け取る。リザーブを送り込める`;
   if(!S && !puWorks(me)){
     return `<div class="facCard sisCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">下位のチームを買収して、姉妹チームにする</div></div></div>
-      <p class="facD">セカンドチームを持てるのは、PUを自分で作る<b>ワークス</b>のチームだけです（姉妹チームには自チームのPUを供給します）。上の「パワーユニット」の施設から、自社PUのワークスになれます。</p>
+      <p class="facD">セカンドチームを持てるのは、PUを自社で作る<b>ワークス</b>のチームだけです。</p>
       <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
     </div>`;
   }
@@ -19329,7 +19337,7 @@ function sisCard(me){
     const C = sisCands(), R = sisRanks();
     return `<div class="facCard sisCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">下位のチームを買収して、姉妹チームにする</div></div></div>
-      <p class="facD">${R.last ? '<b>前年</b>の' : ''}コンストラクターズの下位3チームから1つを買収できます。シーズンの途中に決めた買収は、<b>来季から</b>運営が変わります（開幕前ならすぐに）。PUメーカーを買うと、そのPU部門は撤退します${R.last ? '' : '（1年目は今季の順位で）'}。姉妹チームには自チームのPUを自動で供給します（条件はほかのカスタマーと同じ）。開発などの運営はそのままAIが行います。</p>
+      <p class="facD">${R.last ? '前年' : '今季'}の下位3チームから1つを買収できます。シーズン途中に決めると<b>来季から</b>の運営です。</p>
       <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
       <div class="sisList">${C.length ? C.map(t => { const cost = sisCost(t), on = armed.key === 'sisbuy' + t.id, poor = career.money < cost, pos = R.pos[t.id];
         return `<div class="sisRow">${teamLogo(t, 22)}<div class="sisNm"><b>${esc(t.name)}</b><small class="muted">${R.last ? '昨季' : '今季'}${pos}位・${t.drivers.join(' / ')}</small>${puWorks(t) ? `<small class="sisPuW">PUメーカー：買うとPU部門は撤退${puCustomers(t).length ? `（カスタマー${puCustomers(t).length}チームはほかのメーカーへ）` : ''}</small>` : ''}</div><button class="b sm ${on ? 'go' : ''}" type="button" data-sisbuy="${t.id}" ${poor || sisBusy() ? 'disabled' : ''}>${poor ? `資金が足りません（${money(cost)}）` : on ? 'もう一度押して確定' : career.round > 0 ? `来季から買収 ${money(cost)}` : `買収する ${money(cost)}`}</button></div>`; }).join('') : '<p class="muted" style="font-size:12px;margin:0">いま買収できるチームはありません。</p>'}</div>
@@ -19355,7 +19363,7 @@ function sisCard(me){
     <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
     ${L && L.sisPrize != null ? `<div class="sisLast">前戦：賞金の分配 <b class="gainT">+${money(L.sisPrize)}</b>${L.sisSpons ? ` ・ スポンサー収入の分配 <b class="gainT">+${money(L.sisSpons)}</b>` : ''} ・ 運営費 <b class="lossT">${money(L.sisOps)}</b>${L.sisTrain ? ` ・ トレーニング費 <b class="lossT">${money(L.sisTrain)}</b>` : ''}</div>` : ''}
     <div class="sisSeats">${S.drivers.map(seat).join('')}</div>
-    <p class="note" style="margin:4px 0 0">送り込むと、その席の選手は移籍市場に出ます。「○○と入れ替え」では、自チームのレギュラーと姉妹チームの選手をそのまま入れ替えます（自チームから出た選手は、契約はそのままで、走っている間の年俸は姉妹チームが払います）。送り込んだ選手は姉妹チームの選手として走り（年俸は姉妹チームが負担）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要。空いた席は移籍市場の選手で埋めます）。PUは自チームのものを供給しています。</p>
+    <p class="note" style="margin:4px 0 0">送り込んだ選手の年俸は姉妹チームが払い、いつでもリザーブに呼び戻せます。</p>
     ${sisTechHtml(S, me, busy)}
     <div class="facFoot"><span class="muted">売却額はいまの買収費の${Math.round(SIS_SELL*100)}%。送り込んでいる選手は、売却先のチームに残ります</span><span class="facBtns"><button class="b sm ${armed.key === 'sissell' ? 'go' : ''}" type="button" data-sissell ${busy ? 'disabled' : ''}>${armed.key === 'sissell' ? 'もう一度押して売却' : `売却する +${money(Math.round(sisCost(S)*SIS_SELL))}`}</button></span></div>
   </div>`;
@@ -19399,7 +19407,7 @@ function facHtml(){
   const rivalBest = k => Math.max(...career.teams.filter(t => t.id !== me.id).map(t => facLv(t, k)));
   return `<div class="sec facSec">
     <h2>施設<button type="button" class="qm" data-guide="fac" aria-label="遊び方を見る">?</button><span class="kick">維持費 合計 ${money(pr(up))}/戦</span></h2>
-    <p class="note" style="margin:0 0 8px">強化するとすぐに効果が出ます。レベルが上がるほど、毎戦の維持費が急に増えます。Lv4以上は古くなると改修が必要になります（1シーズン前に予告）。</p>
+    <p class="note" style="margin:0 0 8px">強化はすぐに効きます。Lvが上がるほど維持費が増え、Lv4以上は古くなると改修が必要です。</p>
     <div class="facGrid">${FACS.map(f => { const lv = facLv(me, f.k), max = lv >= FAC_MAX, cost = max ? 0 : facCost(lv + 1), ren = career.facRen && career.facRen[f.k], warn = career.facWarn && career.facWarn[f.k], can = !max && !ren && career.money >= cost, rb = rivalBest(f.k);
       return `<div class="facCard${ren ? ' ren' : ''}">
         <div class="facHead"><span class="facIco"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${f.ico}"/></svg></span><div style="min-width:0"><b>${f.n}</b><div class="facPips" aria-label="Lv${lv}">${Array.from({ length: FAC_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''} ${i === rb - 1 ? 'rv' : ''}"></i>`).join('')}<span class="num">Lv${lv}</span></div></div></div>
@@ -19540,7 +19548,7 @@ function homeCard(me){
   if(!P){
     return `<div class="facCard homeCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>ホームGP</b><div class="muted" style="font-size:11.5px">自チームのサーキットを建てて、GPを開催する</div></div></div>
-      <p class="facD">地元にサーキットを建てると、来季から毎シーズン、カレンダーの1戦がホームGPになります。コースは自動で作るか、コース作成の画面で自分で作れます。</p>
+      <p class="facD">建てると来季から毎年1戦がホームGPになります。コースは自分でも作れます。</p>
       <div class="facEff"><span class="muted">効果</span><span>${effTxt(0)}</span></div>
       <div class="facFoot"><span class="muted">建設費 ${money(lo)}〜${money(hi)} ・ 開催費 ${money(HOME_FEE)}/シーズン</span><span class="facBtns"><button class="b sm go" type="button" data-hplan>建設を計画する</button></span></div>
     </div>`;
@@ -19824,11 +19832,11 @@ function puFacCard(me){
   const btn = works ? '最大' : soon ? '来季から稼働' : on ? `もう一度押して確定（${money(PU_SELF_COST)}）` : `建設する（来季から・${money(PU_SELF_COST)}）`;
   return `<div class="facCard">
     <div class="facHead"><span class="facIco">${PART_ICO.pu}</span><div style="min-width:0"><b>PUワークス</b><div class="facPips" aria-label="Lv${lv}"><i class="${lv ? 'on' : ''} ${rivals ? 'rv' : ''}"></i><span class="num">Lv${lv}</span></div></div></div>
-    <p class="facD">パワーユニットを自社で作る工場。ワークスになると、PU専用の開発枠でPUを開発でき、ほかのチームにPUを供給して供給料を受け取れます。</p>
+    <p class="facD">PUを自社で作る工場。PUを開発でき、ほかのチームに供給して供給料を受け取れます。</p>
     <div class="facEff"><span class="muted">今</span>${now}</div>
     ${works && P.quitNext ? '<div class="facEff nx"><span class="puTag">撤退予定</span>今季の終わりで撤退し、来季からはカスタマーとしてPUを買います（供給元はシーズンの終わりに選びます）</div>' : ''}
-    ${works && !P.quitNext ? `<div class="facEff nx"><span class="muted">撤退</span>来季からカスタマーになります。PU開発枠と供給料の収入はなくなり、今のカスタマーはほかのメーカーへ移ります${qb && qb !== 'レース中は決められません' ? `<br><span class="lossT">${esc(qb)}</span>` : ''}</div>` : ''}
-    ${works || soon ? '' : `<div class="facEff nx"><span class="muted">Lv1</span>来季からワークス。最初はメーカーの平均より少し低い性能・信頼性から始まり、参入1年目はPU開発枠が1つ増えます</div>`}
+    ${works && !P.quitNext ? `<div class="facEff nx"><span class="muted">撤退</span>来季からカスタマーに。PU開発と供給料の収入はなくなります${qb && qb !== 'レース中は決められません' ? `<br><span class="lossT">${esc(qb)}</span>` : ''}</div>` : ''}
+    ${works || soon ? '' : `<div class="facEff nx"><span class="muted">Lv1</span>来季からワークス。最初は平均より少し低い性能から始まります</div>`}
     <div class="facFoot"><span class="muted">${inProg && !works && !soon ? 'レース中は建設できません' : poor && !works && !soon ? '資金が足りません' : 'ワークスは全部で' + (rivals + (works ? 1 : 0)) + 'チーム'}</span><span class="facBtns">${works ? quitBtn : `<button class="b sm ${can ? 'go' : ''}" type="button" data-puself ${can ? '' : 'disabled'}>${btn}</button>`}</span></div>
   </div>`;
 }
@@ -19946,7 +19954,7 @@ function renderHQView(msg){
       ${(() => { const G = ensureGoals(); return G ? `<div class="spGoals"><span class="kick" style="color:#aab0b8">スポンサー目標${career.sponsor ? `（${esc(career.sponsor.name)}）` : ''}</span><div class="sgList">${G.list.map(g => `<span class="sg"><b>${esc(goalText(g))}</b><em>+${money(pr(g.pay))}</em></span>`).join('')}</div></div>` : ''; })()}
       ${LU.some(x => x.why) ? `<div class="luNote">${LU.filter(x => x.why).map(x => `<span>${x.why === 'inj' ? '🩹' : x.why === 'manual' ? '🔄' : '⚠️'} <b>${x.for}</b> ${x.why === 'manual' ? 'の代わりに' : (career.drivers[x.for] && career.drivers[x.for].injWhy === 'sick' ? '体調不良のため欠場' : '負傷のため欠場')} → <b>${x.code}</b>${x.why === 'temp' ? `（移籍市場から代役・${money(pr(r1(career.drivers[x.code].sal*SUB_FEE_K)))}/戦）` : x.why === 'manual' ? 'を起用' : '（リザーブ）が出走'}</span>`).join('')}</div>` : ''}
       <div class="goRow"><button class="b go goRace" id="goRace" type="button">${inProgress ? 'レースに戻る' : Q ? '予選に戻る' : '予選へ'}</button></div>
-      <p class="note" style="color:#aab0b8">予選はQ1・Q2・Q3のノックアウト方式。タイヤは各セッションでいちばん速いものを自動で履きます（決勝のスタートタイヤは、決勝のスタート前にレース画面で選びます）。レース中はコース画面のボタンで、担当マシンにピット・タイヤ・ペースの指示を出せます（自チームのカードを押すと担当を切り替え）。</p>
+      <p class="note" style="color:#aab0b8">予選はQ1〜Q3のノックアウト方式。レース中は画面のボタンでピット・タイヤ・ペースを指示できます。</p>
     </div>` : `
     ${(() => {   // シーズン終了のまとめ：明るいカードに、チャンピオン・自チームの結果・オーナーの評価・お金と信頼度をブロックで並べる
       const dt = driverTable(), dc = dt[0], ct = cons[0], dcd = career.drivers[dc.code];
@@ -20172,7 +20180,7 @@ function renderHQView(msg){
   const reserveCard = (() => {
     const rs = resFix(me), subS = career.sub && career.sub.season === career.season && career.sub.round === career.round ? career.sub : null;
     const head = `<h2><span class="drvKey" style="background:#9b7bff" aria-hidden="true"></span>リザーブ<button type="button" class="qm" data-guide="reserve" aria-label="遊び方を見る">?</button><span class="kick">${rs.length}/${MAX_RES}人</span></h2>`;
-    if(!rs.length) return `<div class="resLine"><b>リザーブ</b><span>なし</span><span class="muted">移籍市場の「リザーブに」から最大${MAX_RES}人まで契約できます（年俸・契約金は市場価値の${Math.round(RES_K*100)}%）。1人ずつ役割を決められます</span><button type="button" class="qm" data-guide="reserve" aria-label="遊び方を見る">?</button></div>`;
+    if(!rs.length) return `<div class="resLine"><b>リザーブ</b><span>なし</span><span class="muted">移籍市場の「リザーブに」から最大${MAX_RES}人まで契約できます</span><button type="button" class="qm" data-guide="reserve" aria-label="遊び方を見る">?</button></div>`;
     const chip = (lab, val, cls = '', tip = '') => `<span class="dcChip ${cls}"${tip ? ` title="${esc(tip)}"` : ''}><small>${lab}</small><b>${val}</b></span>`;
     const card = R => {
       const r = R.code, d = career.drivers[r], grew = k => career.last && career.last.grow && career.last.grow[r] && career.last.grow[r][k];
@@ -20203,7 +20211,7 @@ function renderHQView(msg){
         </div>
       </div>`;
     };
-    return `<div class="sec drvSec resSec">${head}<div class="drvGrid">${rs.map(card).join('')}${rs.length < MAX_RES ? `<div class="resAdd"><b>2人目のリザーブ</b><span class="muted">移籍市場の「リザーブに（2人目）」から契約できます。役割を分けると、両方の効果が同時に働きます</span></div>` : ''}</div></div>`;
+    return `<div class="sec drvSec resSec">${head}<div class="drvGrid">${rs.map(card).join('')}${rs.length < MAX_RES ? `<div class="resAdd"><b>2人目のリザーブ</b><span class="muted">移籍市場の「リザーブに（2人目）」から契約できます</span></div>` : ''}</div></div>`;
   })();
   const dev = (() => {
     const pc = v => Math.round(v*100) + '%', P = DS_TYPES[dsType(me)], myDs = dsOf(me);
@@ -20229,7 +20237,7 @@ function renderHQView(msg){
         const mini = P.map(x => `<span class="rcPart">${x.short ? `<small>${x.short}</small>` : ''}<span class="rcMeter"><i style="width:${Math.round(x.b/th.max*100)}%"></i></span>${x.ok ? `<b class="num">${x.n}</b>回 +<b class="num">${x.b.toFixed(1)}</b>` : '<span class="muted">メーカー製</span>'}</span>`).join('');
         const rows = parts.length > 1 ? `<div class="rcParts">${P.map(x => `<div class="rcPRow"><b>${esc(x.nm)}</b><span class="muted">${resPartKeys(x.part, R.theme).map(k => CAR_LAB[k]).join('・')}</span><span>${x.ok ? `${x.slot}を使用 ・ 研究 <b class="num">${x.n}</b>回 ・ 見込み <b class="num">+${x.b.toFixed(1)}</b>` : `PUはメーカー製のため研究できません（来季のPUはメーカーの研究で決まります）`}</span></div>`).join('')}</div>` : '';
         return `<details class="regCard regFold" data-fold="reg" ${hqOpen.has('reg') ? 'open' : ''}><summary><b>来季の${esc(th.n)}規則</b><span class="rcMini">${mini}</span><span class="rcBtns">${P.map(btn).join('')}</span></summary>
-          <div class="muted" style="font-size:12.5px;margin-top:6px">${esc(th.d)}（${SY(R.at)}年シーズンから）。研究は今季だけでき、${parts.length > 1 ? '<b>パワーユニットはPU開発枠</b>、<b>それ以外は開発枠</b>を使って、別々に研究します' : `${P[0].slot === 'PU開発枠' ? '<b>PU開発枠</b>' : '開発枠'}を1つ使います`}。研究するほど、その部分の来季の初期値が平均より高くなりますが、伸びは少しずつ鈍り、当たり外れもあります（上限+${th.max.toFixed(1)}・±25%）。</div>
+          <div class="muted" style="font-size:12.5px;margin-top:6px">${esc(th.d)}（${SY(R.at)}年シーズンから）。研究は今季だけ。${parts.length > 1 ? 'PUはPU開発枠、ほかは開発枠' : `${P[0].slot === 'PU開発枠' ? 'PU開発枠' : '開発枠'}`}を使い、来季の初期値が上がります（上限+${th.max.toFixed(1)}）。</div>
           ${rows}
           <div class="rum">${rum.length ? `噂：${rum.map(esc).join('・')}は今季の開発を抑えて来季に集中しているらしい。` : '今のところ、来季に集中しているチームの噂はありません。'}</div></details>`; })()
       : regFirstYear() ? `<div class="devLine ok"><b>新規則1年目</b>（${esc(REG_THEMES[career.reg.cur.theme].n)}）：変わった部分の開発は ×${REG_BOOST} 伸びます</div>`
@@ -20269,7 +20277,7 @@ function renderHQView(msg){
       <div class="devInfo">${puSum1}${reg}</div>
       ${cardsHtml}
       ${bar}<!-- 設計責任者と開発の確率：開発ボタンまでのスクロールを減らすため、いちばん下に（2026-11） -->
-      <p class="devFoot muted">数字の右は、ライバルの最高値との差です。項目名を押すと説明が出ます。開発の仕組みは「?」から。</p>
+      <p class="devFoot muted">数字の右はライバルの最高値との差。項目名を押すと説明が出ます。</p>
     </div>`;
   })();
   const tbl = standView === 'drivers'
@@ -20375,7 +20383,7 @@ function renderHQView(msg){
         <div class="dcAbs">${abs}${rab}${abs || rab ? '' : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>${desc}
         <div class="dcActs">${acts}</div>
       </div>`; }).join('')}</div>
-      <p class="note">${myFac('scout') >= 4 ? 'スカウト部門（Lv4以上）の調査で、能力の数値まで分かっています。' : '能力はG〜Sのランクで表示しています。正確な数値が分かるのは、自チームに加入してからです（スカウト部門をLv4にすると、移籍市場でも数値が分かります）。'}交代すると、外れたドライバーは移籍市場に移ります（「リザーブへ下ろす」なら、外れたドライバーはリザーブとしてチームに残ります）。レースの途中では交代できません。</p>
+      <p class="note">${myFac('scout') >= 4 ? '' : '能力はランク表示です（スカウト部門Lv4で数値が分かります）。'}交代すると、外れた選手は移籍市場へ移ります。</p>
       <div class="gLegend" aria-label="ランクの区切り">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
     </div>`;
   /* オーナーの目標（概要タブ）：性格・主目標・副目標と進み具合。第3戦のあとからは中間評価の一言 */
@@ -20395,7 +20403,7 @@ function renderHQView(msg){
         ${SR.map(x => row('副目標', esc(x.t), esc(x.p), cls(x.ok, x.live))).join('')}
       </div>
       ${voice ? `<p class="ogVoice"><b>オーナー</b>「${voice}」</p>` : ''}
-      <p class="note">副目標はシーズンの終わりに評価します。1つ達成するごとにボーナス +${money(SUB_REWARD.bonus)}・信頼度 +${SUB_REWARD.trust}、未達は信頼度 ${SUB_REWARD.miss}。オーナーの性格は、シーズンの切り替わりで変わることがあります。</p></div>`;
+      <p class="note">副目標は1つ達成するごとにボーナス +${money(SUB_REWARD.bonus)}・信頼度 +${SUB_REWARD.trust}（未達は ${SUB_REWARD.miss}）。</p></div>`;
   })();
   const todo = (() => {
     const it = [];   // [重さ, 文, 開くタブ]
@@ -20459,7 +20467,7 @@ function renderHQView(msg){
       ${sp ? `<div class="hc hcSp"><span class="kick">スポンサー</span><div class="hsHead">${sponsorLogo(sp.name, 26)}<span class="tier">${SPONSOR_TYPES[sp.type].n}</span></div><small class="muted hsTerms">契約：${sponsorTerms(sp)}</small></div>` : ''}
     </div>`; })()}
     ${sp ? '' : sponsorCard}
-    ${!guideSeen() && hqTab === 'ov' ? `<div class="guideHint"><span class="gq" aria-hidden="true">?</span><div><b>はじめてですか？</b><span>まずは「遊び方」の最初の「3ステップで始める」だけ読めば遊べます（約30秒）。細かい仕組みは、困ったときに目次から開いてください。</span></div><button type="button" class="b sm go" data-guide="start">遊び方を見る</button><button type="button" class="b sm ghost" id="guideDismiss">閉じる</button></div>` : ''}
+    ${!guideSeen() && hqTab === 'ov' ? `<div class="guideHint"><span class="gq" aria-hidden="true">?</span><div><b>はじめてですか？</b><span>「遊び方」の「3ステップで始める」だけ読めば遊べます（約30秒）。</span></div><button type="button" class="b sm go" data-guide="start">遊び方を見る</button><button type="button" class="b sm ghost" id="guideDismiss">閉じる</button></div>` : ''}
     ${msg ? `<p class="warn">${esc(msg)}</p>` : ''}
     ${career.money < 0 ? '<p class="warn">資金がマイナスです。開発や契約はできません。ポイントを取って賞金を稼ぎましょう。</p>' : ''}
     ${regAnnounced() ? `<div class="regBar"><span class="kick">REGULATIONS</span><span>来季（${SY(career.reg.at)}年シーズン）に<b>${esc(REG_THEMES[career.reg.theme].n)}の大規則変更</b>。${resBlocked() ? 'PUはメーカー製のため、先行研究はできません（来季のPUはメーカーの研究で決まります）' : `マシン開発タブで先行研究ができます（今季 ${myRes()}回）`}。</span></div>`
@@ -24009,7 +24017,7 @@ function qrOvHtml(){
         ${c.qDmg && c.qDmg.heavy ? '<p class="qInfo2 qgNg">クラッシュの損傷が大きく、このセッションは出走できません</p>' : qRepairing(c) ? `<p class="qInfo2">修理中：あと約${Math.ceil(c.qDmg.fix/60)}分（終わりしだい出走できます）</p>` : ''}
         ${auto ? '<p class="qInfo2">出る時と攻め具合はAIが決めます</p>' : `<div class="qOpts1"><small>攻め具合</small>${seg('push', QS_PUSH, cfg.push)}</div>`}</div>`; }).join('');
     return `${head}<p class="qrNote">${note}・${QS_MIN[s]}分　${wx}</p>${mine.length ? cars : '<p class="qInfo2">自チームの車はこのセッションを走りません。</p>'}
-      <p class="qInfo2">開始したら、自チームの車はカードの「コースに出る」で出ます（おまかせの車はAIが出します）。路面は後半ほど速くなりますが、混雑と時間切れに注意。ミニマップで混み具合を見られます。</p>
+      <p class="qInfo2">自チームの車はカードの「コースに出る」で出ます。路面は後半ほど速くなりますが、時間切れに注意。</p>
       <div class="qrOvBtns"><button class="b go" type="button" data-qstart="1">${['Q1', 'Q2', 'Q3'][s]}を開始</button><button class="b" type="button" data-qskipall="1">予選を飛ばして結果へ</button>${skipRace}</div>`;
   }
   // セッション終了
@@ -24366,7 +24374,7 @@ function profPanel(key){
     const gW = v => known ? v*10 : (GRADES.find(([g]) => pt100(v) >= g*10)[0] === -Infinity ? 15 : GRADES.find(([g]) => pt100(v) >= g*10)[0]*10 + 5);
     const s = statD(id), seasons = Object.entries(s.seasons || {}).sort((a, b) => b[0] - a[0]);
     const pos = driverTable().findIndex(x => x.code === id) + 1;
-    return `<div class="recDetail prPanel"><div class="prHead">${natFlag(id, 14)}<b class="prCode">${id}</b><span class="prName">${esc(d.name)}</span><small class="muted">${ageNow(d)}歳${d.birth || d.st ? `（${(ensureBirth(d), birthTxt(d))}）` : ''}${d.retired ? (d.lower ? '・下位カテゴリーへ' : '・引退') : ''}</small>${t ? `<button type="button" class="recLink prTeam" data-spk="t:${t.id}">${teamLogo(t, 16)}${esc(t.name)}${isRes(t, id) ? '（リザーブ）' : ''}</button>` : '<span class="muted">移籍市場</span>'}${close}</div>
+    return `<div class="recDetail prPanel"><div class="prHead">${natFlag(id, 14)}<b class="prCode">${id}</b><span class="prName">${esc(d.name)}</span><small class="muted">${[d.birth || d.st ? (ensureBirth(d), birthTxt(d)) : '', d.retired ? (d.lower ? '下位カテゴリーへ' : '引退') : ''].filter(Boolean).join('・')}</small>${t ? `<button type="button" class="recLink prTeam" data-spk="t:${t.id}">${teamLogo(t, 16)}${esc(t.name)}${isRes(t, id) ? '（リザーブ）' : ''}</button>` : '<span class="muted">移籍市場</span>'}${close}</div>
       <div class="prGrid">
         <div class="prBox"><h4>能力<span class="muted">${known ? '' : '（ランクのみ。スカウト部門Lv4で数値）'}</span></h4>
           <div class="prOvr">総合 ${gradeTag(ovr(d), known)}<span class="muted">伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span></span></div>
@@ -24509,7 +24517,7 @@ function recGrid(D){
 function recChart(D){
   const R = D.rounds.filter(r => r.log);
   if(!R.length) return '<p class="note">まだレースがありません。レースを終えると、ここにポイントの推移が出ます。</p>';
-  if(R.some(r => !r.log.res)) return '<p class="note">このシーズンには、戦ごとの順位を記録するようになる前のレースが含まれているため、推移を描けません。次のシーズンからは表示されます。</p>';
+  if(R.some(r => !r.log.res)) return '<p class="note">記録を始める前のレースがあるため、このシーズンの推移は表示できません。</p>';
   const side = recSide, ents = side === 'd' ? D.drv.map(x => ({ id: x.code, team: x.team })) : D.tms.map(x => ({ id: x.id, team: x.id }));
   const pick = ents.slice(0, 5); ents.forEach(e => { if(e.team === career.team && !pick.includes(e)) pick.push(e); });
   const seen = {};
@@ -24674,7 +24682,7 @@ function renderRecords(){
         ${seasons.length ? `<div class="wrapx"><table class="stand"><tr><th>シーズン</th>${teamOldNames(t).length ? '<th>チーム名</th>' : ''}<th class="n">ポイント</th><th class="n">順位</th><th>ドライバー</th></tr>${seasons.map(([sn, x]) => `<tr><td><button type="button" class="recLink" data-rsn="${sn}">${SY(sn)}年シーズン</button></td>${teamOldNames(t).length ? (() => { const e = teamAt(id, +sn); return `<td>${teamLogo(e, 16)}${esc(e.name)}</td>`; })() : ''}<td class="n">${x.pts}</td><td class="n"><span class="rcP ${rcMedal(x.pos)}">${x.pos}</span></td><td class="muted">${(x.drivers || []).join(' / ')}</td></tr>`).join('')}</table></div>` : '<p class="note">シーズンを終えると、ここにシーズンごとの順位が記録されます。</p>'}</div>`;
     }
   }
-  const hint = { alltime: '年齢は生年月日とレースの開催日から出しています。自チームの選手の記録は水色で示します。名前を押すと通算の戦績を表示します。', season: '名前を押すと通算の戦績、シーズンを押すとその年の順位表に切り替わります。', teams: '見出しを押すと並べ替えます（もう一度押すと逆順）。名前を押すとシーズンごとの成績を表示します。', drivers: '見出しを押すと並べ替えます（もう一度押すと逆順）。名前を押すとシーズンごとの成績を表示します。' }[recView];
+  const hint = { alltime: '水色は自チームの選手。名前を押すと通算の戦績を表示します。', season: '名前を押すと通算の戦績、シーズンを押すとその年の順位表に切り替わります。', teams: '見出しで並べ替え、名前でシーズンごとの成績を表示します。', drivers: '見出しで並べ替え、名前でシーズンごとの成績を表示します。' }[recView];
   return `<div class="sec" id="records">
     <h2>記録<button type="button" class="qm" data-guide="hq" aria-label="遊び方を見る">?</button><div class="seg2">${REC_TABS.map(([k, l]) => `<button type="button" data-rv="${k}" class="${recView === k ? 'on' : ''}">${l}</button>`).join('')}</div></h2>
     ${detail}
@@ -24851,7 +24859,7 @@ function allTimeHtml(){
       return `<tr class="${mine ? 'atMine' : ''}"><td>${esc(x.label)}</td><td>${x.v != null ? recWhoHtml(x.code, x.team) : '<span class="muted">—</span>'}</td><td class="n">${x.v != null ? esc(x.txt) : ''}</td><td class="muted atWhen">${x.from && x.when && (x.from.season !== x.when.season || x.from.round !== x.when.round) ? `${whenTxt(x.from)} 〜 ${whenTxt(x.when)}` : whenTxt(x.when)}${x.live ? '<span class="recLive">継続中</span>' : ''}</td></tr>`; }).join('')}</table></div>`; };
   const C = circuitRecords(log);
   const circ = C.length ? `<h3 class="atH">サーキットの記録（GPごとの最多勝）</h3><div class="wrapx"><table class="stand atT atC"><tr><th>GP</th><th>最多勝</th><th class="n">勝数</th><th class="n">開催</th></tr>${C.map(c => `<tr class="${c.codes.some(isMineCode) ? 'atMine' : ''}"><td>${gpFlag(c.gp + 'GP', 12)} ${esc(c.gp)}GP</td><td>${c.codes.length ? c.codes.map(code => recWhoHtml(code)).join(' ') : '<span class="muted">—</span>'}</td><td class="n" data-u="勝">${c.top || ''}</td><td class="n" data-u="回開催">${c.n}</td></tr>`).join('')}</table></div>` : '';
-  return REC_GROUPS.map(([g, l]) => sec(g, l)).join('') + circ + '<p class="note">「いちばん後ろのグリッドからの優勝」は、全員のグリッドを記録するようにしてからのレースだけで数えます。引退した選手の生年月日は、最後に走ったシーズンから逆算した目安です。</p>';
+  return REC_GROUPS.map(([g, l]) => sec(g, l)).join('') + circ + '<p class="note">最後尾からの優勝は、グリッドを記録し始めてからのレースだけで数えます。</p>';
 }
 // レース結果・ニュースに出す新記録の文
 const recNewTxt = x => { const who = x.who && career.drivers[x.who] ? `${x.who}（${career.drivers[x.who].name}）` : ((teamOf(x.who) || {}).name || x.who);
@@ -25538,7 +25546,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.4.0';
+const APP_VER = '1.4.1';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25578,6 +25586,13 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.4.1', items: [
+    ['その他', [
+      '画面の説明文を短く、わかりやすく',
+      'iPhoneで画面が勝手に拡大される問題を修正',
+      'ドライバーの通算成績は生年月日のみ表示',
+    ]],
+  ] },
   { v: '1.4.0', items: [
     ['PU', [
       'AIのPUメーカーが参入・撤退するように（最大4社）',
