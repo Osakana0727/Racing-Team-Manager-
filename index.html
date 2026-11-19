@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.4.1 -->
+<!-- レーシングチームマネージャー ver 1.5.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.4.1">
-<meta name="build" content="20261118-1">
+<meta name="version" content="1.5.0">
+<meta name="build" content="20261119-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -2501,6 +2501,8 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .dsChip .gd{transform:scale(.9)}
 .lcLeg{font-weight:500;font-size:10px;opacity:.65;letter-spacing:0;margin-left:6px}
 .sisPuW{display:block;color:#f0b34a;font-size:11px;margin-top:1px}
+.yrsSeg button{display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.yrsSeg small{font-size:10px;opacity:.75;font-weight:500}
 .tieT{font-size:.72em;font-weight:800;opacity:.75;margin-right:1px}   /* 同点の順位（T5 など） */
 .dsCard .dsTags{margin:4px 0 6px}
 .dsCard .dsDesc{margin:0 0 6px;font-size:12px;color:var(--muted)}
@@ -2698,6 +2700,11 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .rRoles button i{font-style:normal;font-size:9.5px;font-weight:500;opacity:.8}
 .rRoles button.on{background:var(--tower);color:var(--towerText)}
 .rRoles button:hover:not(.on){color:var(--text)}
+.acCands{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:8px 12px;display:flex;flex-direction:column;gap:8px}
+.acCH{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:13px}
+.acCand{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:8px}
+.acCN{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:13px}.acCN small{font-size:11.5px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:0 4px}
+.acCard .dcChip.warnC b{color:#d7263d}
 .resAdd{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;justify-content:center;font-size:12.5px;min-height:90px}
 
 /* ===== 概要タブ（新） ===== */
@@ -3438,7 +3445,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.4.1</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.5.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -13986,7 +13993,12 @@ const ABIL = {
 };
 const BLUE_IDS = Object.keys(ABIL).filter(k => ABIL[k].blue), RED_IDS = Object.keys(ABIL).filter(k => !ABIL[k].blue);
 const pt100 = v => Math.round(v*10);                 // 能力の表示用（内部の1〜10を、0〜100の整数で見せる）
-const ovr = d => d.st ? r1(DSTATS.reduce((a, [k]) => a + d.st[k], 0) / DSTATS.length) : (d.skill || 5);
+/* 総合：6項目の平均に、特殊能力の査定を足す（2026-11）。青特は +AB_OVR_BLUE、赤特は −AB_OVR_RED（調子に関わる能力は小さめ）。
+   内部の1〜10の値で（表示では×10）。上限は10（表示100） */
+const AB_OVR_BLUE = 0.15, AB_OVR_RED = 0.15, AB_OVR_MINOR = { steady: 0.1, moody: 0.1, gritty: 0.1 };
+const abOvr = d => (d.ab || []).reduce((a, id) => { const A = ABIL[id]; if(!A) return a; const w = AB_OVR_MINOR[id] ?? (A.blue ? AB_OVR_BLUE : AB_OVR_RED); return a + (A.blue ? w : -w); }, 0);
+const ovrBase = d => d.st ? DSTATS.reduce((a, [k]) => a + d.st[k], 0) / DSTATS.length : (d.skill || 5);
+const ovr = d => d.st ? r1(clamp(ovrBase(d) + abOvr(d), 1, 10)) : (d.skill || 5);
 /* 能力のランク（G〜S）。表示の数値（0〜100の整数）を区切りで分ける。
    自チームの選手はランクと数値、他チーム・移籍市場の選手はランクだけを見せる */
 const GRADES = [[9, 'S'], [8, 'A'], [7, 'B'], [6, 'C'], [5, 'D'], [4, 'E'], [3, 'F'], [-Infinity, 'G']];
@@ -15001,7 +15013,7 @@ const WX_TXT = { dry:'晴れ', mixed:'変わりやすい', wet:'雨' };
 const r1 = v => Math.round(v*10)/10;
 const money = v => (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(1) + 'M';
 const salaryOf = sk => r1(0.3 + Math.pow(Math.max(0, sk - 4), 1.6)*0.12);
-const salaryFor = d => r1(Math.max(0.2, salaryOf(ovr(d)) + (d.ab || []).reduce((a, id) => a + (ABIL[id].blue ? 0.2 : -0.12), 0)));
+const salaryFor = d => r1(Math.max(0.2, salaryOf(ovr(d))));   // 特殊能力の分は総合（ovr）に含まれている
 /* 腕前（base）を中心に6項目へばらし、特殊能力を付ける。腕前が高いほど青、低いほど赤が付きやすい */
 function makeDriver(code, name, base){
   const st = {}; DSTATS.forEach(([k]) => st[k] = r1(clamp(base + (Math.random() - 0.5)*2.6, 1, 10)));
@@ -15074,7 +15086,9 @@ const FACS = [
   { k:'hosp',  n:'ホスピタリティ施設', ico:'M4 20V9l8-5 8 5v11M9 20v-6h6v6', d:'基本スポンサー収入が増え、スポンサーの提案も良くなる',
     eff: lv => `基本スポンサー収入 +${lv*10}%・提案 +${lv*5}%` },
   { k:'wx',    n:'気象班',             ico:'M7 18h10a4 4 0 0 0 .5-7.97A6 6 0 0 0 6.1 11 3.5 3.5 0 0 0 7 18zM9 21l1-2M13 21l1-2', d:'レース中の天気予報が、先の周まで・正確に見えるようになる',
-    eff: lv => `予報 ${WX_RANGE[lv]}周先まで・ほぼ正確なのは ${WX_EXACT[lv]}周先まで` }
+    eff: lv => `予報 ${WX_RANGE[lv]}周先まで・ほぼ正確なのは ${WX_EXACT[lv]}周先まで` },
+  { k:'acad',  n:'アカデミー',         own:true, ico:'M2 9l10-5 10 5-10 5zM6 11v5c3 3 9 3 12 0v-5M22 9v6', d:'16〜18歳の若手を受け入れて育てる。21歳までにリザーブへ昇格させられる（自チームだけの施設）',
+    eff: lv => lv ? `在籍${acadSlots(lv)}人・候補${acadCandN(lv)}人/年・伸び ×${(1 + lv*0.25).toFixed(2)}・素質 +${lv}` : '開設前' }
 ];
 const FAC_K = Object.fromEntries(FACS.map(f => [f.k, f]));
 const facCost = lv => 2 + lv*2;                 // Lv(lv−1) → lv に上げる費用（Lv1 $4M … Lv5 $12M）
@@ -15111,18 +15125,84 @@ function skipRenovateFac(k){
   t.fac[k] = Math.max(0, facLv(t, k) - 1); delete career.facRen[k];
   saveCareer(); renderHQ(`${FAC_K[k].n}は改修せず、Lv${t.fac[k]}に下がりました。`);
 }
+/* ---------- アカデミー（自チームだけの施設） ----------
+   ・毎年オフ（開設した年はすぐ）に16〜18歳の候補が届き、枠の数まで入団させられる。候補は次のオフに入れ替わる
+   ・在籍中は移籍市場に出ず、毎戦2項目が少しずつ伸びる（Lvが高いほど）。オフの成長はほかの選手と同じ
+   ・出口：リザーブへ昇格（契約金なし・年俸は半額）か、放出（移籍市場へ）。22歳になるオフまでに昇格しなければ移籍市場へ出る */
+const ACAD_AGE_MAX = 21, ACAD_AMT = 0.03, ACAD_SAL_K = 0.5;
+const acadSlots = lv => [0, 1, 2, 2, 3, 3][clamp(lv, 0, FAC_MAX)];
+const acadCandN = lv => lv ? 2 + Math.ceil(lv/2) : 0;
+function acadState(){ if(!career.acad) career.acad = { list: [], cand: [], cs: null }; return career.acad; }
+const acadList = () => { if(!career || !career.acad) return []; return career.acad.list.filter(c => career.drivers[c] && career.drivers[c].acad); };
+const acadCands = () => { if(!career || !career.acad) return []; return career.acad.cand.filter(c => career.drivers[c] && career.drivers[c].acadC); };
+const isAcad = c => !!(career && career.drivers[c] && career.drivers[c].acad);
+function acadMakeCand(lv){
+  const used = new Set(Object.keys(career.drivers)), names = new Set(Object.values(career.drivers).map(d => d.name));
+  const active = new Set(Object.values(career.drivers).filter(d => !d.retired).map(d => d.name));
+  const { nat, name, code } = genIdentity(used, names, active);
+  const d = makeDriver(code, name, 3.4 + lv*0.2 + Math.random());
+  setAgePot(d, 16 + Math.floor(Math.random()*3));
+  d.pot = r1(clamp(d.pot + lv*0.25 + Math.random()*0.5, d.pot, 10)); d.scout = scoutOf(d.pot);   // Lvが高いほど素質のある候補が来る
+  d.rookie = true; d.nat = nat; d.face = makeFace(Math.random, nat); d.acadC = true; d.sal = salaryFor(d);
+  career.drivers[code] = d; ensureBirth(d);
+  return code;
+}
+function acadRefreshCand(){
+  const A = acadState(), lv = myFac('acad');
+  A.cand.forEach(c => { const d = career.drivers[c]; if(d && d.acadC && !d.acad) delete career.drivers[c]; });   // 選ばれなかった候補は去る（記録もない）
+  A.cand = []; for(let i = 0; i < acadCandN(lv); i++) A.cand.push(acadMakeCand(lv));
+  A.cs = career.season;
+}
+function acadJoin(code){
+  const A = acadState(), lv = myFac('acad'), d = career.drivers[code];
+  if(!d || !d.acadC || acadList().length >= acadSlots(lv)) return;
+  delete d.acadC; d.acad = { s: career.season, o0: ovr(d) }; loveJoin(d, 50);
+  A.list.push(code); A.cand = A.cand.filter(c => c !== code);
+  saveCareer(); renderHQ(`${esc(d.name)}（${ageNow(d)}歳）がアカデミーに入りました。`);
+}
+function acadPromote(code){
+  const t = myTeam(), d = career.drivers[code]; if(!d || !d.acad) return;
+  resFix(t); if(t.reserves.length >= MAX_RES) return;
+  if(!confirmTwice('acadpr' + code)) return;
+  const role = Object.keys(RES_ROLES).find(k => !t.reserves.some(r => r.role === k)) || 'youth';
+  const sal = r1(Math.max(0.2, d.sal*ACAD_SAL_K));
+  delete d.acad; d.acadGrad = career.season; acadState().list = acadState().list.filter(c => c !== code);
+  t.reserves.push({ code, role, since: career.season*100 + career.round }); d.con = { yrs: 2, sal }; d.rival = false; loveJoin(d, 60);
+  saveCareer(); renderHQ(`アカデミーの${esc(d.name)}をリザーブに昇格させました（2年契約・年俸 ${money(pr(sal))}/戦）。`);
+}
+function acadRelease(code){
+  const d = career.drivers[code]; if(!d || !d.acad) return;
+  if(!confirmTwice('acadrel' + code)) return;
+  delete d.acad; acadState().list = acadState().list.filter(c => c !== code); d.faYrs = 0; career.fa.push(code);
+  saveCareer(); renderHQ(`アカデミーの${esc(d.name)}を放出しました（移籍市場へ）。`);
+}
+function acadRaceGrow(){                                         // レース後：在籍生は毎戦2項目が少しずつ伸びる
+  const lv = myFac('acad'), out = {};
+  acadList().forEach(c => { const d = career.drivers[c]; if(!d.st) return; const g = {};
+    shuffled(DSTATS.map(x => x[0])).slice(0, 2).forEach(k => grow(d, k, ACAD_AMT*(1 + lv*0.25), g, 0.5));
+    d.sal = salaryFor(d); if(Object.keys(g).length) out[c] = g; });
+  return out;
+}
+function acadOffseason(rep){                                     // オフ：年を取ったあと。期限切れの在籍生を市場へ、候補を入れ替える
+  if(!career.acad && !myFac('acad')) return;
+  const A = acadState(); rep.acad = acadList().slice(); rep.acadOut = [];
+  acadList().forEach(c => { const d = career.drivers[c]; if(d.age > ACAD_AGE_MAX){ delete d.acad; d.faYrs = 0; career.fa.push(c); rep.acadOut.push(c); rep.gnote.push({ code: c, t: `${ACAD_AGE_MAX + 1}歳になり、アカデミーを離れて移籍市場に出ました` }); } });
+  A.list = acadList();
+  if(myFac('acad')) acadRefreshCand(); else { A.cand.forEach(c => { const d = career.drivers[c]; if(d && d.acadC) delete career.drivers[c]; }); A.cand = []; }
+}
 const pitMiss = lv => Math.max(0.01, 0.08 - lv*0.014);
 const pitRange = lv => `${(1.0 - lv*0.02).toFixed(2)}〜${(1.0 - lv*0.02 + 0.5 - lv*0.06).toFixed(2)}`;
 const facLv = (t, k) => (t && t.fac && t.fac[k]) || 0;
 const myFac = k => facLv(career && myTeam(), k);
 const facUpkeepSum = t => r1(FACS.reduce((a, f) => a + facUpkeep(facLv(t, f.k)), 0));
 /* 最初のレベル：マシンの強さ（car）から決め、施設ごとに±1ばらつかせる */
-function initFac(carV){ const b = clamp(Math.round((carV - 4)/0.9), 0, 4), o = {}; FACS.forEach(f => o[f.k] = clamp(b + Math.floor(Math.random()*3) - 1, 0, FAC_MAX)); return o; }
+function initFac(carV){ const b = clamp(Math.round((carV - 4)/0.9), 0, 4), o = {}; FACS.forEach(f => o[f.k] = f.own ? 0 : clamp(b + Math.floor(Math.random()*3) - 1, 0, FAC_MAX)); return o; }   // 自チームだけの施設（アカデミー）は0から
 function ensureFacilities(){
   if(!career) return;
   career.teams.forEach(t => { if(!t.fac){ const c = CAR_KEYS.reduce((a, k) => a + t.car[k], 0)/CAR_KEYS.length; t.fac = initFac(c); } });
   // 気象班を追加する前のセーブ：ほかの施設の平均くらいから（±1）
-  career.teams.forEach(t => { if(t.fac && t.fac.wx === undefined){ const o = FACS.filter(f => f.k !== 'wx').map(f => t.fac[f.k] || 0), a = o.reduce((x, y) => x + y, 0)/o.length; t.fac.wx = clamp(Math.round(a) + Math.floor(Math.random()*3) - 1, 0, FAC_MAX); } });
+  career.teams.forEach(t => { if(t.fac && t.fac.wx === undefined){ const o = FACS.filter(f => f.k !== 'wx' && !f.own).map(f => t.fac[f.k] || 0), a = o.reduce((x, y) => x + y, 0)/o.length; t.fac.wx = clamp(Math.round(a) + Math.floor(Math.random()*3) - 1, 0, FAC_MAX); } });
+  career.teams.forEach(t => { if(t.fac && t.fac.acad === undefined) t.fac.acad = 0; });   // アカデミーを追加する前のセーブ：全チーム0から
 }
 /* 空力の開発費（風洞で割り引く） */
 /* ---------- 開発枠・大規則変更・先行研究 ----------
@@ -15746,6 +15826,7 @@ function upgradeFac(k){
   const cost = facCost(lv + 1); if(career.money < cost) return;
   if(!confirmTwice('fac' + k, cost)) return;                                   // 高い買い物なので、2回押して確定
   career.money = r1(career.money - cost); t.fac[k] = lv + 1;
+  if(k === 'acad' && acadState().cs !== career.season) acadRefreshCand();   // 開設した年：すぐに今年の候補が届く
   saveCareer(); renderHQ(`${FAC_K[k].n}をLv${lv + 1}に強化しました（${money(cost)}）。`);
 }
 /* ---------- 成長と衰え ----------
@@ -16404,7 +16485,9 @@ if(career && career.v !== 2){
   career.v = 2;
   lsSet(LS_CAREER, career);
 }
-let signYrs = 2;                      // 移籍市場で契約するときの契約年数
+let signYrs = 2;                      // 移籍市場で契約するときの契約年数（2026-11：選手の「契約する」を押してから、その中で選ぶ）
+// 契約年数の選択（1〜3年）。年数ごとの年俸を添える（若手は短い契約、ベテランは長い契約のほうが安い）
+const yrsSeg = salOf => `<div class="seg2 yrsSeg">${[1, 2, 3].map(y => `<button type="button" data-sy="${y}" class="${signYrs === y ? 'on' : ''}" aria-pressed="${signYrs === y}">${y}年<small>${money(pr(salOf(y)))}/戦</small></button>`).join('')}</div>`;
 /* 移籍市場の並べ替え・絞り込み（最後に選んだものを覚えておく） */
 const MKT_SORTS = [['ovr', '総合', -1], ['pot', '伸びしろ', -1], ['age', '年齢', 1], ['fee', '契約金', 1]];   // 3つ目：最初に押したときの向き（-1＝高い順）
 const MKT_KEY = 'rtm.mktSort.v1';
@@ -17214,6 +17297,7 @@ function recordRace(){
     }
     if(d && d.st && !raced.has(r)){ const g = growLog[r] = growLog[r] || {}; const ks = shuffled(DSTATS.map(x => x[0])).slice(0, 2); ks.forEach(k => grow(d, k, 0.035*(1 + myFac('sim')*0.25)*(R.role === 'youth' ? 2 : 1), g, 0.5)); d.sal = salaryFor(d); }   // 育成枠は2倍
   }
+  let acadG = {}; try{ acadG = acadRaceGrow(); }catch(e){ console.error(e); }   // アカデミー生の成長
   growK = 1;
   { const ME = myTeam(), ran = new Set(order.map(c => c.m.name));                        // チーム愛：毎戦の変化
     ME.drivers.concat(resList(ME)).forEach(code => { const d = career.drivers[code]; if(!d) return; d.loveD = 0;
@@ -17231,7 +17315,7 @@ function recordRace(){
   career.last = { name: rd.name, round: career.round + 1, top: rows.slice(0, 3).map(r => r.code), topT: rows.slice(0, 3).map(r => r.team), mine, led,
     gain: { d: Object.fromEntries(rows.map(r => [r.code, r.pts])), c: gainC }, to: (race.toLog || []).slice(0, 12), pop: { d: popD[career.team] || 0, v: popOf(me) }, sreq: sreqRes,
     grow: Object.fromEntries([...new Set([...myTeam().drivers, ...order.filter(c => c.m.team === career.team).map(c => c.m.name), ...resList(myTeam())])].filter(code => growLog[code]).map(code => [code, growLog[code]])),
-    inj: injLog,
+    inj: injLog, acadG,
     abil: abLog, form: formLog, goals: goalRes, awk: awkLog, brk: brkLog, recs: newRecs, sisInv };
   try{ career.last.gray = grayAfterRace(order); }catch(e){ console.error(e); }   // 鬼才：疑惑度・指摘・新しい提案
   if(career.sister){ career.sister.lag = carSnap(me); career.sister.techRun = 0; }   // 技術提携の基準：このレースの自チームの仕様（次のレースで使う＝1戦遅れ）
@@ -17564,7 +17648,8 @@ function marketRvHtml(viewSeg){
           ${wOn ? `<ul class="pchWhy">${ch.why.map(([w, v]) => `<li class="${v > 0 ? 'up' : 'dn'}">${v > 0 ? '＋' : '−'} ${esc(w)}</li>`).join('')}</ul>` : ''}
           <div class="mkRow pchBtns">${btn('fa', `${c}は放出`)}${btn('res', `${c}はリザーブへ`)}</div></div>`; }).join('');
       body = `
-        <div class="mkHead"><b>${signYrs}年契約</b><span>年俸</span><div class="seg2 pchLvSeg">${PCH_LV.map((L, i) => `<button type="button" data-pchlv="${i}" class="${pchLv === i ? 'on' : ''}">${L.n}<small>${money(pr(pchSal(d, i)))}/戦</small></button>`).join('')}</div><span class="${career.money >= fee ? '' : 'bad'}">違約金 ${money(fee)}</span></div>
+        <div class="mkHead"><b>契約年数</b>${yrsSeg(y => Math.max(0.2, d.sal*conMult(d.age, y)*PCH_LV[pchLv].k))}</div>
+        <div class="mkHead"><b>年俸</b><div class="seg2 pchLvSeg">${PCH_LV.map((L, i) => `<button type="button" data-pchlv="${i}" class="${pchLv === i ? 'on' : ''}">${L.n}<small>${money(pr(pchSal(d, i)))}/戦</small></button>`).join('')}</div><span class="${career.money >= fee ? '' : 'bad'}">違約金 ${money(fee)}</span></div>
         ${acts}<p class="muted pchNote">断られたときはお金はかかりません。</p>`;
     }
     return `<div class="dCard faCard pchCard${isOpen ? ' open' : ''}${tried ? ' tried' : ''}">${head}${chips}${stats}${body}
@@ -17676,7 +17761,7 @@ function contractOffseason(rep){
     if(!d.con) d.con = { yrs: 1, sal: r1(d.sal*RES_K) };
     d.con.yrs = Math.max(0, d.con.yrs - 1); d.leave = false;
     if(d.con.yrs <= 0){ const L = loveOf(d);
-      if(resKOf(d) === null || (L < 30 && Math.random() < (L < 20 ? 0.7 : 0.3))) d.leave = true;   // 強くなってリザーブを嫌がる・チーム愛が低いと、更新を断られる
+      if((resKOf(d) === null && !d.fromSis) || (L < 30 && Math.random() < (L < 20 ? 0.7 : 0.3))) d.leave = true;   // 強くなってリザーブを嫌がる（姉妹チームから来た選手は除く）・チーム愛が低いと、更新を断られる
       (rep.con.resExp = rep.con.resExp || []).push(r); } }
   me.drivers.forEach(c => { const d = career.drivers[c]; d.loveD = 0; loveAdd(d, 3); d.leave = false; });   // シーズンを一緒に越えた
   me.drivers.forEach(c => { const d = career.drivers[c]; d.rival = false; if(d.con.yrs <= 0){ rep.con.expired.push(c); const L = loveOf(d);
@@ -18363,12 +18448,12 @@ function nextSeason(){
     career.reg = { ...regPlan(S), res: {}, resPU: {}, pol: {}, cur: { season: S, theme: regRep.theme } };
   }
   // ライバルも施設を強化する（スポンサー収入が多いチームほど上げやすい）
-  career.teams.forEach(t => { if(t.id === career.team || !t.fac) return; if(Math.random() < 0.35 + (t.spons - 2.8)*0.1){ const cand = FACS.filter(f => f.k !== 'hosp' && f.k !== 'scout' && t.fac[f.k] < FAC_MAX); if(cand.length){ const f = cand[Math.floor(Math.random()*cand.length)]; t.fac[f.k]++; } } });
+  career.teams.forEach(t => { if(t.id === career.team || !t.fac) return; if(Math.random() < 0.35 + (t.spons - 2.8)*0.1){ const cand = FACS.filter(f => !f.own && f.k !== 'hosp' && f.k !== 'scout' && t.fac[f.k] < FAC_MAX); if(cand.length){ const f = cand[Math.floor(Math.random()*cand.length)]; t.fac[f.k]++; } } });
   // オフシーズン：1歳年を取り、年齢に応じて伸びる・衰える。引退と新人の加入
   const rep = { grow: {}, retired: [], rookies: [], signed: [], gnote: [], left: [] };
-  const myCodes = new Set([...myTeam().drivers, ...resList(myTeam())]);
+  const myCodes = new Set([...myTeam().drivers, ...resList(myTeam()), ...acadList()]);   // アカデミー生も1シーズンで成長タイプが分かる
   Object.values(career.drivers).forEach(d => {
-    if(!d.st || d.retired) return;
+    if(!d.st || d.retired || d.acadC) return;   // アカデミーの候補（まだ入っていない）は年を取らない（オフに入れ替わる）
     d.age++;
     const g = {}, ea = gAge(d);                                   // 成長タイプで見た年齢（早熟は年上、晩成は年下として扱う）
     if(myCodes.has(d.code)){                                       // 自チームの選手：1シーズン一緒に過ごしたので成長タイプが分かる。ピークと衰えの節目を知らせる
@@ -18412,6 +18497,7 @@ function nextSeason(){
   const seatsOpen = career.teams.reduce((a, t) => a + t.drivers.filter(c => career.drivers[c].retired).length, 0);
   const nRook = clamp(FA_TARGET - (career.fa.length - seatsOpen), 1, seatsOpen + 12);
   for(let n = 0; n < nRook; n++){ const d = makeRookie(); career.drivers[d.code] = d; career.fa.push(d.code); rep.rookies.push(d.code); }
+  try{ acadOffseason(rep); }catch(e){ console.error(e); }               // アカデミー：期限切れの在籍生を市場へ・候補の入れ替え
   // 引退で空いたシートは、移籍市場から総合の高い順に埋める（自チームも同じ。契約金はかからない）
   career.teams.forEach(t => t.drivers.forEach((code, slot) => {
     if(!career.drivers[code].retired) return;
@@ -19240,7 +19326,6 @@ function sisSwapResBlock(resCode, sisCode){
   if(sisBusy()) return 'レースの途中は入れ替えられません';
   if(r.con && r.con.yrs <= 0) return `${resCode}は契約満了です（先に更改してください）`;
   if(career.resDemand && career.resDemand.code === resCode) return `${resCode}の要求に先に返事をしてください`;
-  if(!o.loan && resKOf(o) == null) return `${sisCode}は総合80以上のため、リザーブには入りません`;
   return '';
 }
 function sisSwapRes(resCode, slot){
@@ -19255,7 +19340,7 @@ function sisSwapRes(resCode, slot){
   r.rival = false; if(!r.con) r.con = { yrs: 1, sal: r.sal };
   if(!back) o.fromSis = S.id;
   delete o.loan; o.rival = false;
-  o.con = { yrs: Math.max(1, o.con ? o.con.yrs : 1), sal: back && o.con ? o.con.sal : r1(Math.max(0.2, o.sal*(resKOf(o) || RES_K))) };
+  o.con = { yrs: Math.max(1, o.con ? o.con.yrs : 1), sal: back && o.con ? o.con.sal : r1(Math.max(0.2, o.sal*(resKOf(o) ?? 1))) };   // 姉妹チームとのやり取りは、総合80以上でもリザーブに入る（そのときの年俸は市場価値のまま）
   if(!back) loveJoin(o, 40);
   if(career.sub && (career.sub.res === resCode || career.sub.for === sisCode)) career.sub = null;
   if(career.train) delete career.train[sisCode];
@@ -19316,7 +19401,7 @@ function sisSetTech(lv){
 }
 function sisCard(me){
   const S = sisTeam(), ico = '<span class="facIco"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 20V10l5-3v13M10 20V7l5 3v10M15 20v-7l4-2v9"/></svg></span>';
-  const eff = `運営費 <b>${money(pr(SIS_OPS))}</b>/戦・賞金の <b>${Math.round(SIS_SHARE*100)}%</b>・スポンサー収入の <b>${Math.round(SIS_SPONS*100)}%</b>・シーズン賞金の <b>${Math.round(SIS_SEASON*100)}%</b> を受け取る。リザーブを送り込める`;
+  const eff = `運営費 <b>${money(pr(SIS_OPS))}</b>/戦・賞金の <b>${Math.round(SIS_SHARE*100)}%</b>・スポンサー収入の <b>${Math.round(SIS_SPONS*100)}%</b>・シーズン賞金の <b>${Math.round(SIS_SEASON*100)}%</b> を受け取る。ドライバーを入れ替えられる`;
   if(!S && !puWorks(me)){
     return `<div class="facCard sisCard">
       <div class="facHead">${ico}<div style="min-width:0"><b>セカンドチーム</b><div class="muted" style="font-size:11.5px">下位のチームを買収して、姉妹チームにする</div></div></div>
@@ -19344,28 +19429,13 @@ function sisCard(me){
     </div>`;
   }
   const tbl = teamTable(), pos = tbl.findIndex(x => x.id === S.id) + 1, rs = resList(me), L = career.last && career.last.led, busy = sisBusy();
-  const seat = (code, slot) => { const d = career.drivers[code], loan = isLoan(code);
-    const acts = loan
-      ? `<button class="b sm ${armed.key === 'sisrec' + code ? 'go' : ''}" type="button" data-sisrec="${code}" ${rs.length >= MAX_RES || busy ? 'disabled' : ''}${rs.length >= MAX_RES ? ' title="リザーブの枠に空きがありません"' : ''}>${armed.key === 'sisrec' + code ? 'もう一度押して確定' : 'リザーブに呼び戻す'}</button>`
-      : rs.length ? rs.map(r => `<button class="b sm ${armed.key === 'sissend' + r + slot ? 'go' : ''}" type="button" data-sissend="${r}:${slot}" ${busy ? 'disabled' : ''}>${armed.key === 'sissend' + r + slot ? 'もう一度押して確定' : `${r}を送り込む`}</button>`).join('')
-      : '<span class="muted" style="font-size:11px">送り込めるリザーブがいません</span>';
-    const rswaps = rs.map(rc => { const why = sisSwapResBlock(rc, code), on = armed.key === 'sisswr' + rc + slot; return `<button class="b sm ghost ${on ? 'go' : ''}" type="button" data-sisswr="${rc}:${slot}" ${why ? `disabled title="${esc(why)}"` : ''}>${on ? 'もう一度押して確定' : `リザーブ${rc}と入れ替え`}</button>`; }).join('');
-    const swaps = me.drivers.map(c => { const why = sisSwapBlock(c), k = 'sisswap' + c + slot, on = armed.key === k;
-      return `<button class="b sm ghost ${on ? 'go' : ''}" type="button" data-sisswap="${c}:${slot}" ${why ? `disabled title="${esc(why)}"` : `title="自チームの${c}と、${code}を入れ替えます"`}>${on ? 'もう一度押して確定' : `${c}と入れ替え`}</button>`; }).join('');
-    // 能力：6項目をランクと数値で（姉妹チームは自分のチームなので数値まで見える）。特殊能力は押すと説明
-    const abs = (d.ab || []).map(id => { const k = 'sis:' + code + ':' + id, on = drvAbOpen.has(k); return `<button type="button" class="abBtn${on ? ' on' : ''}" data-abo="${k}" aria-expanded="${on}">${abChip(id)}</button>`; }).join('');
-    const desc = (d.ab || []).filter(id => drvAbOpen.has('sis:' + code + ':' + id)).map(id => `<p class="abDesc">${abChip(id, false)}<span>${esc(ABIL[id].d)}</span></p>`).join('');
-    const stats = `<div class="sisSt">${DSTATS.map(([k, lab]) => `<span class="sisS"><small>${lab}</small>${gradeTag(d.st[k], true)}</span>`).join('')}</div>${abs ? `<div class="dcAbs sisAbs">${abs}</div>` : ''}${desc}`;
-    return `<div class="sisSeat"><span class="sisWho">${natFlag(code, 12)}<b>${code}</b><span class="muted">${esc(d.name)}・${ageNow(d)}歳</span><span class="sisOv">総合 ${gradeTag(ovr(d), true)}</span><span class="muted">伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span></span>${loan ? '<span class="sisTag">自チームから</span>' : ''}<button type="button" class="b sm ghost dcRec" data-prof="d:${code}" aria-label="${code}の戦績を見る">戦績</button></span>${sisInjHtml(code)}${stats}<span class="sisActs">${acts}${swaps}${rswaps}</span></div>`; };
   return `<div class="facCard sisCard open">
     <div class="facHead">${teamLogo(S, 34)}<div style="min-width:0"><b>${esc(S.name)}</b><div class="muted" style="font-size:11.5px">セカンドチーム ・ 今季${pos}位（${career.cpts[S.id] || 0}pts）・ ${SY(career.sister.since)}年シーズンに買収</div></div><span class="homeTag">SISTER</span></div>
     ${sisBrandHtml(S)}
     <div class="facEff"><span class="muted">効果</span><span>${eff}</span></div>
     ${L && L.sisPrize != null ? `<div class="sisLast">前戦：賞金の分配 <b class="gainT">+${money(L.sisPrize)}</b>${L.sisSpons ? ` ・ スポンサー収入の分配 <b class="gainT">+${money(L.sisSpons)}</b>` : ''} ・ 運営費 <b class="lossT">${money(L.sisOps)}</b>${L.sisTrain ? ` ・ トレーニング費 <b class="lossT">${money(L.sisTrain)}</b>` : ''}</div>` : ''}
-    <div class="sisSeats">${S.drivers.map(seat).join('')}</div>
-    <p class="note" style="margin:4px 0 0">送り込んだ選手の年俸は姉妹チームが払い、いつでもリザーブに呼び戻せます。</p>
     ${sisTechHtml(S, me, busy)}
-    <div class="facFoot"><span class="muted">売却額はいまの買収費の${Math.round(SIS_SELL*100)}%。送り込んでいる選手は、売却先のチームに残ります</span><span class="facBtns"><button class="b sm ${armed.key === 'sissell' ? 'go' : ''}" type="button" data-sissell ${busy ? 'disabled' : ''}>${armed.key === 'sissell' ? 'もう一度押して売却' : `売却する +${money(Math.round(sisCost(S)*SIS_SELL))}`}</button></span></div>
+    <div class="facFoot"><span class="muted">売却額はいまの買収費の${Math.round(SIS_SELL*100)}%（選手の入れ替えはドライバータブで）</span><span class="facBtns"><button class="b sm ${armed.key === 'sissell' ? 'go' : ''}" type="button" data-sissell ${busy ? 'disabled' : ''}>${armed.key === 'sissell' ? 'もう一度押して売却' : `売却する +${money(Math.round(sisCost(S)*SIS_SELL))}`}</button></span></div>
   </div>`;
 }
 function sisTechHtml(S, me, busy){
@@ -20012,6 +20082,7 @@ function renderHQView(msg){
         const others = [O.length ? `特殊能力：${O.map(x => `${x.code} ${esc(ABIL[x.id].n)}${x.kind === 'gain' ? '習得' : '克服'}`).join('、')}` : '', OA.length ? `覚醒：${OA.map(x => `${x.code}（${esc((teamOf(x.team) || {}).name || '')}）`).join('、')}` : '', OB.length ? `限界突破：${OB.map(x => `${x.code}（${esc((teamOf(x.team) || {}).name || '')}）`).join('、')}` : '', (L.recs || []).length ? `新記録：${L.recs.map(x => esc(recNewTxt(x))).join('、')}` : ''].filter(Boolean);
         return `<div class="lrTop">${podium}<div class="myResW">${mine}</div></div>
           ${resG ? `<div class="lrLine"><span class="muted">リザーブの成長</span>${resG}</div>` : ''}
+          ${Object.keys(L.acadG || {}).length ? `<div class="lrLine"><span class="muted">アカデミーの成長</span>${Object.keys(L.acadG).map(c => `<span><b>${c}</b> ${growTxt(L.acadG[c])}</span>`).join('　')}</div>` : ''}
           ${others.length ? `<div class="lrLine muted"><span>他チーム</span>${others.join('　')}</div>` : ''}`; })()}
       ${career.last.inj && career.last.inj.length ? `<div class="goalRes"><span class="muted">負傷</span>${career.last.inj.map(x => `<span class="gr2 ${x.team === career.team ? 'ng' : ''}">${x.team === career.team ? '🩹 ' : ''}${x.code}（${esc((teamOf(x.team) || {}).name || '')}）次の${x.n}戦欠場</span>`).join('')}</div>` : ''}
       ${career.last.aduo ? `<div class="goalRes"><span class="muted">ADUOの判定</span>${career.last.aduo.granted.length ? career.last.aduo.granted.map(x => `<span class="gr2 ${x.id === career.team || (career.pu && !puWorks(myTeam()) && x.id === puMakerOf(myTeam())) ? 'ok' : ''}"><span class="aduoTag sm">ADUO</span> ${esc((teamOf(x.id) || {}).name || '')}（遅れ ${x.gap}%・PU枠+${ADUO_LV[x.lv].slots}${x.up ? '・段階アップ' : ''}）</span>`).join('') : '<span class="gr2">新たな認定なし</span>'}</div>` : ''}
@@ -20064,7 +20135,7 @@ function renderHQView(msg){
     // ドライバー：総合の前後と、能力ごとの伸び
     const drvCard = code => { const d = career.drivers[code]; if(!d || !d.st) return '';
       const g = (off.grow || {})[code] || {}, prevSt = Object.fromEntries(DSTATS.map(([k]) => [k, d.st[k] - (g[k] || 0)]));
-      const o1 = ovr(d), o0 = r1(DSTATS.reduce((a, [k]) => a + prevSt[k], 0)/DSTATS.length), newIn = off.myDrv && !off.myDrv.includes(code);
+      const o1 = ovr(d), o0 = r1(DSTATS.reduce((a, [k]) => a + prevSt[k], 0)/DSTATS.length), newIn = off.myDrv && !off.myDrv.includes(code) && !(off.acad || []).includes(code);
       const notes = (off.gnote || []).filter(x => x.code === code).map(x => `<span class="osTag">${esc(x.t)}</span>`).join('');
       const joined = (off.signed || []).find(s => s.team === career.team && s.in === code);
       return `<div class="osDrv">
@@ -20074,7 +20145,8 @@ function renderHQView(msg){
         <div class="osSt">${DSTATS.map(([k, lab]) => { const a = d.st[k], b = prevSt[k], lo = Math.min(a, b), dv = a - b;
           return `<span class="osSL">${lab}</span><span class="osBar"><i class="b" style="width:${lo*10}%"></i>${Math.abs(dv) >= 0.005 ? `<i class="${dv > 0 ? 'up' : 'dn'}" style="left:${lo*10}%;width:${Math.abs(dv)*10}%"></i>` : ''}</span><span class="osSV">${pt100(a)}${Math.abs(dv) >= 0.005 ? `<small class="${dv > 0 ? 'gainT' : 'lossT'}">${sgn(dv)}</small>` : ''}</span>`; }).join('')}</div>
         ${notes ? `<div class="osTags">${notes}</div>` : ''}</div>`; };
-    const drvB = `<div class="osBlk"><span class="osLab">ドライバー</span><div class="osDrvs">${me.drivers.map(drvCard).join('')}</div></div>`;
+    const drvB = `<div class="osBlk"><span class="osLab">ドライバー</span><div class="osDrvs">${me.drivers.map(drvCard).join('')}</div></div>`
+      + ((off.acad || []).length ? `<div class="osBlk"><span class="osLab">アカデミー</span><div class="osDrvs">${off.acad.filter(c => career.drivers[c]).map(drvCard).join('')}</div></div>` : '');
     // マシン：部品ごとの値（平均）と、全チームの中の順位の前後
     const carB = (() => { const P = off.carPrev; if(!P || !P[me.id]) return '';
       const avg = (car, keys) => keys.reduce((a, k) => a + car[k], 0)/keys.length;
@@ -20213,6 +20285,32 @@ function renderHQView(msg){
     };
     return `<div class="sec drvSec resSec">${head}<div class="drvGrid">${rs.map(card).join('')}${rs.length < MAX_RES ? `<div class="resAdd"><b>2人目のリザーブ</b><span class="muted">移籍市場の「リザーブに（2人目）」から契約できます</span></div>` : ''}</div></div>`;
   })();
+  const acadCard = (() => {                                       // アカデミー：在籍生（成長が見える）と今年の候補
+    const lv = myFac('acad'), L = acadList(), C = acadCands(); if(!lv && !L.length) return '';
+    const slots = acadSlots(lv), full = L.length >= slots, rs = resFix(me), resFull = rs.length >= MAX_RES;
+    const AG = (career.last && career.last.acadG) || {};
+    const chip = (lab, val, cls = '') => `<span class="dcChip ${cls}"><small>${lab}</small><b>${val}</b></span>`;
+    const card = c => { const d = career.drivers[c], o0 = d.acad.o0 ?? ovr(d), dv = pt100(ovr(d)) - pt100(o0), left = ACAD_AGE_MAX - d.age, g = AG[c] || {};
+      const onP = armed.key === 'acadpr' + c, onR = armed.key === 'acadrel' + c;
+      return `<div class="dCard acCard">
+        <div class="dcHead">${driverFace(c, teamSuit(me))}<span class="dcCode">${c}</span><div class="dcName">${natFlag(c, 13)}<b>${esc(d.name)}</b>${formTag(d)}<small>${ageNow(d)}歳 ・ ${SY(d.acad.s)}年入団</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${c}">戦績</button></div>
+        <div class="dcChips">${chip('総合', `<span class="ovG">${gradeTag(ovr(d), true)}</span>`, 'big')}${chip('入団から', `<span class="${dv > 0 ? 'gainT' : dv < 0 ? 'lossT' : 'muted'}">${dv >= 0 ? '+' : '−'}${Math.abs(dv)}</span>`)}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`)}${chip('成長', gtChip(d), '', gtTip(d))}${chip('期限', left > 0 ? `あと${left}年` : '今季まで', left <= 0 ? 'warnC' : '')}</div>
+        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${g[k] ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
+        <div class="dcAbs">${(d.ab || []).length ? d.ab.map(id => abChip(id)).join('') : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>
+        <div class="dcActs"><div class="resActs">
+          <button type="button" class="b sm ${onP ? 'go' : ''}" data-acadpr="${c}" ${resFull || inProgress ? 'disabled' : ''}>${onP ? 'もう一度押して確定' : `リザーブに昇格（年俸 ${money(pr(r1(Math.max(0.2, d.sal*ACAD_SAL_K))))}/戦）`}</button>
+          <button type="button" class="b sm ghost ${onR ? 'go' : ''}" data-acadrel="${c}" ${inProgress ? 'disabled' : ''}>${onR ? 'もう一度押して確定' : '放出'}</button>
+        </div>${resFull ? `<small class="muted">リザーブが${MAX_RES}人いるため昇格できません</small>` : ''}</div>
+      </div>`; };
+    const cand = c => { const d = career.drivers[c];
+      return `<div class="acCand">${driverFace(c, FACE_FA_SUIT, 32)}<div class="acCN"><b>${natFlag(c, 12)}${esc(d.name)}</b><small>${ageNow(d)}歳 ・ 総合 ${gradeTag(ovr(d), true)} ・ 伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span> ・ 成長 ${gtChip(d)}</small></div>
+        <button type="button" class="b sm go" data-acadjoin="${c}" ${full || inProgress ? 'disabled' : ''}>入団</button></div>`; };
+    return `<div class="sec drvSec acSec"><h2><span class="drvKey" style="background:#2fb36a" aria-hidden="true"></span>アカデミー<span class="kick">Lv${lv} ・ ${L.length}/${slots}人</span></h2>
+      <p class="note" style="margin:0 0 8px">毎戦2項目が少しずつ伸びます。${ACAD_AGE_MAX}歳のシーズンが終わるまでに昇格させないと、移籍市場に出ます。</p>
+      ${L.length ? `<div class="drvGrid">${L.map(card).join('')}</div>` : '<p class="muted" style="font-size:12.5px;margin:0">在籍している選手はいません。</p>'}
+      ${lv ? `<div class="acCands"><div class="acCH"><b>今年の候補</b><small class="muted">${C.length ? (full ? '枠がいっぱいです（施設のLvを上げると増えます）' : '入団させた選手は他チームに取られません。残りは次のオフに入れ替わります') : '次のオフに新しい候補が届きます'}</small></div>${C.map(cand).join('')}</div>` : '<p class="muted" style="font-size:12.5px">施設がLv0のため、新しい候補は届きません。</p>'}
+    </div>`;
+  })();
   const dev = (() => {
     const pc = v => Math.round(v*100) + '%', P = DS_TYPES[dsType(me)], myDs = dsOf(me);
     const pips = (n, used) => `<span class="slotPips" aria-hidden="true">${Array.from({ length: n }, (_, i) => `<i class="${i < used ? 'used' : ''}"></i>`).join('')}</span>`;
@@ -20350,7 +20448,6 @@ function renderHQView(msg){
     <div class="sec">
       <h2>移籍市場<button type="button" class="qm" data-guide="market" aria-label="遊び方を見る">?</button><span class="kick">契約金 = 年俸×${SIGN_K}</span></h2>
       ${mktSeg}
-      <div class="row" style="margin:0 0 6px;gap:8px"><span class="muted">契約年数</span><div class="seg2">${[1, 2, 3].map(y => `<button type="button" data-sy="${y}" class="${signYrs === y ? 'on' : ''}">${y}年</button>`).join('')}</div><span class="muted">若手は短い契約、ベテランは長い契約のほうが年俸が安くなります</span></div>
       <div class="mktBar"><span class="muted">並べ替え</span><div class="seg2 mktSort">${MKT_SORTS.map(([k, lab]) => { const on = mktSort.k === k; return `<button type="button" data-msort="${k}" class="${on ? 'on' : ''}" aria-pressed="${on}" title="${on ? 'もう一度押すと逆の順に' : ''}">${lab}${on ? `<i>${mktSort.dir < 0 ? '▼' : '▲'}</i>` : ''}</button>`; }).join('')}</div>
         <button type="button" class="b sm ghost mktAff ${mktSort.aff ? 'on' : ''}" data-maff="1" aria-pressed="${mktSort.aff}">${mktSort.aff ? '✓ ' : ''}契約できる選手だけ</button>
         <span class="muted mktCnt">${mktList().length === career.fa.length ? `${career.fa.length}人` : `表示中 ${mktList().length}人／全${career.fa.length}人`}</span></div>
@@ -20375,7 +20472,7 @@ function renderHQView(msg){
           : `<div class="mkRow"><span class="mkWho"><b>リザーブ</b><small>${money(pr(rsal))}/戦・契約金 ${money(rf)}</small></span>${rs.length < MAX_RES ? cBtn('signr' + code, `data-signr="${code}"`, rs.length ? '2人目のリザーブに' : 'リザーブにする', '', ok, 'ghost') : rs.map(rc => cBtn('signr' + code + rc, `data-signr="${code}" data-rout="${rc}"`, `${rc}と入れ替え`, `リザーブの${rc}と入れ替え`, ok, 'ghost')).join('')}</div>`;
         const sisRow = sisTeam() ? (() => { const S = sisTeam(); return `<div class="mkRow"><span class="mkWho"><b>${esc(S.short || S.name)}</b><small>セカンドチーム（費用は姉妹チーム）</small></span>${S.drivers.map((c, slot) => isLoan(c) ? '' : cBtn('sissign' + code + slot, `data-sissign="${code}:${slot}"`, `${c}と交代`, '', !inProgress, 'ghost')).join('')}</div>`; })() : '';
         const acts = !open ? `<button type="button" class="b sm go mkOpen" data-mkopen="${code}" ${inProgress ? 'disabled' : ''}>契約する<i>▾</i></button>`
-          : `<div class="mkPanel"><div class="mkHead"><b>${signYrs}年契約</b><span>年俸 ${money(pr(csal))}/戦</span><span class="${can ? '' : 'bad'}">契約金 ${money(fee)}</span><button type="button" class="b sm ghost mkClose" data-mkopen="${code}" aria-label="閉じる">×</button></div>${regRows}${sisRow}${resRow}</div>`;
+          : `<div class="mkPanel"><div class="mkHead"><b>契約年数</b>${yrsSeg(y => Math.max(0.2, d.sal*conMult(d.age, y)))}<span class="${can ? '' : 'bad'}">契約金 ${money(fee)}</span><button type="button" class="b sm ghost mkClose" data-mkopen="${code}" aria-label="閉じる">×</button></div>${regRows}${sisRow}${resRow}</div>`;
         return `<div class="dCard faCard">
         <div class="dcHead">${driverFace(code, FACE_FA_SUIT)}<span class="dcCode">${code}</span><div class="dcName">${natFlag(code, 13)}<b>${esc(d.name)}</b>${isRookie(code) ? ' <span class="newTag">新人</span>' : ''}${formTag(d)}${awkTag(d)}${brkTag(d)}<small>${ageNow(d)}歳</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${code}" aria-label="${code}の戦績を見る">戦績</button></div>
         <div class="dcChips">${chip('総合', ovTxt, 'big')}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`, '', 'スカウト評価：これから伸びる余地の目安（少しずれることがあります）')}${chip('成長', gtChip(d), 'gt', gtTip(d))}${chip('年俸', money(pr(csal)) + '<i>/戦</i>', '', `${signYrs}年契約のときの年俸（1戦あたり）`)}${chip('契約金', money(fee), can ? '' : 'bad', can ? '' : '資金が足りません')}</div>
@@ -20478,7 +20575,7 @@ function renderHQView(msg){
       <div class="hqCol">${conCard}${evCard}${sreqCard}${nextCard}${offCard}${todo}</div>
       <div class="hqCol">${ownerCard}${last}${miniStand}</div>
     </div>${cal}` : ''}
-    ${hqTab === 'drv' ? `${conCard}${drivers}${reserveCard}${sisDrvCard}${loanCard}` : ''}
+    ${hqTab === 'drv' ? `${conCard}${drivers}${reserveCard}${acadCard}${sisDrvCard}${loanCard}` : ''}
     ${hqTab === 'dev' ? dev + loanCard : ''}
     ${hqTab === 'fac' ? facHtml() + loanCard : ''}
     ${hqTab === 'mkt' ? market + loanCard : ''}
@@ -20510,7 +20607,7 @@ function renderHQView(msg){
   el.querySelectorAll('[data-racc]').forEach(b => b.onclick = () => retireAccept(b.dataset.racc, retireUI.code === b.dataset.racc ? retireUI.pick : null));
   el.querySelectorAll('[data-gods]').forEach(b => b.onclick = () => { hqTab = 'mkt'; lsSet(HQ_TAB_KEY, hqTab); mktView = 'ds'; renderHQ(); });   // 開発タブから、移籍市場の設計責任者へ
   el.querySelectorAll('[data-mview]').forEach(b => b.onclick = () => { mktView = b.dataset.mview; renderHQ(); });
-  el.querySelectorAll('[data-pchopen]').forEach(b => b.onclick = () => { const y = window.scrollY; pchOpen = pchOpen === b.dataset.pchopen ? null : b.dataset.pchopen; renderHQ(); window.scrollTo(0, y); });
+  el.querySelectorAll('[data-pchopen]').forEach(b => b.onclick = () => { const y = window.scrollY; pchOpen = pchOpen === b.dataset.pchopen ? null : b.dataset.pchopen; if(pchOpen) signYrs = 2; renderHQ(); window.scrollTo(0, y); });
   el.querySelectorAll('[data-pchlv]').forEach(b => b.onclick = () => { const y = window.scrollY; pchLv = +b.dataset.pchlv; renderHQ(); window.scrollTo(0, y); });
   el.querySelectorAll('[data-pch]').forEach(b => b.onclick = () => { const y = window.scrollY; doPoachRival(b.dataset.pch, +b.dataset.pslot, b.dataset.pmode); window.scrollTo(0, y); });
   el.querySelectorAll('[data-dpchopen]').forEach(b => b.onclick = () => { const y = window.scrollY; dpchOpen = dpchOpen === b.dataset.dpchopen ? null : b.dataset.dpchopen; renderHQ(); window.scrollTo(0, y); });
@@ -20557,7 +20654,7 @@ function renderHQView(msg){
   el.querySelectorAll('[data-prof]').forEach(b => b.onclick = () => openProf(b.dataset.prof));   // カードの「戦績」
   el.querySelectorAll('[data-calr]').forEach(b => b.onclick = () => openProf(b.dataset.calr));   // カレンダー：終わったレースの結果
   el.querySelectorAll('[data-spk]').forEach(b => b.onclick = () => { const k = b.dataset.spk; if(k) openProf(k); });   // 選手権の名前：戦績を画面の上に重ねて出す（記録タブ・ドライバータブと同じ）
-  el.querySelectorAll('[data-mkopen]').forEach(b => b.onclick = () => { mktOpen = mktOpen === b.dataset.mkopen ? null : b.dataset.mkopen; renderHQ(); });
+  el.querySelectorAll('[data-mkopen]').forEach(b => b.onclick = () => { mktOpen = mktOpen === b.dataset.mkopen ? null : b.dataset.mkopen; if(mktOpen) signYrs = 2; renderHQ(); });   // 開くたびに2年から
   el.querySelectorAll('[data-pchwhy]').forEach(b => b.onclick = () => { const k = b.dataset.pchwhy; pchWhyOpen.has(k) ? pchWhyOpen.delete(k) : pchWhyOpen.add(k); renderHQ(); });
   el.querySelectorAll('[data-sign]').forEach(b => b.onclick = () => sign(b.dataset.sign, +b.dataset.slot));
   { const pc = el.querySelector('#popCard'); if(pc) pc.onclick = openIncome; }
@@ -20567,6 +20664,9 @@ function renderHQView(msg){
   el.querySelectorAll('[data-rrole]').forEach(b => b.onclick = () => setResRole(b.dataset.rcode, b.dataset.rrole));
   el.querySelectorAll('[data-promo]').forEach(b => b.onclick = () => promoteReserve(+b.dataset.promo, b.dataset.prcode));
   el.querySelectorAll('[data-relres]').forEach(b => b.onclick = () => releaseReserve(b.dataset.relres));
+  el.querySelectorAll('[data-acadjoin]').forEach(b => b.onclick = () => acadJoin(b.dataset.acadjoin));
+  el.querySelectorAll('[data-acadpr]').forEach(b => b.onclick = () => acadPromote(b.dataset.acadpr));
+  el.querySelectorAll('[data-acadrel]').forEach(b => b.onclick = () => acadRelease(b.dataset.acadrel));
   el.querySelectorAll('[data-rdem]').forEach(b => b.onclick = () => answerResDemand(b.dataset.rdem === '1'));
   el.querySelectorAll('[data-renew]').forEach(b => b.onclick = () => renew(b.dataset.renew, +b.dataset.yrs, !!b.dataset.free));
   el.querySelectorAll('[data-rrenew]').forEach(b => b.onclick = () => renewRes(b.dataset.rrenew, +b.dataset.yrs));
@@ -20580,7 +20680,7 @@ function renderHQView(msg){
   el.querySelectorAll('[data-poachpick]').forEach(b => b.onclick = () => { poachUI.pick = b.dataset.poachpick; armed = { key:'', until:0 }; renderHQ(); });
   el.querySelectorAll('[data-poachclose]').forEach(b => b.onclick = () => { poachUI = { code: null, pick: null }; armed = { key:'', until:0 }; renderHQ(); });
   el.querySelectorAll('[data-refuse]').forEach(b => b.onclick = () => refusePoach(+b.dataset.refuse));
-  el.querySelectorAll('[data-sy]').forEach(b => b.onclick = () => { signYrs = +b.dataset.sy; renderHQ(); });
+  el.querySelectorAll('[data-sy]').forEach(b => b.onclick = () => { const y = window.scrollY; signYrs = +b.dataset.sy; renderHQ(); window.scrollTo(0, y); });
   el.querySelectorAll('[data-msort]').forEach(b => b.onclick = () => { const k = b.dataset.msort;
     mktSort.dir = mktSort.k === k ? -mktSort.dir : MKT_SORTS.find(x => x[0] === k)[2]; mktSort.k = k; saveMktSort(); renderHQ(); });
   el.querySelectorAll('[data-maff]').forEach(b => b.onclick = () => { mktSort.aff = !mktSort.aff; saveMktSort(); renderHQ(); });
@@ -25546,7 +25646,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.4.1';
+const APP_VER = '1.5.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25586,6 +25686,20 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.5.0', items: [
+    ['本部', [
+      '新施設「アカデミー」：16〜18歳の若手を育ててリザーブに昇格',
+      '移籍市場：契約ボタンを押してから年数を選ぶ形に',
+      '施設タブのセカンドチーム欄をすっきり',
+    ]],
+    ['ドライバー', [
+      '総合値に特殊能力の評価を反映',
+      'セカンドチームとの入れ替えはAランク制限なし',
+    ]],
+    ['その他', [
+      'チームのロゴが2つ並ぶことがある問題を修正',
+    ]],
+  ] },
   { v: '1.4.1', items: [
     ['その他', [
       '画面の説明文を短く、わかりやすく',
@@ -26041,7 +26155,7 @@ function tlDecorate(root){
     for(const [i, name] of parts){
       const before = txt.slice(last, i);
       // 名前が文字の先頭で、その前にロゴがあれば付けない（カードの見出しなど）
-      const skip = i === 0 && last === 0 && (tlHasLogoBefore(node) || tlCardLogo(node));
+      const skip = last === 0 && !txt.slice(0, i).trim() && (tlHasLogoBefore(node) || tlCardLogo(node));   // 前が空白だけでも「先頭」とみなす（「ロゴ 名前」の形で2重にならないように）
       if(before) frag.append(before);
       if(!skip){ const t = tlMap.get(name); if(t){ const w = document.createElement('span'); w.className = 'tlLogo'; w.innerHTML = teamLogo(t, 16); const g = w.firstElementChild; g.classList.add('tlA'); frag.append(g); changed = true; } }
       frag.append(name); last = i + name.length;
