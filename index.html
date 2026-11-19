@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.5.0 -->
+<!-- レーシングチームマネージャー ver 1.5.1 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.5.0">
-<meta name="build" content="20261119-1">
+<meta name="version" content="1.5.1">
+<meta name="build" content="20261119-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -3445,7 +3445,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.5.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.5.1</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -14396,7 +14396,7 @@ function guideHtml(){
     <p><b>先行研究</b>：予告されたシーズンだけ、開発枠を使って来季の研究ができます（1回 ${M(resCost())}）。研究は<b>パワーユニット</b>と<b>それ以外（空力・ブレーキ）</b>に分かれていて、パワーユニットはPU開発枠（PUのワークスだけ。カスタマーはできません）、それ以外は開発枠を使います。全面や空力＋パワーユニットの変更では、両方を別々に研究します。研究するほど来季の初期値が平均より高くなります（効果の上限は、変わる項目が少ないテーマほど1項目あたり大きく、空力 +${REG_THEMES.aero.max.toFixed(1)}・パワーユニット +${REG_THEMES.pu.max.toFixed(1)}・空力＋パワーユニット +${REG_THEMES.aeropu.max.toFixed(1)}・全面 +${REG_THEMES.all.max.toFixed(1)}。当たり外れ ±25%）。今季を強くするか、今季を捨てて来季に賭けるかの判断です。研究を${resNeed(0)}回以上すると、オーナーは目標より1つ下（${resNeed(1)}回以上で2つ下）の順位までを「達成」として扱います。ライバルもそれぞれの方針で研究します。パワーユニットの規則変更のときは、PUのカスタマー（メーカーからPUを買っているチーム）は研究できません（来季のPUはメーカー製になり、メーカーの研究で決まるため）。</p>
     <p><b>新規則1年目</b>：変わった部分の開発は、1回あたり ×${REG_BOOST} 伸びます。</p>
     ${sub('fac', '施設')}
-    <p>強化するとすぐに効きます（工期なし）。強化の費用は ${M(facCost(1))}（Lv1）〜 ${M(facCost(FAC_MAX))}（Lv${FAC_MAX}）。レベルごとに毎戦の維持費がかかり、高いレベルほど急に高くなります（Lv1 ${M(pr(facUpkeep(1)))}〜Lv5 ${M(pr(facUpkeep(5)))}/戦）。Lv4以上の施設は、シーズンの切り替えで「来季、改修が必要」と予告されることがあり（Lv4 25%・Lv5 40%）、予告された施設は次のシーズンの初めに改修する（強化費の半分）か、改修せずに1レベル下げるかを選びます。チームによって最初のレベルが違い、ライバルもシーズンの終わりに強化します。</p>
+    <p>強化するとすぐに効きます（工期なし）。強化の費用は ${M(facCost(1))}（Lv1）〜 ${M(facCost(FAC_MAX))}（Lv${FAC_MAX}）。レベルごとに毎戦の維持費がかかり、高いレベルほど急に高くなります（Lv1 ${M(pr(facUpkeep(1)))}〜Lv5 ${M(pr(facUpkeep(5)))}/戦）。アカデミーだけは高額で、建設 ${M(ACAD_COST[1])}（来季から開校）・強化 ${M(ACAD_COST[2])}〜${M(ACAD_COST[5])}・維持費 ${M(pr(ACAD_UPKEEP[1]))}〜${M(pr(ACAD_UPKEEP[5]))}/戦に加えて、在籍生1人ごとに ${M(pr(ACAD_FEE))}/戦の育成費がかかります（建設費は売却しても戻りません）。Lv4以上の施設は、シーズンの切り替えで「来季、改修が必要」と予告されることがあり（Lv4 25%・Lv5 40%）、予告された施設は次のシーズンの初めに改修する（強化費の半分）か、改修せずに1レベル下げるかを選びます。チームによって最初のレベルが違い、ライバルもシーズンの終わりに強化します。</p>
     ${tbl(['施設', 'Lv1', `Lv${FAC_MAX}`], FACS.map(f => [`<b>${f.n}</b><br><small>${esc(f.d)}</small>`, esc(f.eff(1)), esc(f.eff(FAC_MAX))]))}
     <p><b>ホームGP</b>：施設タブで自チームのサーキットを計画して建設費（$90M〜$180M。コースのタイプと観客席の規模で変わる）を払うと、今季の終わりに完成し、来季から毎シーズン、選んだラウンドがホームGPになります。開催国は、今のGPの開催国とドライバーの出身国から選べます（表示がその国の国旗になり、同じ国のGPとは重なりません）。コースは自動で作るか、コース作成の画面で自分で作れます（自分で作ったコースのタイプは、直線の割合とコーナーの形から自動で判定）。開催費は毎シーズン $5M。ホームGPでは観客席の多くがチームカラーになり、レース後に地元スポンサーのボーナス（$3〜5M）とドライバーのチーム愛 +3 が入ります。マシンの速さには影響しません。完成後は「改修を計画する」で、コース（そのまま／自分で作り直す／自動で作り直す）・観客席の規模・名前・開催国を変えられます（改修費は新しい内容で建てるときの建設費の半分。今季の終わりに工事をして、来季から新しいサーキットで開催。シーズン中なら取り消して全額返金）。開催国は建設を決めたあとは、改修でのみ変えられます。</p>
     <p><b>セカンドチーム</b>：PUのワークスなら、施設タブで、前年のコンストラクターズの下位3チーム（1年目は今季の順位）から1つを買収して姉妹チームにできます。シーズンの途中に買収を決めると、運営が変わるのは来季からです（開幕前ならすぐに。今季のあいだは予約を取り消せます）。PUメーカーを買うと、そのPU部門は撤退し、カスタマーはほかのメーカーへ移ります（買収費はチームの強さで $170M〜$200M ほど）。毎戦、運営費 ${M(pr(SIS_OPS))} を払い、姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%を受け取ります。自チームのリザーブを姉妹チームのシートに送り込んで実戦を積ませ（その席の選手は移籍市場へ）、いつでもリザーブに呼び戻せます（リザーブの枠に空きが必要）。送り込んだ選手の年俸は姉妹チームが払い、ほかのチームに引き抜かれることもありません。姉妹チームには自チームのPUを自動で供給します（供給料など、条件はほかのカスタマーと同じ。来季の受け入れ数には数えません）。開発などの運営はAIが行います。いまの買収費の${Math.round(SIS_SELL*100)}%で売却でき、送り込んでいた選手はそのまま売却先のチームに残ります。<br><b>技術提携</b>：レベル1（${M(pr(SIS_TECH[1].cost))}/戦）でブレーキ、レベル2（${M(pr(SIS_TECH[2].cost))}/戦）で空力も、自チームの1戦前の値から一定の差（ブレーキ−0.5・空力−1.5）まで姉妹チームの値が上がります。レベル3（${M(pr(SIS_TECH[3].cost))}/戦）は空力の差を−1.0まで縮めますが、毎戦${Math.round(SIS_INV_P*100)}%の確率で技術規則の調査が入り、違反と判断されると罰金 ${M(SIS_FINE)}・その戦の姉妹チームのポイント剥奪・今季はレベル1までに制限されます。タイミング表や順位表では、セカンドチームの行をオレンジで示します（自チームは水色）。セカンドチームの選手の人事（契約満了の更改・放出、引退の申し出、ほかのチームからの獲得の申し出、負傷の代役）は、自チームと同じく契約の欄で自分が決めます（決めるまでレースには進めません。費用・年俸は姉妹チームが払います）。移籍市場の選手と、セカンドチームの席で直接契約することもできます。</p>
@@ -14759,10 +14759,14 @@ function repayAll(){
 }
 function sellFac(k){
   const t = myTeam(), lv = facLv(t, k); if(lv <= 0 || (career.facRen && career.facRen[k])) return;   // 改修を決める前は売れない
-  if(!confirmTwice('facsell' + k, -r1(facCost(lv)*0.5))) return;
-  const back = r1(facCost(lv)*0.5);
+  const back = facSellBack(k, lv);
+  if(!confirmTwice('facsell' + k, -back)) return;
   t.fac[k] = lv - 1; career.money = r1(career.money + back);
-  saveCareer(); renderHQ(`${FAC_K[k].n}をLv${lv - 1}に下げ、${money(back)}を受け取りました。`);
+  if(k === 'acad' && lv === 1){                                  // 閉校：在籍生は移籍市場へ、候補は去る
+    const out = acadList(); out.forEach(c => { const d = career.drivers[c]; delete d.acad; d.faYrs = 0; career.fa.push(c); });
+    acadState().list = []; acadState().cand.forEach(c => { const d = career.drivers[c]; if(d && d.acadC) delete career.drivers[c]; }); acadState().cand = [];
+    saveCareer(); renderHQ(`アカデミーを閉校しました${out.length ? `（在籍生${out.length}人は移籍市場へ）` : ''}。`); return; }
+  saveCareer(); renderHQ(`${FAC_K[k].n}をLv${lv - 1}に下げ${back ? `、${money(back)}を受け取りました` : 'ました'}。`);
 }
 /* ---------- オーナー目標（シーズンごとのコンストラクターズの目標順位と、オーナーの信頼度） ---------- */
 function teamPower(t){
@@ -15087,23 +15091,28 @@ const FACS = [
     eff: lv => `基本スポンサー収入 +${lv*10}%・提案 +${lv*5}%` },
   { k:'wx',    n:'気象班',             ico:'M7 18h10a4 4 0 0 0 .5-7.97A6 6 0 0 0 6.1 11 3.5 3.5 0 0 0 7 18zM9 21l1-2M13 21l1-2', d:'レース中の天気予報が、先の周まで・正確に見えるようになる',
     eff: lv => `予報 ${WX_RANGE[lv]}周先まで・ほぼ正確なのは ${WX_EXACT[lv]}周先まで` },
-  { k:'acad',  n:'アカデミー',         own:true, ico:'M2 9l10-5 10 5-10 5zM6 11v5c3 3 9 3 12 0v-5M22 9v6', d:'16〜18歳の若手を受け入れて育てる。21歳までにリザーブへ昇格させられる（自チームだけの施設）',
+  { k:'acad',  n:'アカデミー',         own:true, ico:'M2 9l10-5 10 5-10 5zM6 11v5c3 3 9 3 12 0v-5M22 9v6', d:'16〜18歳の若手を受け入れて育てる高額施設。21歳までにリザーブへ昇格させられる（自チームだけ）',
     eff: lv => lv ? `在籍${acadSlots(lv)}人・候補${acadCandN(lv)}人/年・伸び ×${(1 + lv*0.25).toFixed(2)}・素質 +${lv}` : '開設前' }
 ];
 const FAC_K = Object.fromEntries(FACS.map(f => [f.k, f]));
 const facCost = lv => 2 + lv*2;                 // Lv(lv−1) → lv に上げる費用（Lv1 $4M … Lv5 $12M）
 const FAC_UPKEEP = [0, 0.1, 0.2, 0.4, 0.7, 1.1];  // 1つの施設の、1戦あたりの維持費（2026-10：高いレベルほど急に高くなる。以前は Lv×$0.12M）
 const facUpkeep = lv => FAC_UPKEEP[clamp(lv, 0, FAC_MAX)] ?? 0;
+/* アカデミーは高額施設：建設（Lv1）$20M・来季から開校。強化費・維持費もほかより高く、在籍生1人ごとに育成費がかかる。建設費は売っても戻らない */
+const ACAD_COST = [0, 20, 10, 14, 18, 24], ACAD_UPKEEP = [0, 0.3, 0.5, 0.8, 1.2, 1.6], ACAD_FEE = 0.1;
+const facCostK = (k, lv) => k === 'acad' ? (ACAD_COST[clamp(lv, 0, FAC_MAX)] ?? 0) : facCost(lv);
+const facUpkeepK = (k, lv) => k === 'acad' ? (ACAD_UPKEEP[clamp(lv, 0, FAC_MAX)] ?? 0) : facUpkeep(lv);
+const facSellBack = (k, lv) => k === 'acad' && lv <= 1 ? 0 : r1(facCostK(k, lv)*0.5);
 /* 施設の老朽化（2026-10）：Lv4以上の施設は、シーズンの切り替えで「来季、改修が必要」と予告されることがある（Lv4 25%・Lv5 40%）。
    予告された施設は、次のシーズンの初めに改修するか（そのレベルの強化費の半分）、改修せずに1レベル下げるかを選ぶ。決めるまでレースには進めない */
 const FAC_WARN_P = { 4: 0.25, 5: 0.4 }, FAC_REN_K = 0.5;
-const facRenCost = lv => r1(facCost(lv)*FAC_REN_K);
+const facRenCost = (lv, k) => r1(facCostK(k, lv)*FAC_REN_K);
 function facAging(rep){
   const me = myTeam(), warn = career.facWarn || {}, next = {};
   career.facRen = {};
   for(const f of FACS){
     const lv = facLv(me, f.k);
-    if(warn[f.k] && lv >= 4) career.facRen[f.k] = { lv, cost: facRenCost(lv) };
+    if(warn[f.k] && lv >= 4) career.facRen[f.k] = { lv, cost: facRenCost(lv, f.k) };
     else if(lv >= 4 && Math.random() < (FAC_WARN_P[lv] || 0)) next[f.k] = true;
   }
   career.facWarn = next;
@@ -15183,7 +15192,14 @@ function acadRaceGrow(){                                         // レース後
     d.sal = salaryFor(d); if(Object.keys(g).length) out[c] = g; });
   return out;
 }
+function acadCancelBuild(){                                      // 建設の取りやめ（開校前なら全額戻る）
+  if(!career.acadBuild) return;
+  if(!confirmTwice('acadcancel', -ACAD_COST[1])) return;
+  delete career.acadBuild; career.money = r1(career.money + ACAD_COST[1]);
+  saveCareer(); renderHQ(`アカデミーの建設を取りやめました（${money(ACAD_COST[1])}が戻りました）。`);
+}
 function acadOffseason(rep){                                     // オフ：年を取ったあと。期限切れの在籍生を市場へ、候補を入れ替える
+  if(career.acadBuild){ delete career.acadBuild; myTeam().fac.acad = Math.max(1, myFac('acad')); rep.acadOpen = true; }   // 建設したアカデミーが開校
   if(!career.acad && !myFac('acad')) return;
   const A = acadState(); rep.acad = acadList().slice(); rep.acadOut = [];
   acadList().forEach(c => { const d = career.drivers[c]; if(d.age > ACAD_AGE_MAX){ delete d.acad; d.faYrs = 0; career.fa.push(c); rep.acadOut.push(c); rep.gnote.push({ code: c, t: `${ACAD_AGE_MAX + 1}歳になり、アカデミーを離れて移籍市場に出ました` }); } });
@@ -15194,7 +15210,7 @@ const pitMiss = lv => Math.max(0.01, 0.08 - lv*0.014);
 const pitRange = lv => `${(1.0 - lv*0.02).toFixed(2)}〜${(1.0 - lv*0.02 + 0.5 - lv*0.06).toFixed(2)}`;
 const facLv = (t, k) => (t && t.fac && t.fac[k]) || 0;
 const myFac = k => facLv(career && myTeam(), k);
-const facUpkeepSum = t => r1(FACS.reduce((a, f) => a + facUpkeep(facLv(t, f.k)), 0));
+const facUpkeepSum = t => r1(FACS.reduce((a, f) => a + facUpkeepK(f.k, facLv(t, f.k)), 0) + (career && t.id === career.team ? acadList().length*ACAD_FEE : 0));   // 自チームはアカデミーの育成費も含む
 /* 最初のレベル：マシンの強さ（car）から決め、施設ごとに±1ばらつかせる */
 function initFac(carV){ const b = clamp(Math.round((carV - 4)/0.9), 0, 4), o = {}; FACS.forEach(f => o[f.k] = f.own ? 0 : clamp(b + Math.floor(Math.random()*3) - 1, 0, FAC_MAX)); return o; }   // 自チームだけの施設（アカデミー）は0から
 function ensureFacilities(){
@@ -15823,10 +15839,12 @@ function scoutStars(d){
 function upgradeFac(k){
   const t = myTeam(), lv = facLv(t, k);
   if(lv >= FAC_MAX || (career.facRen && career.facRen[k])) return;   // 改修を決める前は強化できない
-  const cost = facCost(lv + 1); if(career.money < cost) return;
+  const cost = facCostK(k, lv + 1); if(career.money < cost) return;
+  if(k === 'acad' && lv === 0 && career.acadBuild) return;                    // 建設中（来季から開校）
   if(!confirmTwice('fac' + k, cost)) return;                                   // 高い買い物なので、2回押して確定
-  career.money = r1(career.money - cost); t.fac[k] = lv + 1;
-  if(k === 'acad' && acadState().cs !== career.season) acadRefreshCand();   // 開設した年：すぐに今年の候補が届く
+  career.money = r1(career.money - cost);
+  if(k === 'acad' && lv === 0){ career.acadBuild = career.season; saveCareer(); renderHQ(`アカデミーの建設を始めました（${money(cost)}）。来季から開校します。`); return; }
+  t.fac[k] = lv + 1;
   saveCareer(); renderHQ(`${FAC_K[k].n}をLv${lv + 1}に強化しました（${money(cost)}）。`);
 }
 /* ---------- 成長と衰え ----------
@@ -19478,16 +19496,18 @@ function facHtml(){
   return `<div class="sec facSec">
     <h2>施設<button type="button" class="qm" data-guide="fac" aria-label="遊び方を見る">?</button><span class="kick">維持費 合計 ${money(pr(up))}/戦</span></h2>
     <p class="note" style="margin:0 0 8px">強化はすぐに効きます。Lvが上がるほど維持費が増え、Lv4以上は古くなると改修が必要です。</p>
-    <div class="facGrid">${FACS.map(f => { const lv = facLv(me, f.k), max = lv >= FAC_MAX, cost = max ? 0 : facCost(lv + 1), ren = career.facRen && career.facRen[f.k], warn = career.facWarn && career.facWarn[f.k], can = !max && !ren && career.money >= cost, rb = rivalBest(f.k);
+    <div class="facGrid">${FACS.map(f => { const lv = facLv(me, f.k), max = lv >= FAC_MAX, cost = max ? 0 : facCostK(f.k, lv + 1), ren = career.facRen && career.facRen[f.k], warn = career.facWarn && career.facWarn[f.k], bld = f.k === 'acad' && !lv && career.acadBuild, can = !max && !ren && !bld && career.money >= cost, rb = rivalBest(f.k), back = facSellBack(f.k, lv);
       return `<div class="facCard${ren ? ' ren' : ''}">
         <div class="facHead"><span class="facIco"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${f.ico}"/></svg></span><div style="min-width:0"><b>${f.n}</b><div class="facPips" aria-label="Lv${lv}">${Array.from({ length: FAC_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''} ${i === rb - 1 ? 'rv' : ''}"></i>`).join('')}<span class="num">Lv${lv}</span></div></div></div>
         <p class="facD">${f.d}</p>
         ${ren ? `<div class="facRen"><b>老朽化：改修が必要です</b><span>改修すればLv${lv}のまま、改修しなければLv${lv - 1}に下がります。決めるまでレースには進めません。</span>
           <div class="facBtns"><button class="b sm ${career.money >= ren.cost ? 'go' : ''}" type="button" data-facren="${f.k}" ${career.money >= ren.cost ? '' : 'disabled'}>${armed.key === 'facren' + f.k ? 'もう一度押して確定' : `改修する ${money(ren.cost)}`}</button><button class="b sm ghost" type="button" data-facdown="${f.k}">${armed.key === 'facdown' + f.k ? 'もう一度押して確定' : `改修せずLv${lv - 1}に下げる`}</button></div></div>`
-          : warn ? `<div class="facWarn">来季、改修が必要になる見込みです（改修費 ${money(facRenCost(lv))}・改修しなければ1レベル下がる）</div>` : ''}
+          : warn ? `<div class="facWarn">来季、改修が必要になる見込みです（改修費 ${money(facRenCost(lv, f.k))}・改修しなければ1レベル下がる）</div>` : ''}
         <div class="facEff"><span class="muted">今</span>${lv ? f.eff(lv) : '効果なし'}</div>
         ${max ? '' : `<div class="facEff nx"><span class="muted">Lv${lv + 1}</span>${f.eff(lv + 1)}</div>`}
-        <div class="facFoot"><span class="muted">維持費 ${money(pr(facUpkeep(lv)))}/戦${max ? '' : ` → ${money(pr(facUpkeep(lv + 1)))}`}</span><span class="facBtns">${lv > 0 && !ren ? `<button class="b sm ghost" type="button" data-facsell="${f.k}" title="1段階下げて、建設費の半分を受け取る">${armed.key === 'facsell' + f.k ? 'もう一度押して売却' : `売却 +${money(r1(facCost(lv)*0.5))}`}</button>` : ''}<button class="b sm ${can ? 'go' : ''}" type="button" data-fac="${f.k}" ${can ? '' : 'disabled'}>${max ? '最大' : armed.key === 'fac' + f.k ? 'もう一度押して確定' : `強化 ${money(cost)}`}</button></span></div>
+        ${f.k === 'acad' ? `<div class="facEff"><span class="muted">費用</span>育成費は在籍生1人ごとに ${money(pr(ACAD_FEE))}/戦（維持費に加算）・建設費は売却しても戻りません</div>` : ''}
+        ${bld ? `<div class="facWarn">建設中：来季から開校します</div>` : ''}
+        <div class="facFoot"><span class="muted">維持費 ${money(pr(facUpkeepK(f.k, lv)))}/戦${max ? '' : ` → ${money(pr(facUpkeepK(f.k, lv + 1)))}`}</span><span class="facBtns">${lv > 0 && !ren ? `<button class="b sm ghost" type="button" data-facsell="${f.k}" title="${f.k === 'acad' && lv === 1 ? '閉校する（在籍生は移籍市場へ）' : '1段階下げて、強化費の半分を受け取る'}">${armed.key === 'facsell' + f.k ? 'もう一度押して確定' : f.k === 'acad' && lv === 1 ? '閉校' : `売却 +${money(back)}`}</button>` : ''}${bld ? `<button class="b sm ghost" type="button" data-acadcancel>${armed.key === 'acadcancel' ? 'もう一度押して確定' : `建設をやめる +${money(cost)}`}</button>` : `<button class="b sm ${can ? 'go' : ''}" type="button" data-fac="${f.k}" ${can ? '' : 'disabled'}>${max ? '最大' : armed.key === 'fac' + f.k ? 'もう一度押して確定' : f.k === 'acad' && !lv ? `建設 ${money(cost)}（来季から開校）` : `強化 ${money(cost)}`}</button>`}</span></div>
       </div>`; }).join('')}${puFacCard(me)}${homeCard(me)}${sisCard(me)}</div>
     <div class="legend" style="margin-top:8px"><span><i style="background:var(--blue)"></i>自チームのレベル</span><span><em style="position:static;display:inline-block;width:10px;height:10px;border-radius:2px;box-shadow:inset 0 0 0 2px #e5323b;background:transparent"></em>ライバルの最高レベル</span></div>
   </div>`;
@@ -20146,7 +20166,8 @@ function renderHQView(msg){
           return `<span class="osSL">${lab}</span><span class="osBar"><i class="b" style="width:${lo*10}%"></i>${Math.abs(dv) >= 0.005 ? `<i class="${dv > 0 ? 'up' : 'dn'}" style="left:${lo*10}%;width:${Math.abs(dv)*10}%"></i>` : ''}</span><span class="osSV">${pt100(a)}${Math.abs(dv) >= 0.005 ? `<small class="${dv > 0 ? 'gainT' : 'lossT'}">${sgn(dv)}</small>` : ''}</span>`; }).join('')}</div>
         ${notes ? `<div class="osTags">${notes}</div>` : ''}</div>`; };
     const drvB = `<div class="osBlk"><span class="osLab">ドライバー</span><div class="osDrvs">${me.drivers.map(drvCard).join('')}</div></div>`
-      + ((off.acad || []).length ? `<div class="osBlk"><span class="osLab">アカデミー</span><div class="osDrvs">${off.acad.filter(c => career.drivers[c]).map(drvCard).join('')}</div></div>` : '');
+      + ((off.acad || []).length ? `<div class="osBlk"><span class="osLab">アカデミー</span><div class="osDrvs">${off.acad.filter(c => career.drivers[c]).map(drvCard).join('')}</div></div>`
+         : off.acadOpen ? `<div class="osBlk"><span class="osLab">アカデミー</span><p class="note" style="margin:0">開校しました。ドライバータブで今年の候補を入団させられます。</p></div>` : '');
     // マシン：部品ごとの値（平均）と、全チームの中の順位の前後
     const carB = (() => { const P = off.carPrev; if(!P || !P[me.id]) return '';
       const avg = (car, keys) => keys.reduce((a, k) => a + car[k], 0)/keys.length;
@@ -20305,7 +20326,7 @@ function renderHQView(msg){
     const cand = c => { const d = career.drivers[c];
       return `<div class="acCand">${driverFace(c, FACE_FA_SUIT, 32)}<div class="acCN"><b>${natFlag(c, 12)}${esc(d.name)}</b><small>${ageNow(d)}歳 ・ 総合 ${gradeTag(ovr(d), true)} ・ 伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span> ・ 成長 ${gtChip(d)}</small></div>
         <button type="button" class="b sm go" data-acadjoin="${c}" ${full || inProgress ? 'disabled' : ''}>入団</button></div>`; };
-    return `<div class="sec drvSec acSec"><h2><span class="drvKey" style="background:#2fb36a" aria-hidden="true"></span>アカデミー<span class="kick">Lv${lv} ・ ${L.length}/${slots}人</span></h2>
+    return `<div class="sec drvSec acSec"><h2><span class="drvKey" style="background:#2fb36a" aria-hidden="true"></span>アカデミー<span class="kick">Lv${lv} ・ ${L.length}/${slots}人 ・ 育成費 ${money(pr(r1(L.length*ACAD_FEE)))}/戦</span></h2>
       <p class="note" style="margin:0 0 8px">毎戦2項目が少しずつ伸びます。${ACAD_AGE_MAX}歳のシーズンが終わるまでに昇格させないと、移籍市場に出ます。</p>
       ${L.length ? `<div class="drvGrid">${L.map(card).join('')}</div>` : '<p class="muted" style="font-size:12.5px;margin:0">在籍している選手はいません。</p>'}
       ${lv ? `<div class="acCands"><div class="acCH"><b>今年の候補</b><small class="muted">${C.length ? (full ? '枠がいっぱいです（施設のLvを上げると増えます）' : '入団させた選手は他チームに取られません。残りは次のオフに入れ替わります') : '次のオフに新しい候補が届きます'}</small></div>${C.map(cand).join('')}</div>` : '<p class="muted" style="font-size:12.5px">施設がLv0のため、新しい候補は届きません。</p>'}
@@ -20665,6 +20686,7 @@ function renderHQView(msg){
   el.querySelectorAll('[data-promo]').forEach(b => b.onclick = () => promoteReserve(+b.dataset.promo, b.dataset.prcode));
   el.querySelectorAll('[data-relres]').forEach(b => b.onclick = () => releaseReserve(b.dataset.relres));
   el.querySelectorAll('[data-acadjoin]').forEach(b => b.onclick = () => acadJoin(b.dataset.acadjoin));
+  el.querySelectorAll('[data-acadcancel]').forEach(b => b.onclick = () => acadCancelBuild());
   el.querySelectorAll('[data-acadpr]').forEach(b => b.onclick = () => acadPromote(b.dataset.acadpr));
   el.querySelectorAll('[data-acadrel]').forEach(b => b.onclick = () => acadRelease(b.dataset.acadrel));
   el.querySelectorAll('[data-rdem]').forEach(b => b.onclick = () => answerResDemand(b.dataset.rdem === '1'));
@@ -25646,7 +25668,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.5.0';
+const APP_VER = '1.5.1';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25686,6 +25708,12 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.5.1', items: [
+    ['本部', [
+      'アカデミーを高額施設に：建設$20Mで来季から開校、強化・維持費も高め',
+      'アカデミーの在籍生1人ごとに育成費',
+    ]],
+  ] },
   { v: '1.5.0', items: [
     ['本部', [
       '新施設「アカデミー」：16〜18歳の若手を育ててリザーブに昇格',
