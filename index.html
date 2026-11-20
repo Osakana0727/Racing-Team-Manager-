@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.5.1 -->
+<!-- レーシングチームマネージャー ver 1.6.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.5.1">
-<meta name="build" content="20261119-2">
+<meta name="version" content="1.6.0">
+<meta name="build" content="20261120-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -960,6 +960,8 @@ body.guideOpen{overflow:hidden}
 .drv .pts small{display:block;font-size:10px;color:var(--muted);letter-spacing:.1em}
 .skill{display:inline-block;width:70px;height:6px;border-radius:3px;background:var(--btn);vertical-align:1px;overflow:hidden;margin-right:6px}
 .skill i{display:block;height:100%;background:var(--blue)}
+.skill.capd i{box-shadow:inset -3px 0 0 #e5323b}   /* 頭打ち（限界値に達した項目）：バーの端に赤い線 */
+.dst2 .skill.capd{overflow:visible;position:relative}.dst2 .skill.capd::after{content:'頭打ち';position:absolute;right:0;top:-12px;font-size:9px;line-height:1;font-weight:700;color:#e5323b}
 /* 開発 */
 
 .bar{position:relative;height:10px;border-radius:5px;background:var(--btn);overflow:visible}
@@ -3445,7 +3447,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.5.1</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.6.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -4305,6 +4307,8 @@ function trackFold(T){
 // 走ってよい横位置の範囲（折り返しの少し手前まで）
 const FOLD_K = 0.8;
 function foldClamp(T, i, v){ const F = trackFold(T); return clamp(v, F.lo[i]*FOLD_K, F.hi[i]*FOLD_K); }
+const LINE_SCALES = [24, 12, 6, 3, 2, 1], LINE_IT = 800, LINE_ETA = 0.05;
+let OFF_LINE_K = 0.7;   // ラインを外れた車がコーナーで使えるラインの曲がりの割合（0＝コースの中心線の曲がり）   // C：曲がり最小ラインを解く間隔（点）・回数・1回に動かす割合
 function racingLine(T){
   if(T.line) return T.line;
   const K = T.pts, N = T.N;
@@ -4326,18 +4330,18 @@ function racingLine(T){
     if(pitSide(T) > 0){ if(ph < hi[i]) hi[i] = Math.max(lo[i] + 1, ph); }
     else if(-ph > lo[i]) lo[i] = Math.min(hi[i] - 1, -ph);
   }
-  const m = Math.max(2, Math.round(30/T.sp));               // どのくらい先の点と結んでならすか
-  let o = new Float64Array(N), nx = new Float64Array(N);
-  for(let it=0; it<260; it++){
+  // C（2026-11）：曲がりが最小のライン（アウト・イン・アウト）。
+  //   以前は「両隣の中点へ寄せる」ならし方で、これは糸を張ったような最短のラインになり、コーナーの内側に張り付いていた（インベタ）。
+  //   今は曲がりの変化（4階差分）を小さくする向きに少しずつ動かす。粗い間隔（24点おき）から細かい間隔へ順に解くと、
+  //   コーナーの手前から外へ出て、頂点で内へ寄り、出口で外へ戻るラインになる（1コース0.1秒ほど）
+  const o = new Float64Array(N), X = new Float64Array(N), Y = new Float64Array(N);
+  for(const s of LINE_SCALES) for(let it=0; it<LINE_IT; it++){
+    for(let i=0;i<N;i++){ const q = K[i]; X[i] = q.x + q.nx*o[i]; Y[i] = q.y + q.ny*o[i]; }
     for(let i=0;i<N;i++){
-      const a = K[(i-m+N)%N], b = K[(i+m)%N], q = K[i];
-      const ax = a.x + a.nx*o[(i-m+N)%N], ay = a.y + a.ny*o[(i-m+N)%N];
-      const bx = b.x + b.nx*o[(i+m)%N],   by = b.y + b.ny*o[(i+m)%N];
-      const px = q.x + q.nx*o[i], py = q.y + q.ny*o[i];
-      const d = ((ax+bx)/2 - px)*q.nx + ((ay+by)/2 - py)*q.ny;   // 両隣の中点へ近づく向きの量
-      nx[i] = clamp(o[i] + 0.5*d, lo[i], hi[i]);
+      const q = K[i], a = (i - 2*s + N*8)%N, b = (i - s + N*8)%N, c = (i + s)%N, d = (i + 2*s)%N;
+      const gx = X[a] - 4*X[b] + 6*X[i] - 4*X[c] + X[d], gy = Y[a] - 4*Y[b] + 6*Y[i] - 4*Y[c] + Y[d];
+      o[i] = clamp(o[i] - LINE_ETA*(gx*q.nx + gy*q.ny), lo[i], hi[i]);
     }
-    [o, nx] = [nx, o];
   }
   T.lineLo = lo; T.lineHi = hi;
   T.line = o; T.lineR = lineRadii(T, o, true);
@@ -6459,7 +6463,7 @@ function recordReplay(){
   RP.lastRec = race.t;
   const order = ranking(), rank = new Map(order.map((c,i)=>[c, i+1]));
   const cars = [];
-  for(const c of race.cars){ if(!c.gone) cars.push({ c, x: c.x, y: c.y, h: c.h + (c.bodyOff || 0), out: !!c.out, idx: c.idx, pos: rank.get(c) }); }
+  for(const c of race.cars){ if(!c.gone) cars.push({ c, x: c.x, y: c.y, h: bodyH(c), out: !!c.out, idx: c.idx, pos: rank.get(c) }); }
   const S = race.scCar;
   RP.buf.push({ t: race.t, cars, sc: S ? { x: S.x, y: S.y, h: S.h, idx: S.idx } : null });
   // 粒（煙・砂煙・水しぶき）は、描くときの位置・大きさ・濃さだけを記録する
@@ -6671,7 +6675,7 @@ function drawViewInner(cm){
     const camCar = cam.mode === 'lead' ? order.find(o => !o.out) : race.cars.find(o => o.m === cam.follow);
     const drawCar = c => {
       /* カメラが追っている車の足元の黄色い輪は廃止（担当マシンは頭上の水色の三角で分かる） */
-      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.h + (c.bodyOff || 0)); ctx.scale(0.5, 0.37);   // bodyOff：スライド中は車体の向きが進む向きとずれる   // 横幅だけ細めに（実車の細長い形に近づける）
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(bodyH(c)); ctx.scale(0.5, 0.37);   // bodyOff：スライド中は車体の向きが進む向きとずれる   // 横幅だけ細めに（実車の細長い形に近づける）
       drawF1Car(ctx, c.m.color, col2Of(c.m), c.m.tcam, carLook(c));   // リタイアしても元のマシンカラーのまま（壊れ方は carLook）
       ctx.restore();
       if(c.out) return;                                          // 煙は粒子（drawSmokePuffs）で描く
@@ -6850,7 +6854,7 @@ function drawRearLight(c){
   let on = braking ? 1 : 0;
   if(!braking && rain) on = ((performance.now()/1000)*4 + c.phase) % 1 < 0.5 ? 0.85 : 0;   // 1秒に4回
   else if(!braking && night) on = 0.5;                               // ナイトレース：テールランプは常に点けておく
-  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.h + (c.bodyOff || 0));
+  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(bodyH(c));
   const x = -9.4;                                          // リアウイングのすぐ後ろ
   if(on){
     if(rain || night){
@@ -11294,6 +11298,8 @@ function noPassSpeed(k){
 }
 /* ハンドルを向ける先（何m先のライン上の点を狙うか）。短いほどラインに忠実で、長いほどコーナーの内側を早く切り込む（以前は 22＋速さ×0.16） */
 let LOOK_A = 22, LOOK_B = 0.16;
+const BODY_LR = 6, BODY_KB_MAX = 0.3, BODY_KB_RATE = 10;   // 車体の中心から後輪までの長さ（描画の単位）・車体の向きのずれの上限（ラジアン）・なじむ速さ
+const bodyH = c => c.h + (c.bodyOff || 0) + (c.out ? 0 : (c.kb || 0));
 const CELEB_D = 420, CELEB_GAP = 1.0, CELEB_WAVE = 260;   // ウイニングウィーブ：チェッカーまでの距離／2位との差（秒）／蛇行1往復の長さ
 function stepCar(c, dt){
   if(homeTrial){ c.wear = 0; c.pitReq = false; c.userBox = false; }   // ホームGPの試走：タイヤは減らさず、ピットにも入らない
@@ -11906,7 +11912,8 @@ function stepCar(c, dt){
   }
   const grip = c.grip * tyreF * (c.off ? 0.65 : 1) * (1 - FUEL.grip*fuel) * trGrip(c) * lineK;
   // ラインからのずれ（0＝ぴったり、1＝半車線以上ずれ）と、ダーティエアによるグリップ低下（最大 DIRTY_AIR＝6%）
-  const onLine = clamp(1 - Math.abs(c.lat - lineAt(best)) / (half*0.7), 0, 1);
+  const onLine0 = clamp(1 - Math.abs(c.lat - lineAt(best)) / (half*0.7), 0, 1);
+  const onLine = OFF_LINE_K + (1 - OFF_LINE_K)*onLine0;   // ラインを外れても、ラインの曲がりの OFF_LINE_K ぶんは使える（C：ラインがアウト・イン・アウトになって、外れたときの損が大きくなり追い抜きが2割減ったため）
   const dirtyF = 1 - DIRTY_AIR*c.dirty*((c.m && c.m.dirtyK) || 1);   // バトルがうまいほど前の車の後ろでも曲がれる
   const look = c.inPit ? Math.max(2, Math.round((12 + c.v*0.1)/T.sp)) : Math.max(3, Math.round((LOOK_A + c.v*LOOK_B)/T.sp));
   const li = (best+look)%N, tp = T.pts[li];
@@ -11923,6 +11930,7 @@ function stepCar(c, dt){
   // A：オーバーラン（止まりきれずにランオフへ出るミス）のときは、ハンドルの制限を掛けない（制限するとバリアまで突っ込んでクラッシュが増えた）
   const under = c.underUntil > race.t, lockNow = c.lockUntil > race.t && !(c.overrunUntil > race.t);
   const maxYaw = (onPitPath ? Math.max(grip, 900) : grip * (under ? UNDER_GRIP : 1) * (lockNow ? LOCK_YAW : 1)) / Math.max(c.v, 40);   // ロック中は前輪が転がらず、ハンドルがほとんど効かない   // アンダーステア中はフロントが逃げて曲がりきれない
+  const h0 = c.h;
   if(man) manualSteer(c, dt, grip);
   else if(onPitPath) c.h += clamp(diff*10, -maxYaw, maxYaw) * dt;
   else {
@@ -11931,6 +11939,10 @@ function stepCar(c, dt){
     const Ld = Math.max(8, Math.hypot(tp.x+tp.nx*tl - c.x, tp.y+tp.ny*tl - c.y));
     c.h += clamp(2*Math.max(c.v, 30)*Math.sin(diff)/Ld, -maxYaw, maxYaw) * dt;
   }
+  // 車体の向き（見た目だけ）：後輪が軌跡をなぞるように、曲がっている間は車体を進む向きより少し外へ向ける（kb）。
+  // 以前は車体の中心が進む向きにそのまま向けていたため、きついコーナーほどリアが外へ流れているように見えていた
+  { const kap = c.v > 8 ? wrapAng(c.h - h0)/Math.max(1e-3, c.v*dt) : 0, want = c.spin || c.overUntil > race.t ? 0 : clamp(-Math.atan(BODY_LR*kap), -BODY_KB_MAX, BODY_KB_MAX);
+    c.kb = (c.kb || 0) + (want - (c.kb || 0))*Math.min(1, dt*BODY_KB_RATE); }
 
   // 目標速度（前方のコーナー半径から計算）
   const vmax = c.vmax * (man ? 1 : c.vmul * paceP(c).v * (ttSaveOn(c) ? 0.996 : ttPushOn(c) ? 1.003 : 1)) * (1 - FUEL.speed*fuel) * (1 + 0.07*c.slip) * (c.ot ? OT_V : (c.boost ? BOOST_V : 1)) * (c.ers < CLIP_AT && p.r > 300 && c.finish === null ? CLIP_V : 1) * (c.finish !== null || race.state === 'finished' ? 0.55 : 1) * trV(c);
@@ -12687,7 +12699,7 @@ function stepSpin(c, dt, T, best){
 // タイヤの白煙とタイヤ痕。axle：+1 前輪／-1 後輪。k：強さ
 function scrubSmoke(c, axle, dt, k = 1){
   const ds = race.dust; if(!ds) return;
-  const body = c.h + (c.bodyOff || 0), ch = Math.cos(body), sh = Math.sin(body), nx = -sh, ny = ch;
+  const body = bodyH(c), ch = Math.cos(body), sh = Math.sin(body), nx = -sh, ny = ch;
   const fx = axle > 0 ? 6.2 : -6;
   const n = 26 * k * dt * (1 - 0.7*race.wet) + (c.scrubAcc || 0);
   c.scrubAcc = n - Math.floor(n);
@@ -14347,6 +14359,7 @@ function guideHtml(){
     <p>能力は6項目（${DSTATS.map(x => x[1]).join('・')}）。表示は0〜100で、G〜Sのランクで色分けしています。</p>
     <div class="gRanks">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
     <p>他チームと移籍市場の選手はランクだけが見えます（スカウト部門をLv4にすると数値も分かります）。「伸びしろ」の★は、これから伸びる余地の目安です。</p>
+    <p>選手には項目ごとに見えない<b>限界値</b>があり、得意な項目ほど高く伸び、苦手な項目は早めに止まります。限界に達した項目は、能力バーの端に赤い線と「頭打ち」が出ます（自チームの選手と、数値が見える選手だけ）。覚醒や限界突破をすると、上がった項目の限界値も上がります。</p>
     ${sub('abil', '特殊能力')}
     <p>青は長所、赤は短所です。条件を満たすと、レースの中で効果が出ます（自チームなら画面に知らせが出ます）。レースの内容によって、青を覚えたり、赤を克服したりします。</p>
     <div class="gAbil">${[...blue, ...red].map(([id, a]) => `<div>${abChip(id, false)}<span>${esc(a.d)}</span></div>`).join('')}</div>
@@ -15909,12 +15922,34 @@ const starTxt = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 const DLAB = Object.fromEntries(DSTATS);
 const sgn = v => (v >= 0 ? '+' : '−') + (Math.abs(v)*10).toFixed(1);   // 0〜100の表示に合わせて10倍
 const growTxt = g => Object.entries(g || {}).filter(([, v]) => Math.abs(v) >= 0.005).map(([k, v]) => `<span class="${v >= 0 ? 'gr' : 'dc'}">${DLAB[k]}${sgn(v)}</span>`).join(' ');
-/* 1つの項目を伸ばす（年齢と、伸びしろまでの余裕で伸び幅が変わる） */
+/* 能力の限界値（2026-11・パワプロ風の裏パラメーター）：d.cap[項目] = その項目が伸びられる上限（内部の1〜10）。画面には出さない。
+   ・伸びしろ（d.pot）を中心に、得意な項目は高く、苦手な項目は低く散らす（今の能力が高い項目ほど得意になりやすい）
+   ・上限に近づくほど伸びが鈍り、上限で止まる（画面では「頭打ち」の印）。衰えは今まで通り
+   ・覚醒・限界突破で、上がった項目の上限も上がる
+   ・限界値を持っていない選手（以前のセーブ・新しく作った選手）は、最初に必要になったときに決める。今の能力より下にはしない */
+const CAP_SPREAD = [1.1, 0.5, 0, -0.6, -1.2, -1.8], CAP_NOISE = 0.5, CAP_MID = -0.5, CAP_NEAR = 0.1, CAP_SLOW = 0.8;
+const CAP_AWK = 0.5, CAP_BRK = 0.4;                               // 覚醒・限界突破で上がる上限の量（伸びた分に加えて）
+function capOf(d){
+  if(d.cap && typeof d.cap === 'object') return d.cap;
+  const base = Math.max(d.pot ?? 0, ovrBase(d)) + CAP_MID, keys = DSTATS.map(([k]) => k);
+  const order = keys.map(k => [k, d.st[k] + Math.random()*1.2]).sort((a, b) => b[1] - a[1]).map(x => x[0]);   // 今の能力が高い項目ほど得意になりやすい
+  const cap = {};
+  order.forEach((k, i) => { const v = base + CAP_SPREAD[i] + (Math.random() - 0.5)*CAP_NOISE;
+    cap[k] = Math.round(clamp(Math.max(v, d.st[k] + 0.05), 1, 10)*100)/100; });   // 今より下にはしない
+  return (d.cap = cap);
+}
+const capRoom = (d, k) => capOf(d)[k] - d.st[k];
+const capped = (d, k) => !!(d && d.st) && capRoom(d, k) < CAP_NEAR;           // 頭打ち（もうほとんど伸びない）
+const capCls = (d, k, vis) => vis && capped(d, k) ? ' capd' : '';
+function capRaise(d, k, add){ const c = capOf(d); c[k] = Math.round(clamp(Math.max(c[k], d.st[k]) + add, 1, 10)*100)/100; }
+/* 1つの項目を伸ばす（年齢と、伸びしろまでの余裕と、その項目の限界値までの余裕で伸び幅が変わる） */
 function grow(d, k, amt, log, minRoom = 0.3){
   const room = clamp((d.pot - ovr(d)) / 1.5, minRoom, 1);   // 伸びしろの上限に近いほど伸びにくい（それでも最低 minRoom 倍は伸びる）
-  const add = amt * growK * ageK(gAge(d)) * (amt > 0 ? room : 1);
-  const before = d.st[k];
-  d.st[k] = Math.round(clamp(before + add, 1, 10)*1000)/1000;
+  const before = d.st[k], cp = amt > 0 ? capOf(d)[k] : 10;
+  if(amt > 0 && before >= cp) return;                         // 限界値に達した項目は伸びない
+  const near = amt > 0 ? clamp((cp - before)/CAP_SLOW, 0.2, 1) : 1;   // 限界値に近いほど鈍る
+  const add = amt * growK * ageK(gAge(d)) * (amt > 0 ? room*near : 1);
+  d.st[k] = Math.round(clamp(Math.min(before + add, amt > 0 ? cp : 10), 1, 10)*1000)/1000;
   const diff = d.st[k] - before;
   if(log && Math.abs(diff) >= 0.001) log[k] = Math.round(((log[k] || 0) + diff)*1000)/1000;
 }
@@ -16030,7 +16065,7 @@ function awakenings(order, pre, growLog){
     if(beatMate) d.mateW = true;
     if(d.awk || Math.random() >= p*awkAgeK(d.age)*seasonK()) return;
     const k = awkAmt(d), g = {};
-    DSTATS.forEach(([key]) => { const b = d.st[key]; d.st[key] = Math.round(clamp(b + k*(0.8 + Math.random()*0.4), 1, 10)*1000)/1000; const df = d.st[key] - b; if(df >= 0.001) g[key] = Math.round(df*1000)/1000; });
+    DSTATS.forEach(([key]) => { const b = d.st[key]; d.st[key] = Math.round(clamp(b + k*(0.8 + Math.random()*0.4), 1, 10)*1000)/1000; const df = d.st[key] - b; if(df >= 0.001) g[key] = Math.round(df*1000)/1000; capRaise(d, key, CAP_AWK); });   // 限界値も上がる
     const avg = Object.values(g).reduce((a, v) => a + v, 0)/DSTATS.length;
     if(d.pot != null) d.pot = r1(Math.min(10, d.pot + avg));        // 伸びしろの上限も同じだけ上がる（覚醒のあとも伸び続けられる）
     let ab = null;
@@ -16066,7 +16101,7 @@ function breakThrough(d, round){                                  // 効果を�
   const from = gtOf(d).n, avgSt = DSTATS.reduce((a, [k]) => a + d.st[k], 0)/DSTATS.length;
   const k = brkAmt(d)*(late ? BRK_LATE : 1), g = {};
   DSTATS.forEach(([key]) => { const b = d.st[key], low = clamp(1 + (avgSt - b)*0.25, 0.7, 1.5);
-    d.st[key] = Math.round(clamp(b + k*low*(0.8 + Math.random()*0.4), 1, 10)*1000)/1000; const df = d.st[key] - b; if(df >= 0.001) g[key] = Math.round(df*1000)/1000; });
+    d.st[key] = Math.round(clamp(b + k*low*(0.8 + Math.random()*0.4), 1, 10)*1000)/1000; const df = d.st[key] - b; if(df >= 0.001) g[key] = Math.round(df*1000)/1000; capRaise(d, key, CAP_BRK); });   // 限界値も上がる
   if(!late) d.gt = GROW_TYPES[i + 1].k;
   const avg = Object.values(g).reduce((a, v) => a + v, 0)/DSTATS.length;
   if(d.pot != null) d.pot = r1(Math.min(10, Math.max(d.pot + avg, ovr(d))));
@@ -17527,7 +17562,7 @@ function candDetailHtml(code, known){
   const gW = v => known ? v*10 : (GRADES.find(([g]) => pt100(v) >= g*10)[0] === -Infinity ? 15 : GRADES.find(([g]) => pt100(v) >= g*10)[0]*10 + 5);
   const abs = (d.ab || []).map(id => `<p class="abDesc">${abChip(id, false)}<span>${esc(ABIL[id].d)}</span></p>`).join('') + (d.rab ? `<p class="abDesc">${rabChip(d.rab)}<span>${esc(RABIL[d.rab].d)}（リザーブ時に効く）</span></p>` : '');
   return `<div class="pcDet"><div class="pcDetHead">${driverFace(code, FACE_FA_SUIT, 36)}<div><b>${code}</b> ${esc(d.name)}${formTag(d)}${awkTag(d)}${brkTag(d)}<small>${ageNow(d)}歳 ・ 総合 ${gradeTag(ovr(d), known)} ・ 伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span> ・ 成長 ${gtChip(d)}</small></div><button type="button" class="b sm ghost" data-prof="d:${code}">戦績</button></div>
-    <div class="dst2${known ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], known)}</span>`).join('')}</div>
+    <div class="dst2${known ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, known)}"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], known)}</span>`).join('')}</div>
     ${abs || '<p class="muted" style="margin:4px 0 0;font-size:11.5px">特殊能力なし</p>'}
     ${known ? '' : '<p class="muted" style="margin:4px 0 0;font-size:11px">能力はランクで表示しています（スカウト部門をLv4にすると数値が分かります）。</p>'}</div>`;
 }
@@ -17652,7 +17687,7 @@ function marketRvHtml(viewSeg){
     const rk = 'rv:' + code + ':r:' + (d.rab || ''), rOn = d.rab && drvAbOpen.has(rk);
     const rab = d.rab ? `<button type="button" class="abBtn${rOn ? ' on' : ''}" data-abo="${rk}" aria-expanded="${rOn}">${rabChip(d.rab)}</button>` : '';
     const desc = d.ab.filter(id => drvAbOpen.has('rv:' + code + ':' + id)).map(id => `<p class="abDesc">${abChip(id, false)}<span>${esc(ABIL[id].d)}（レギュラー時に効く）</span></p>`).join('') + (rOn ? `<p class="abDesc">${rabChip(d.rab)}<span>${esc(RABIL[d.rab].d)}（リザーブ時に効く）</span></p>` : '');
-    const stats = `<div class="dst2${sc ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], sc)}</span>`).join('')}</div>
+    const stats = `<div class="dst2${sc ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, sc)}"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], sc)}</span>`).join('')}</div>
       <div class="dcAbs">${abs}${rab}${abs || rab ? '' : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>${desc}`;
     let body = '';
     if(isOpen){
@@ -20238,7 +20273,7 @@ function renderHQView(msg){
         <div class="dcHead">${driverFace(code, teamSuit(myTeam()))}<span class="dcCode">${code}</span><span class="roleTag r${slot}" title="${slot ? 'セカンドドライバー（マシンのTカメラは黄色）' : 'ファーストドライバー（マシンのTカメラは黒）'}"><i aria-hidden="true"></i>${slot ? 'セカンド' : 'ファースト'}</span><div class="dcName">${natFlag(code, 13)}<b>${esc(d.name)}</b>${formTag(d)}${awkTag(d)}${brkTag(d)}${payTag(code)}${d.inj ? ` <span class="injTag">負傷 あと${d.inj}戦欠場</span>` : ''}<small>${ageNow(d)}歳</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${code}" aria-label="${code}の戦績を見る">戦績</button></div>
         <div class="dcChips">${chip('総合', `<span class="ovG">${gradeTag(ovr(d), true)}</span>`, 'big')}${chip('今季', (career.dpts[code] || 0) + 'pts')}${chip('契約', exp ? '満了' : d.con ? `残り${d.con.yrs}年` : '—', exp ? 'bad' : '')}${chip('年俸', money(pr(payOf(code))) + '<i>/戦</i>', d.sal - payOf(code) >= 0.3 ? 'good' : '', d.sal - payOf(code) >= 0.3 ? `お買い得：今の市場価値は ${money(pr(d.sal))}/戦（契約が切れるとこの額を求められます）` : '')}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`, '', 'スカウト評価：これから伸びる余地の目安（少しずれることがあります）')}${chip('成長', gtChip(d), 'gt', gtTip(d))}</div>
         ${loveRowHtml(d)}
-        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}${tr && tr.k === k ? '<span class="trMark" title="重点トレーニング中">トレ</span>' : ''}</span><span class="skill"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${grew(k) ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
+        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}${tr && tr.k === k ? '<span class="trMark" title="重点トレーニング中">トレ</span>' : ''}</span><span class="skill${capCls(d, k, true)}"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${grew(k) ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
         <div class="dcTrain"><span class="tl">トレーニング</span><select data-tk="${code}" aria-label="${code}の重点トレーニングの項目"><option value="">項目を選ぶ</option><optgroup label="能力を伸ばす">${DSTATS.map(([k, lab]) => `<option value="${k}" ${tr && tr.k === k ? 'selected' : ''}>${lab}</option>`).join('')}</optgroup>${trRedOpts(d, tr)}</select><div class="seg2" role="radiogroup" aria-label="${code}のトレーニングの強さ"><button type="button" data-tl="${code}" data-lv="0" class="${tr ? '' : 'on'}">なし</button>${[1, 2].map(lv => `<button type="button" data-tl="${code}" data-lv="${lv}" class="${tr && tr.lv === lv ? 'on' : ''}" ${tr ? '' : 'disabled'}>${TRAIN_LV[lv].n} ${money(pr(TRAIN_LV[lv].cost))}</button>`).join('')}</div>${trXpHtml(d, tr)}</div>
         <div class="dcAbs">${abs || '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}${rab}</div>${abDesc}
       </div>`;
@@ -20259,7 +20294,7 @@ function renderHQView(msg){
         <div class="dcHead">${driverFace(code, teamSuit(S))}<span class="dcCode">${code}</span><div class="dcName">${natFlag(code, 13)}<b>${esc(d.name)}</b>${formTag(d)}${awkTag(d)}${brkTag(d)}<small>${ageNow(d)}歳 ・ ${slot ? 'セカンド' : 'ファースト'}${loan ? ' ・ <span class="sisTag">自チームから</span>' : ''}</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${code}" aria-label="${code}の戦績を見る">戦績</button></div>
         <div class="dcChips">${chip('総合', gradeTag(ovr(d), true), 'big')}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`)}${chip('成長', gtChip(d))}${chip('今季', `${career.dpts[code] || 0}pt`)}${chip('契約', con ? (con.yrs > 0 ? `残り${con.yrs}年` : '満了') : '—')}</div>
         ${sisInjHtml(code)}
-        <div class="dst2" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}${tr && tr.k === k ? '<span class="trMark" title="重点トレーニング中">トレ</span>' : ''}</span><span class="skill"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}</span>`).join('')}</div>
+        <div class="dst2" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}${tr && tr.k === k ? '<span class="trMark" title="重点トレーニング中">トレ</span>' : ''}</span><span class="skill${capCls(d, k, true)}"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}</span>`).join('')}</div>
         <div class="dcTrain"><span class="tl">トレーニング<small class="muted">（費用は自チームの資金から）</small></span><select data-tk="${code}" aria-label="${code}の重点トレーニングの項目"><option value="">項目を選ぶ</option><optgroup label="能力を伸ばす">${DSTATS.map(([k, lab]) => `<option value="${k}" ${tr && tr.k === k ? 'selected' : ''}>${lab}</option>`).join('')}</optgroup>${trRedOpts(d, tr)}</select><div class="seg2" role="radiogroup" aria-label="${code}のトレーニングの強さ"><button type="button" data-tl="${code}" data-lv="0" class="${tr ? '' : 'on'}">なし</button>${[1, 2].map(lv => `<button type="button" data-tl="${code}" data-lv="${lv}" class="${tr && tr.lv === lv ? 'on' : ''}" ${tr ? '' : 'disabled'}>${TRAIN_LV[lv].n} ${money(pr(TRAIN_LV[lv].cost))}</button>`).join('')}</div>${trXpHtml(d, tr)}</div>
         <div class="dcAbs">${abs || '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>${desc}
         <div class="dcActs sisDActs">
@@ -20293,7 +20328,7 @@ function renderHQView(msg){
         <p class="rLock muted">${canResRole(R) ? (career.round === 0 ? '役割はシーズンの最初（第1戦の前）に決められます' : '契約したばかりなので、次のレースの前まで役割を決められます') : '役割を変えられるのは、契約したときとシーズンの最初だけです'}</p>
         <div class="dcChips">${chip('総合', `<span class="ovG">${gradeTag(ovr(d), true)}</span>`, 'big')}${chip('今季', (career.dpts[r] || 0) + 'pts')}${chip('契約', d.con ? (d.con.yrs > 0 ? `残り${d.con.yrs}年` : '満了') : '—', d.con && d.con.yrs <= 0 ? 'bad' : '')}${chip('年俸', money(pr(payOf(r))) + '<i>/戦</i>')}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`, '', 'スカウト評価：これから伸びる余地の目安（少しずれることがあります）')}${chip('成長', gtChip(d), 'gt', gtTip(d))}</div>
         ${loveRowHtml(d)}
-        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${grew(k) ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
+        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, true)}"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${grew(k) ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
         <div class="resInfo"><span class="riLab">${esc(RES_ROLES[R.role].n)}</span><span>${effect}</span></div>
         <div class="resInfo"><span class="riLab">シミュレーター</span><span>毎戦2項目が少しずつ伸びます（Lv${myFac('sim')}${R.role === 'youth' ? '・育成枠で2倍' : ''}）</span></div>
         <div class="dcAbs">${d.rab ? `<button type="button" class="abBtn${rOpen ? ' on' : ''}" data-abo="${rk}" aria-expanded="${rOpen}">${rabChip(d.rab)}</button>` : '<span class="muted" style="font-size:11.5px">リザーブ特殊能力なし</span>'}${d.ab.map(id => `<span class="abOff" title="${esc(ABIL[id].n)}：${esc(ABIL[id].d)}（レギュラーのとき効きます）">${esc(ABIL[id].n)}<i>レギュラー時のみ</i></span>`).join('')}</div>
@@ -20316,7 +20351,7 @@ function renderHQView(msg){
       return `<div class="dCard acCard">
         <div class="dcHead">${driverFace(c, teamSuit(me))}<span class="dcCode">${c}</span><div class="dcName">${natFlag(c, 13)}<b>${esc(d.name)}</b>${formTag(d)}<small>${ageNow(d)}歳 ・ ${SY(d.acad.s)}年入団</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${c}">戦績</button></div>
         <div class="dcChips">${chip('総合', `<span class="ovG">${gradeTag(ovr(d), true)}</span>`, 'big')}${chip('入団から', `<span class="${dv > 0 ? 'gainT' : dv < 0 ? 'lossT' : 'muted'}">${dv >= 0 ? '+' : '−'}${Math.abs(dv)}</span>`)}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`)}${chip('成長', gtChip(d), '', gtTip(d))}${chip('期限', left > 0 ? `あと${left}年` : '今季まで', left <= 0 ? 'warnC' : '')}</div>
-        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${g[k] ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
+        <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, true)}"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${g[k] ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
         <div class="dcAbs">${(d.ab || []).length ? d.ab.map(id => abChip(id)).join('') : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>
         <div class="dcActs"><div class="resActs">
           <button type="button" class="b sm ${onP ? 'go' : ''}" data-acadpr="${c}" ${resFull || inProgress ? 'disabled' : ''}>${onP ? 'もう一度押して確定' : `リザーブに昇格（年俸 ${money(pr(r1(Math.max(0.2, d.sal*ACAD_SAL_K))))}/戦）`}</button>
@@ -20497,7 +20532,7 @@ function renderHQView(msg){
         return `<div class="dCard faCard">
         <div class="dcHead">${driverFace(code, FACE_FA_SUIT)}<span class="dcCode">${code}</span><div class="dcName">${natFlag(code, 13)}<b>${esc(d.name)}</b>${isRookie(code) ? ' <span class="newTag">新人</span>' : ''}${formTag(d)}${awkTag(d)}${brkTag(d)}<small>${ageNow(d)}歳</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${code}" aria-label="${code}の戦績を見る">戦績</button></div>
         <div class="dcChips">${chip('総合', ovTxt, 'big')}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`, '', 'スカウト評価：これから伸びる余地の目安（少しずれることがあります）')}${chip('成長', gtChip(d), 'gt', gtTip(d))}${chip('年俸', money(pr(csal)) + '<i>/戦</i>', '', `${signYrs}年契約のときの年俸（1戦あたり）`)}${chip('契約金', money(fee), can ? '' : 'bad', can ? '' : '資金が足りません')}</div>
-        <div class="dst2${sc ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], sc)}</span>`).join('')}</div>
+        <div class="dst2${sc ? '' : ' est'}" role="table" aria-label="${code}の能力">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, sc)}"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], sc)}</span>`).join('')}</div>
         <div class="dcAbs">${abs}${rab}${abs || rab ? '' : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>${desc}
         <div class="dcActs">${acts}</div>
       </div>`; }).join('')}</div>
@@ -24500,7 +24535,7 @@ function profPanel(key){
       <div class="prGrid">
         <div class="prBox"><h4>能力<span class="muted">${known ? '' : '（ランクのみ。スカウト部門Lv4で数値）'}</span></h4>
           <div class="prOvr">総合 ${gradeTag(ovr(d), known)}<span class="muted">伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span></span></div>
-          <div class="dst2${known ? '' : ' est'}">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], known)}</span>`).join('')}</div>
+          <div class="dst2${known ? '' : ' est'}">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, known)}"><i style="width:${gW(d.st[k])}%"></i></span><span class="dv">${gradeTag(d.st[k], known)}</span>`).join('')}</div>
           <div class="dcAbs" style="margin-top:6px">${d.ab.length ? d.ab.map(x => abChip(x)).join('') : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}${d.rab ? rabChip(d.rab) : ''}</div></div>
         <div class="prBox"><h4>戦績<span class="muted">今季 ${career.dpts[id] || 0}pts${pos ? `・${pos}位` : ''}</span></h4>${nums(s, [['リタイア', s.dnf]])}
           ${seasons.length ? `<div class="wrapx"><table class="stand"><tr><th>シーズン</th><th>チーム</th><th class="n">ポイント</th><th class="n">順位</th><th class="n">優勝</th></tr>${seasons.map(([sn, x]) => { const T = teamAt(x.team, +sn); return `<tr><td>${SY(sn)}</td><td>${T ? teamLogo(T, 14) + esc(T.name) : '—'}</td><td class="n">${x.pts}</td><td class="n">${x.pos ? x.pos + '位' : '<span class="muted">途中</span>'}</td><td class="n">${x.wins || 0}</td></tr>`; }).join('')}</table></div>` : '<p class="note">まだレースの記録がありません。</p>'}</div>
@@ -25668,7 +25703,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.5.1';
+const APP_VER = '1.6.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25708,6 +25743,16 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.6.0', items: [
+    ['レース', [
+      'レーシングラインをアウト・イン・アウトに作り直し（ラップタイムが速くなります）',
+      '曲がるときの車体の向きを自然に（リアが流れて見えないように）',
+      'ラインを外れたときのコーナーの損を調整（追い抜きの数を維持）',
+    ]],
+    ['ドライバー', [
+      '能力に項目ごとの見えない限界値。頭打ちの項目はバーに赤い線',
+    ]],
+  ] },
   { v: '1.5.1', items: [
     ['本部', [
       'アカデミーを高額施設に：建設$20Mで来季から開校、強化・維持費も高め',
