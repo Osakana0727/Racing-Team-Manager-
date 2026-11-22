@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.6.0 -->
+<!-- レーシングチームマネージャー ver 1.7.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.6.0">
-<meta name="build" content="20261120-1">
+<meta name="version" content="1.7.0">
+<meta name="build" content="20261122-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -930,7 +930,7 @@ body.guideOpen{overflow:hidden}
 .hq .sec h2 .kick{font-weight:700}
 /* 次のレース（タイミングタワーと同じ黒い札） */
 .nextRace{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start}
-@media (max-width:460px){.nextRace{grid-template-columns:1fr}}
+@media (max-width:460px){.nextRace{grid-template-columns:1fr}.nextRace canvas{max-width:100%;aspect-ratio:2.1/1}}
 .nextRace canvas{width:100%;max-width:260px;aspect-ratio:10/7;border-radius:8px;background:rgba(255,255,255,.04)}
 .nrName{font-size:20px;font-weight:700;line-height:1.25;margin:2px 0 4px;text-wrap:balance}
 .nrMeta{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}
@@ -960,8 +960,8 @@ body.guideOpen{overflow:hidden}
 .drv .pts small{display:block;font-size:10px;color:var(--muted);letter-spacing:.1em}
 .skill{display:inline-block;width:70px;height:6px;border-radius:3px;background:var(--btn);vertical-align:1px;overflow:hidden;margin-right:6px}
 .skill i{display:block;height:100%;background:var(--blue)}
-.skill.capd i{box-shadow:inset -3px 0 0 #e5323b}   /* 頭打ち（限界値に達した項目）：バーの端に赤い線 */
-.dst2 .skill.capd{overflow:visible;position:relative}.dst2 .skill.capd::after{content:'頭打ち';position:absolute;right:0;top:-12px;font-size:9px;line-height:1;font-weight:700;color:#e5323b}
+.skill.capd i{box-shadow:inset -3px 0 0 #e5323b}   /* MAX（限界値に達した項目）：バーの端に赤い線 */
+.dst2 .skill.capd{overflow:visible;position:relative}.dst2 .skill.capd::after{content:'MAX';position:absolute;right:0;top:-12px;font-size:9px;line-height:1;font-weight:800;letter-spacing:.04em;color:#e5323b}
 /* 開発 */
 
 .bar{position:relative;height:10px;border-radius:5px;background:var(--btn);overflow:visible}
@@ -1275,6 +1275,38 @@ body.phoneRace .lead-txt{min-width:0;flex-wrap:wrap;row-gap:2px}
 .awkFx.brkFx .awkSt b{color:#ffd85a}
 .awkFx .brkGt{margin-top:9px;font-size:13px;color:#f2f4f8}
 .awkFx .brkGt b{color:#ffd85a}
+/* トレーニング合宿 */
+.cpCard{border-color:color-mix(in srgb,var(--tc,#17b8c4) 60%,var(--line));border-width:2px;display:flex;flex-direction:column;gap:8px}
+.cpCard .osLab{margin-bottom:0}.cpLead{margin:0;font-size:12.5px;color:var(--muted)}
+.cpSlot{display:flex;align-items:center;gap:10px;border:1.5px dashed var(--line);border-radius:10px;padding:8px 10px}
+.cpSlot.done{display:flex;flex-direction:column;align-items:stretch;gap:4px;border:0;background:var(--btn)}
+.cpSE{display:flex;flex-direction:column;flex:1;line-height:1.3}.cpSE small,.cpSH small{font-size:11.5px;font-weight:700;color:var(--muted)}
+.cpSH{display:flex;align-items:center;justify-content:space-between}
+.cpWho{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}.cpWho small{margin-left:auto;font-size:11.5px}
+.cpGain{display:flex;flex-wrap:wrap;gap:5px;font-size:12px}.cpGain>span:not(.ab){background:var(--panel);border-radius:7px;padding:1px 7px}
+.cpTier{font-size:11px;font-weight:800;border-radius:4px;padding:0 6px;line-height:1.6}
+.cpTier.t2{color:#3a2600;background:linear-gradient(90deg,#ffd76a,#ffb800)}.cpTier.t1{color:#fff;background:#2563eb}.cpTier.t0{color:#fff;background:#7b838c}
+.cpPicks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.cpPick,.cpLv,.cpK{border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer}
+.cpPick[aria-pressed="true"],.cpLv[aria-pressed="true"],.cpK[aria-pressed="true"]{border:2px solid var(--tc,#17b8c4);box-shadow:0 0 0 1px color-mix(in srgb,var(--tc,#17b8c4) 30%,transparent)}
+.cpPick{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}.cpPick small{font-size:10.5px;color:var(--muted)}
+.cpNote{margin:-4px 0 0}
+.cpLvs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.cpLv{min-height:74px;padding:6px 8px;display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left}.cpLv small{font-size:10.5px;color:var(--muted);line-height:1.3}
+.cpLv:disabled{opacity:.5;cursor:not-allowed}
+.cpKs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.cpK{min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:10px;font-size:13px}
+.cpK>span:last-child{display:inline-flex;align-items:center;gap:4px}
+.cpMax{font:800 9px "Chakra Petch",sans-serif;color:#e5323b}
+.cpWarn{margin:-4px 0 0;color:#b4232f}
+.cpEst{display:flex;flex-direction:column;gap:3px;background:var(--btn);border-radius:12px;padding:10px 12px;font-size:12.5px}
+.cpGo{display:flex;flex-direction:column;gap:6px;align-items:stretch;text-align:center}.cpGo .b{min-height:48px;font-size:15px}.cpGo .b:disabled{opacity:.5}
+.awkFx.campFx .awkSt small{display:block;font:800 9px "Chakra Petch",sans-serif;color:#ff6b74}
+.awkFx.cpOk::before,.awkFx.cpDull::before{display:none}
+.awkFx.cpOk .awkBox{background:linear-gradient(100deg,#1d4fb8,#5aa9ff,#1d4fb8);background-size:200% 100%}
+.awkFx.cpOk .awkTitle{background:none;color:#8cc4ff;-webkit-background-clip:border-box;background-clip:border-box;animation:none}
+.awkFx.cpDull .awkBox{background:#7b838c;animation:awkPop .5s cubic-bezier(.2,1.6,.4,1)}
+.awkFx.cpDull .awkTitle{background:none;color:#d6dade;-webkit-background-clip:border-box;background-clip:border-box;animation:none}
 @keyframes awkIn{from{opacity:0}to{opacity:1}}
 @keyframes awkPop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes awkSpin{to{transform:rotate(360deg)}}
@@ -3443,11 +3475,312 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
   body.raceView #appTitle{display:none}                         /* スマホ：タイトルとバージョンもレース中は隠す */
   body.raceView .hdrTools{margin-left:0}
 }
+
+/* ===== 本部のUI（2026-11）：チームカラーのヘッダー・固定タブ・カードの見た目をそろえる =====
+   色は JS（hqTheme）が #hq に --tc（チームカラー）・--tcs（白文字を載せられる濃さ）・--tcd（グラデーションの奥の色）・--tct（手前の色）として入れる */
+.hq{--tc:#17b8c4;--tcs:#127f88;--tcd:#14306e;--tct:#17b8c4}
+.hqHero{background:linear-gradient(150deg,var(--tct) 0%,var(--tcd) 100%);color:#fff;border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 22px rgba(0,0,0,.16)}
+.hhTop{display:flex;align-items:center;gap:14px;min-width:0}
+.hhTop .logo{flex:none;background:#fff;border-radius:15px;padding:2px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.28))}
+.hhName{display:flex;flex-direction:column;min-width:0}
+.hhName .kick{color:rgba(255,255,255,.85);font:600 11px "Chakra Petch",system-ui,sans-serif;letter-spacing:.12em}
+.hhName b{font-size:22px;font-weight:800;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.hhName small{font-size:12.5px;opacity:.92}
+.hhTiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.hht{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;align-items:flex-start;gap:1px;color:#fff;font:inherit;text-align:left;min-width:0}
+.hht>span{font-size:11px;opacity:.92}
+.hht b{font:700 22px "Chakra Petch","Segoe UI",system-ui,sans-serif;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+.hht b.neg{color:#ffd3d9}
+.hht b i{font-style:normal;font-size:11px;margin-left:4px;vertical-align:middle}
+.hht small{font-size:11px;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+button.hht{cursor:pointer}button.hht:hover{background:rgba(255,255,255,.24);border-color:rgba(255,255,255,.4)}
+button.hht:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (min-width:900px){.hqHero{flex-direction:row;align-items:center;justify-content:space-between}.hhTiles{flex:0 1 520px}}
+@media (max-width:560px){.hqHero{margin:-14px -16px 0;border-radius:0 0 22px 22px;padding:16px 16px 16px}.hhName b{font-size:21px}.hht b{font-size:21px}}
+/* 概要以外のタブでは、ヘッダーを小さく（中身を早く見せる） */
+.hqHero.sm{padding:10px 14px;gap:8px}
+.hqHero.sm .hhTop{gap:10px}.hqHero.sm .hhTop .logo{width:38px;height:38px;border-radius:10px}
+.hqHero.sm .hhName .kick,.hqHero.sm .hhName small{display:none}.hqHero.sm .hhName b{font-size:17px}
+.hqHero.sm .hhTiles{gap:6px}
+.hqHero.sm .hht{flex-direction:row;align-items:baseline;justify-content:center;gap:6px;padding:4px 8px;border-radius:10px}
+.hqHero.sm .hht small{display:none}.hqHero.sm .hht b{font-size:16px}
+@media (min-width:900px){.hqHero.sm .hhTiles{flex:0 1 420px}}
+/* タブ：スクロールしても上に残る。ヘッダーが見えなくなったら、細い帯（ロゴ・順位・資金）を一緒に出す */
+.hqStick{position:sticky;top:var(--hdrH,0px);z-index:8;display:flex;flex-direction:column;gap:6px;margin:-6px -16px 0;padding:6px 16px;background:linear-gradient(var(--bg) 75%,transparent)}
+/* 細い帯は重ねて出し、タブは transform で下へずらす（レイアウトの高さが変わらないので、スクロールがカクつかない） */
+.hqMB{display:flex;position:absolute;left:16px;right:16px;top:6px;height:38px;box-sizing:border-box;align-items:center;gap:8px;background:linear-gradient(150deg,var(--tct),var(--tcd));color:#fff;border-radius:12px;padding:0 10px;font-size:13.5px;box-shadow:0 4px 12px rgba(0,0,0,.16);opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.hqStick.away .hqMB{opacity:1;transform:none}
+.hqStick .hqTabs{position:relative;z-index:2;transition:transform .22s ease}
+.hqStick .hqMB{z-index:2}
+.hqStick.away .hqTabs{transform:translateY(44px)}
+.hqStick::after{content:'';position:absolute;z-index:1;left:0;right:0;top:100%;height:44px;background:linear-gradient(var(--bg) 70%,transparent);opacity:0;transition:opacity .22s ease;pointer-events:none}
+.hqStick.away::after{opacity:1}
+@media (prefers-reduced-motion:reduce){.hqMB,.hqStick .hqTabs,.hqStick::after{transition:none}}
+.hqStick.noAnim .hqMB,.hqStick.noAnim .hqTabs,.hqStick.noAnim::after{transition:none}
+.hqMB .logo{flex:none;background:#fff;border-radius:8px}
+.hqMB b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hqMB .num{font-weight:700;background:rgba(255,255,255,.2);border-radius:8px;padding:1px 8px;white-space:nowrap}
+.hqMB .num.neg{color:#ffd3d9}
+.hq .hqTabs{border-color:transparent;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08),0 0 0 1px var(--line)}
+.hq .hqTabs button{border-radius:12px}
+.hq .hqTabs button.on{background:var(--tcs);color:#fff;box-shadow:none}
+.hq .hqTabs button.on svg{stroke:#fff}
+.hqTabs .tBadge{position:absolute;top:4px;right:calc(50% - 23px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#d7263d;color:#fff;font:700 10.5px/17px "Chakra Petch",system-ui,sans-serif;font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--panel)}
+/* カード：角を丸く・枠より影で区切る。見出しは太く */
+.hq .sec{border-radius:18px;border-color:transparent;box-shadow:0 1px 3px rgba(0,0,0,.06),0 0 0 1px var(--line)}
+.hq .sec h2{font-size:15px;font-weight:800}
+.hq .sec.tower{box-shadow:inset 0 4px 0 var(--tc),0 6px 18px rgba(0,0,0,.18)}
+.todoN{display:inline-block;min-width:22px;height:22px;padding:0 6px;margin-left:8px;border-radius:11px;background:#d7263d;color:#fff;font:700 12px/22px "Chakra Petch",system-ui,sans-serif;text-align:center;vertical-align:1px}
+/* 初回の案内：1行 */
+.hq .guideHint{flex-wrap:nowrap;gap:8px;padding:6px 6px 6px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--signal) 60%,var(--line));background:color-mix(in srgb,var(--signal) 14%,var(--panel));box-shadow:none;font-size:12.5px}
+.hq .guideHint>span{flex:1;min-width:0}
+.ghX{flex:none;border:0;background:transparent;color:var(--muted);width:36px;height:36px;font-size:18px;border-radius:10px;cursor:pointer}.ghX:hover{background:var(--btn)}
+/* オーナー */
+.ownPill{margin-left:8px;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;background:color-mix(in srgb,var(--tc) 18%,var(--panel));vertical-align:1px}
+.ownTrust{display:flex;flex-direction:column;gap:4px;margin:0 0 8px}
+.ownTrust>div{display:flex;justify-content:space-between;font-size:13px}
+.pbar{display:block;height:8px;border-radius:4px;background:var(--line);overflow:hidden}.pbar i{display:block;height:100%;border-radius:4px}
+.ownMore{margin:0 0 8px}.ownMore summary{cursor:pointer;font-size:12.5px;color:var(--muted);min-height:32px;display:flex;align-items:center;gap:4px;list-style:none}.ownMore summary::-webkit-details-marker{display:none}.ownMore summary::after{content:'›';font-size:15px;transition:transform .15s}.ownMore[open] summary::after{transform:rotate(90deg)}
+.ownMore[open] summary{margin-bottom:6px}
+/* スポンサー：契約を項目ごとのタイルに */
+.spSec h2{display:flex;align-items:center;gap:10px}
+.spSec .spTier{margin-left:auto;font-size:11.5px;font-weight:700;letter-spacing:0;color:var(--text);background:color-mix(in srgb,var(--signal) 22%,var(--panel));border-radius:999px;padding:2px 10px}
+.spTiles{display:grid;gap:6px}
+.spTiles>div{background:var(--btn);border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;min-width:0}
+.spTiles small{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spTiles b{font-size:14px;font-weight:700;white-space:nowrap}
+/* スマホ：タブは画面の一番下に固定。その上にレースバーを1行（GP名・スキップ・予選へ）。上には何も固定しない */
+.hqTabs .ts{display:none}
+@media (max-width:560px){
+  .hq{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .hqStick{position:static;margin:0;padding:0;background:none}
+  .hqStick::after,.hqMB{display:none}
+  .hq .hqTabs,.hqStick.away .hqTabs{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:none;transition:none;margin:0;border-radius:0;border:0;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.06);background:var(--panel);gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  .hq .hqTabs button{min-height:52px;gap:2px;background:transparent;color:var(--muted);font-weight:500;border-radius:0;padding:2px 0}
+  .hq .hqTabs button:hover{background:transparent}
+  .hq .hqTabs button svg{width:44px;height:28px;padding:4px 12px;box-sizing:border-box;border-radius:14px;stroke:currentColor;transition:background .15s}
+  .hq .hqTabs button.on{background:transparent;color:var(--tcs);font-weight:800;box-shadow:none}
+  .hq .hqTabs button.on svg{stroke:var(--tcs);background:color-mix(in srgb,var(--tc) 22%,var(--panel));stroke-width:2.2}
+  .hqTabs .tl{display:inline}.hqTabs button:has(.ts) .tl{display:none}.hqTabs .ts{display:inline}
+  .hqTabs .tBadge{top:0;right:calc(50% - 26px)}
+  .hqTabs .tDot{top:2px;right:calc(50% - 22px)}
+  .raceBar{bottom:calc(61px + env(safe-area-inset-bottom));margin:0 -16px;padding:14px 10px 8px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
+  .raceBar .rbIn{flex-wrap:nowrap;gap:8px;padding:6px 6px 6px 12px;border-radius:16px}
+  .raceBar .rbIn:has(.rbMoney.pend){flex-wrap:wrap}
+  .raceBar .rbInfo{flex:1 1 auto;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:8px;align-items:center;padding:0;font-size:14px}
+  .raceBar .rbInfo .flag{grid-row:span 2}
+  .raceBar .rbInfo b{overflow:hidden;text-overflow:ellipsis}
+  .raceBar .rbInfo small{display:block!important;margin:0;font-size:10.5px;line-height:1.2}
+  .raceBar .rbMoney:not(.pend){display:none}
+  .raceBar .rbMoney.pend{flex:1 1 100%;justify-content:center;order:5}
+  .raceBar .skipBtn{flex:none;min-height:44px;padding:0 12px;font-size:13.5px}
+  .raceBar .b.go{flex:none;min-width:0;min-height:44px;padding:0 18px;font-size:15px}
+}
+}
+
+/* カレンダー：コース情報のシート（スマホは下から・PCは中央） */
+.calH .ch.link .chBtn{cursor:pointer}
+.ciModal{align-items:center}
+.ciSheet{background:var(--panel);color:var(--text);width:100%;max-width:520px;max-height:86vh;overflow:auto;overscroll-behavior:contain;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.3);animation:ciIn .22s ease both;position:relative}
+.ciModal{--tc:#17b8c4}
+.ciModal.closing .ciSheet{animation:ciOut .2s ease both}.ciModal.closing{background:transparent;transition:background .2s}
+@keyframes ciIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes ciOut{to{opacity:0;transform:translateY(40px)}}
+.ciGrab{display:none;justify-content:center;padding:8px 0 2px;position:sticky;top:0;background:var(--panel);z-index:2}.ciGrab span{width:40px;height:5px;border-radius:3px;background:var(--line)}
+.ciHead{display:flex;align-items:center;gap:10px;padding:12px 12px 10px 16px;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line)}
+.ciTt{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.25}.ciTt b{font-size:19px}.ciTt small{font:600 11px "Chakra Petch",system-ui,sans-serif;color:var(--muted);letter-spacing:.06em}
+.ciX{flex:none;width:40px;height:40px;border-radius:20px;border:0;background:var(--btn);color:var(--text);font-size:18px;cursor:pointer}.ciX:focus:not(:focus-visible){outline:none}
+.ciBody{padding:12px 16px 20px;display:flex;flex-direction:column;gap:12px}
+.ciBody h3{margin:4px 0 -4px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:space-between}
+.ciMap{background:#23272e;border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.ciMap canvas{width:100%;aspect-ratio:2.2/1;display:block}
+.ciTags{display:flex;gap:6px;flex-wrap:wrap}
+.ciTiles{display:grid;gap:6px}.ciTiles.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.ciTiles.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ciTiles>div{background:var(--btn);border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;min-width:0}
+.ciTiles small{font-size:10.5px;color:var(--muted)}.ciTiles b{font-size:16px;font-weight:700}
+.ciWx>div{flex-direction:row;align-items:center;gap:8px;text-align:left;padding:8px 10px;border-radius:12px}
+.ciWx svg{width:22px;height:22px;flex:none;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ciWx span{display:flex;flex-direction:column;line-height:1.25}.ciWx b{font-size:15px}
+.ciDesc{margin:0;font-size:13px}
+.ciBadge{font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--btn)}
+.ciBadge.ciGood{background:color-mix(in srgb,var(--hqGood) 20%,var(--panel));color:var(--hqGood)}.ciBadge.ciBad{background:color-mix(in srgb,var(--hqBad) 16%,var(--panel));color:var(--hqBad)}
+.ciFit{display:flex;flex-direction:column;gap:7px;font-size:13px}
+.ciFit>div{display:grid;grid-template-columns:minmax(0,1fr) 110px 38px;gap:8px;align-items:center}
+.ciFit>div:not(.key){opacity:.75}.ciFit small{color:var(--muted)}.ciFit b{text-align:right}
+.ciHist{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ciHist summary{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 12px;font-weight:700;cursor:pointer;list-style:none}
+.ciHist summary::-webkit-details-marker{display:none}
+.ciHist summary small{font-weight:500;font-size:12px;color:var(--muted)}.ciHist summary small::after{content:' ›';display:inline-block;transition:transform .15s}
+.ciHist[open] summary{border-bottom:1px solid var(--line)}.ciHist[open] summary small::after{transform:rotate(90deg)}
+.ciHist>:not(summary){margin:10px 12px 0}.ciHist>:last-child{margin-bottom:12px}
+.ciHistL{display:flex;flex-direction:column}
+.ciHR{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:8px;align-items:center;min-height:44px;padding:0 2px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.ciHR:last-child{border-bottom:0}.ciHR:hover{background:var(--btn)}
+.ciW{display:flex;align-items:center;gap:6px;font-weight:700}.ciW i{width:10px;height:10px;border-radius:3px;display:inline-block}
+@media (max-width:560px){
+  .ciModal{align-items:flex-end;padding:0}
+  .ciSheet{max-width:none;max-height:90vh;border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom);animation-name:ciUp}
+  .ciModal.closing .ciSheet{animation-name:ciDown}
+  .ciGrab{display:flex}.ciHead{top:15px}
+  @keyframes ciUp{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes ciDown{to{transform:translateY(100%)}}
+}
+@media (prefers-reduced-motion:reduce){.ciSheet,.ciModal.closing .ciSheet{animation:none}}
+
+/* 記録：3つのまとまり（シーズン／歴代／履歴）と、まとまりの中のチップ */
+.recGrp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--btn);margin:0 0 10px}
+.recGrp button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--muted);font:700 14px inherit;font-family:inherit;cursor:pointer}
+.recGrp button.on{background:var(--panel);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.recChips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px 12px;padding:0 2px 2px}.recChips::-webkit-scrollbar{display:none}
+.recChips button{flex:none;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 13px inherit;font-family:inherit;white-space:nowrap;cursor:pointer}
+.recChips button.on{background:var(--tcs,#1b1f25);border-color:transparent;color:#fff}
+#records .rcTools{display:flex;flex-direction:column;gap:6px}
+#records .rcTools .seg2{display:flex;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}#records .rcTools .seg2::-webkit-scrollbar{display:none}
+#records .rcTools .seg2 button{flex:none;white-space:nowrap}
+/* 順位表：名前は2行で高さをそろえる。自チームはチームカラーの帯。トップとの差はスマホでは PTS の下に */
+.rcDrv{display:inline-flex;align-items:center;gap:6px;text-align:left}
+.rcNm{display:flex;flex-direction:column;line-height:1.2;min-width:0}.rcNm b{font-size:13.5px}.rcNm .muted{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:12em}
+#records .rcStand tr.mine td:first-child{box-shadow:inset 4px 0 0 var(--tc,#17b8c4)}
+#records .rcStand tr.mine{background:color-mix(in srgb,var(--tc,#17b8c4) 10%,transparent)}
+.rcGap{display:none}
+.rcGapRow td{text-align:center;color:var(--muted);padding:0!important;line-height:1.2;font-size:13px}
+.rcMore{display:block;margin:8px auto 0;min-height:40px}
+@media (max-width:560px){
+  #records .rcStand .rcTeam .tn{display:none}
+  #records .rcStand td,#records .rcStand th{padding-top:7px;padding-bottom:7px}
+  .rcGap{display:block;font-size:10.5px;color:var(--muted);font-weight:500;line-height:1.1}
+}
+/* 設定メニュー */
+.setBody{gap:8px}
+.setBody h3{margin:6px 0 0;font-size:12.5px;color:var(--muted);font-weight:700}
+.setBody h3.danger{color:var(--hqBad)}
+.setRow{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.setRow:hover:not(:disabled){background:var(--btn)}.setRow:disabled{opacity:.45;cursor:default}
+.setRow span{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}.setRow b{font-size:14px}.setRow small{font-size:11.5px;color:var(--muted)}
+.setRow i{font-style:normal;font-size:18px;color:var(--muted)}
+.setRow.danger b{color:var(--hqBad)}.setRow.danger.armed{border-color:var(--hqBad);background:color-mix(in srgb,var(--hqBad) 10%,var(--panel))}
+.setBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:760px){.setBtn{width:34px;justify-content:center;padding:0}}
+.setBtn+.guideBtn{margin-left:6px}
+@media (max-width:420px){header .appVer{display:none}}
+body.raceView #setBtn{display:none}   /* レース中は設定（リセットなど）を出さない */   /* スマホは1行に収めるため、バージョンは設定メニューに表示 */
+
+/* チームの出来事のポップアップ */
+.evpWho{display:flex;gap:10px}
+.evpD{display:flex;align-items:center;gap:8px;background:var(--btn);border-radius:14px;padding:6px 10px 6px 6px}
+.evpD span{display:flex;flex-direction:column;gap:2px}.evpD b{font:700 15px "Chakra Petch",system-ui,sans-serif}
+.evpB{margin:0;font-size:14px;line-height:1.6}
+.evpOpts{display:flex;flex-direction:column;gap:8px}
+.evpOpts .evOpt{min-height:52px;padding:10px 12px;border-radius:12px;background:var(--panel)}
+.evpOpts .evOpt b{font-size:14px}.evpOpts .evOpt small{font-size:12px}
+.evpOpts .evOpt:hover{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 8%,var(--panel))}
+.evpLater{align-self:center;min-height:40px}
+.sreqFrom{padding:8px 12px}
+.evpOpts .evOpt:focus:not(:focus-visible),.ciModal .ciX:focus:not(:focus-visible){outline:none}
+/* ===== PC版レース画面（2026-11 UI改善）：順位表・天気と路面・カード・ラジオ・操作バー（PCのキャリアの決勝だけ） ===== */
+.mtCol,.pcWx,.pcStep,.pcGear,.pcMenu,.tcSide,.tcTabs,.tcTime,.rFace{display:none}
+#pcGear,#pcSpd,#pcCam,#pcMenu{display:none!important}
+body.career.pcRace #stage{--tcW:clamp(340px,29vw,410px)}
+body.career.pcRace .stage .hud:not(:has(#hint:not(:empty))):not(:has(#flag:not(:empty))){display:none}
+/* 1 順位表 */
+body.career.pcRace .stage .miniTower{width:218px;padding:0 0 4px;border-radius:12px;background:rgba(14,16,20,.88);border:1px solid rgba(255,255,255,.12);overflow:hidden}
+body.career.pcRace .miniTower .mtHead{margin:0;border-radius:0;background:#0b0d12;min-height:32px;padding:4px 8px 4px 10px}
+body.career.pcRace .miniTower .mtHead>span{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex:1}
+body.career.pcRace .miniTower .mtRace{font:700 13px "Chakra Petch",sans-serif;letter-spacing:.14em;color:#ffc400}
+body.career.pcRace .miniTower .mtLap{font:700 12px "Chakra Petch",sans-serif;color:#aab0b8;letter-spacing:.04em}
+body.career.pcRace .miniTower .mtLap b{font-size:16px;color:#fff}
+body.career.pcRace .miniTower .mtCol{display:flex;align-items:center;justify-content:space-between;pointer-events:auto;background:#1b1e27;border-bottom:1px solid rgba(255,255,255,.08);padding:1px 2px;margin-bottom:3px}
+body.career.pcRace .miniTower .mtCol button{width:30px;height:24px;border:0;background:none;color:#c9ced6;font:700 16px "Chakra Petch",sans-serif;cursor:pointer;border-radius:5px;line-height:1}
+body.career.pcRace .miniTower .mtCol button:hover{background:rgba(255,255,255,.1)}
+body.career.pcRace .miniTower .mtCol span{font:700 11.5px "M PLUS 1p",sans-serif;color:#f2f4f8}
+body.career.pcRace .miniTower.fold .mtCol{display:none}
+body.career.pcRace .miniTower .mtRows{pointer-events:auto;padding:0 4px}
+body.career.pcRace .miniTower .mtR{grid-template-columns:1.7em 4px 2.7em minmax(3.6em,1fr) 1em 1.1em}
+body.career.pcRace .miniTower .mtR[data-k]{cursor:pointer}
+body.career.pcRace .miniTower .mtR[data-k]:hover{background:rgba(255,255,255,.08);border-radius:3px}
+body.career.pcRace .miniTower .mtR.mine{background:rgba(0,200,255,.26)}
+body.career.pcRace .miniTower .mtR.cam{background:#f2f4f8;color:#11131a;border-radius:3px}
+body.career.pcRace .miniTower .mtR.cam .mtG,body.career.pcRace .miniTower .mtR.cam:not(.mtP1) .mtP{color:#3d434a}
+/* 2 天気・路面 */
+body.career.pcRace .pcWx{display:block;position:absolute;top:220px;right:72px;width:300px;z-index:7;background:rgba(14,16,20,.88);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#f2f4f8;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+body.career.pcRace .pcWx[hidden]{display:none}
+.pcWx .pwH{padding:5px 10px;background:#0b0d12;border-radius:12px 12px 0 0;font:700 11px "Chakra Petch",sans-serif;letter-spacing:.12em;color:#9aa3ad}
+.pcWx .pwSlot{padding:7px 8px 0}
+.pcWx .pwSlot .wxbox:not([hidden]){position:relative!important;inset:auto!important;display:flex!important;flex-wrap:wrap;gap:6px;align-items:center;background:none!important;box-shadow:none!important;padding:0!important;border:0!important;transform:none!important}
+.pcWx .pwSlot .wxlab{display:none!important}
+.pcWx .pwRows{display:flex;flex-direction:column;gap:3px;padding:6px 10px 9px;font:500 12.5px "M PLUS 1p",sans-serif}
+.pcWx .pwRows div{display:flex;justify-content:space-between}
+.pcWx .pwRows span{color:#aab0b8}
+.pcWx .pwRows b{font-weight:700}
+/* 3 自チームのカード */
+body.career.pcRace .tc{grid-template-columns:62px minmax(0,1fr) 84px!important;column-gap:10px!important}
+body.career.pcRace .tc .tcSide{display:flex;flex-direction:column;align-items:center;gap:2px;grid-column:1;grid-row:2/span 7;align-self:start;padding-top:4px}
+.tcSide .tcFace{display:block;width:54px;height:54px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.08)}
+.tcSide .tcFace svg{display:block;width:100%;height:100%}
+.tcSide .tcLapN{font:600 10px "Chakra Petch",sans-serif;color:#9aa3ad;letter-spacing:.04em;white-space:nowrap;margin-top:2px}
+.tcSide .tcLapT{font:700 14px "Chakra Petch",sans-serif;color:#fff}
+body.career.pcRace .tc .tcHead,body.career.pcRace .tc .tcRow,body.career.pcRace .tc .tcPace,body.career.pcRace .tc .tcStart,body.career.pcRace .tc .tcSet,body.career.pcRace .tc .tcTabs,body.career.pcRace .tc .tcTime{grid-column:2!important}
+body.career.pcRace .tc .tcHead{order:1}body.career.pcRace .tc .tcTabs{order:2}body.career.pcRace .tc .tcTime{order:3}body.career.pcRace .tc .tcRow{order:4}body.career.pcRace .tc .tcPace{order:5}body.career.pcRace .tc .tcStart,body.career.pcRace .tc .tcSet{order:6}
+body.career.pcRace .tcBoxW{grid-column:3!important;grid-row:2/span 7!important;order:7}
+body.career.pcRace .tc .tcTabs{display:flex;align-items:center;gap:4px;margin-top:2px}
+.tcTabs button{flex:none;white-space:nowrap;height:24px;padding:0 9px;border:0;border-radius:6px;background:rgba(255,255,255,.08);color:#c9ced6;font:700 11.5px "M PLUS 1p",sans-serif;cursor:pointer}
+.tcTabs button:hover{background:rgba(255,255,255,.16)}
+.tcTabs button.on{background:#f2f4f8;color:#11131a}
+.tcTabs .tcGap{margin-left:auto;overflow:hidden;text-overflow:ellipsis;font:600 11px "Chakra Petch",sans-serif;color:#aab0b8;white-space:nowrap}
+.tcTabs .tcGap b{color:#fff}
+body.career.pcRace .tc.tabT .tcRow,body.career.pcRace .tc.tabT .tcPace{display:none!important}
+body.career.pcRace .tc.tabT .tcTime{display:flex;flex-direction:column;gap:5px}
+.tcTime .tsecs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.tcTime .tsc{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.07);border-radius:7px;padding:3px 0;line-height:1.2}
+.tcTime .tsc small{font-size:10px;color:#9aa3ad}
+.tcTime .tsc b{font-size:13px}
+.tcTime .tsc.p b{color:#c58bff}.tcTime .tsc.g b{color:#3ce08c}.tcTime .tsc.y b{color:#ffc400}
+.tcTime .tln{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#aab0b8}
+.tcTime .tln b{color:#fff;font-size:13px}.tcTime .tln b.p{color:#c58bff}
+body.career.pcRace .tc.pre .tcTabs,body.career.pcRace .tc.pre .tcTime{display:none!important}
+body.career.pcRace .tc .tcPace .pcLab{display:inline;font:700 11.5px "M PLUS 1p",sans-serif}
+body.career.pcRace .tc .tcPace button svg{display:none}
+/* 4 チームラジオ：顔つき */
+body.career.pcRace .radioBox{left:calc(var(--mtW,0px) + 18px)!important}   /* 順位表の右から出す（縦に長い順位表と重ならないように） */
+body.career.pcRace #radioBox .radio{display:flex!important;gap:9px;align-items:center}
+body.career.pcRace #radioBox .radio .rFace{display:block;flex:none;width:40px;height:40px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.08)}
+body.career.pcRace #radioBox .radio .rFace:empty{display:none}
+body.career.pcRace #radioBox .radio .rFace svg{display:block;width:100%;height:100%}
+body.career.pcRace #radioBox .radio .rMain{min-width:0}
+/* 5 操作バー（1段） */
+body.career.pcRace .dock{gap:6px!important;padding:6px!important;flex-wrap:nowrap!important;border-radius:12px!important;overflow:visible!important}
+body.career.pcRace .dock #dkSpeed{display:none!important}
+body.career.pcRace .dock button{min-height:40px!important}
+body.career.pcRace .dock #dkStart{min-width:0!important;max-width:none!important;padding:0 12px!important;font-size:13.5px!important}
+body.career.pcRace .dock #dkStart.pause{width:44px;padding:0!important}
+body.career.pcRace .dock #dkStart.pause span{display:none}
+body.career.pcRace .dock .pcStep{display:inline-flex;align-items:center;background:rgba(255,255,255,.06);border-radius:9px;padding:0 2px;flex:none}
+body.career.pcRace .dock .pcStep button{width:28px;padding:0!important;background:none;font-size:18px;color:#c9ced6;min-width:0}
+body.career.pcRace .dock .pcStep button:hover{background:rgba(255,255,255,.1)}
+body.career.pcRace .dock .pcStep b{min-width:34px;text-align:center;font:700 14px "Chakra Petch",sans-serif;color:#ffc400}
+body.career.pcRace .dock .pcCam b{min-width:46px;color:#f2f4f8;font:700 12.5px "M PLUS 1p",sans-serif;white-space:nowrap}
+body.career.pcRace #camctl.inDock>:is(#camAll,#camAuto,#camMy,#camLead,#camFree,#camRot,#camTilt,.who){display:none!important}
+body.career.pcRace .dock #pcGear{display:inline-flex!important;width:44px}
+body.career.pcRace .dock #pcSpd,body.career.pcRace #camctl.inDock #pcCam{display:inline-flex!important}
+body.career.pcRace .dock #pcMenu:not([hidden]){display:flex!important}
+body.career.pcRace .dock .pcGear.on{background:#f2f4f8;color:#11131a}
+body.career.pcRace .dock .pcMenu:not([hidden]){display:flex;flex-direction:column;gap:7px;position:absolute;right:0;bottom:calc(100% + 8px);width:270px;padding:10px 12px;border-radius:12px;background:rgba(17,19,26,.97);border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 26px rgba(0,0,0,.45);z-index:30;font-family:"M PLUS 1p",sans-serif}
+.pcMenu .pmT{font-size:12px;color:#9aa3ad}
+.pcMenu .pmRow{display:flex}.pcMenu .pmRow:empty{display:none}.pcMenu .pmRow>*{flex:1 1 auto}
+body.career.pcRace .pcMenu .dkScX1{justify-content:flex-start;min-height:36px!important;width:100%}
+body.career.pcRace .pcMenu .dkMode{display:flex!important;width:100%}
+body.career.pcRace .pcMenu .dkMode button{min-height:34px!important;min-width:0!important;flex:1 1 0}
+body.career.pcRace .pcMenu .dkTOW{width:100%}
+body.career.pcRace .pcMenu .dkTO{min-height:36px!important;width:100%;justify-content:space-between}
+body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:space-between!important;min-height:36px!important;padding:0 10px!important;width:100%;background:rgba(255,255,255,.08);color:#e9ebee}
+.pcMenu .pmTg i{width:30px;height:16px;border-radius:8px;background:rgba(255,255,255,.2);position:relative;flex:none}
+.pcMenu .pmTg i::after{content:"";position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .15s}
+.pcMenu .pmTg.on i{background:#ffc400}.pcMenu .pmTg.on i::after{left:16px}
 </style>
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.6.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.7.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -3456,6 +3789,7 @@ body.raceView .hqMini svg{width:17px;height:17px;fill:none;stroke:currentColor;s
   </div>
   <button type="button" class="b sm hqMini" id="hqMini" aria-label="チーム本部へ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M4 20h16"/></svg><span>本部</span></button>
   <button type="button" class="sndIco" id="soundBtn" hidden aria-pressed="true" title="音のオン・オフ" aria-label="音のオン・オフ"></button>
+  <button type="button" class="guideBtn setBtn" id="setBtn" title="設定" aria-label="設定" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="gt">設定</span></button>
   <button type="button" class="guideBtn" id="guideBtn" data-guide="start" title="遊び方"><span class="gq" aria-hidden="true">?</span><span class="gt">遊び方</span></button>
   <div class="tabs" role="tablist" aria-label="モード">
     <button id="tabHQ" class="on" role="tab" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M4 20h16"/></svg><span class="tt"><small>TEAM HQ</small><b>チーム本部</b></span></button>
@@ -3878,9 +4212,13 @@ const PIT_IN_D = 64, PIT_IN_FULL = 18, PIT_OUT_D = 46;   // 停止位置の64手
 const PIT_GARAGE_LAT = 9 + PIT_BOX_W + 6;    // ガレージの中心（ファストレーンの中心から）
 // 作業エリアへの寄り（ファストレーンの中心からのずれ）。idx と、次の点までの割合 fr（0〜1）で連続的に求める（点ごとの段差でガクガクしないように）
 function pitBoxShift(T, c, idx, fr = 0){
-  if(!c || c.redSpot || c.parc || c.boxIdx == null) return 0;           // 赤旗中にピットレーンで並ぶ車・パルクフェルメへ向かう車はファストレーンのまま
   const N = T.N;
   const S = x => x <= 0 ? 0 : x >= 1 ? 1 : x*x*x*(x*(6*x - 15) + 10);   // 曲がり具合まで連続（入り始め・入り終わりでハンドルが急に動かない）
+  if(c && c.redSpot && c.redRow === 2 && !c.served && c.boxIdx != null){   // 赤旗の2列目：入口のすぐ先から作業エリアを走って、1列目（ファストレーン）の横に並ぶ
+    const pl = T.pit, from = (((idx - (pl.entry + pl.ramp) + N) % N) + fr)*T.sp;
+    return from > ((pl.exit - pl.entry + N) % N)*T.sp ? 0 : PIT_BOX_LAT*S(from/40);
+  }
+  if(!c || c.redSpot || c.parc || c.boxIdx == null) return 0;           // 赤旗中にピットレーンで並ぶ車（1列目）・パルクフェルメへ向かう車はファストレーンのまま
   const L = N*T.sp, past = (((idx - c.boxIdx + N) % N) + fr)*T.sp, ahead = past > L/2 ? L - past : -past;   // ahead<0：停止位置を過ぎた
   let f;
   if(!c.served) f = ahead <= 0 ? 1 : ahead >= PIT_IN_D ? 0 : S((PIT_IN_D - ahead)/(PIT_IN_D - PIT_IN_FULL));
@@ -5050,8 +5388,21 @@ for(const c of [cv, cv2]){
   c.addEventListener('pointermove', e => { if(mode === 'race') racePtrMove(e); });
   ['pointerup', 'pointercancel'].forEach(ev => c.addEventListener(ev, e => { if(mode === 'race') racePtrUp(e); }));
   c.addEventListener('lostpointercapture', e => { if(mode === 'race' && fptr.has(e.pointerId)) racePtrUp(e); });
+  let wAcc = 0, wAt = 0;
   c.addEventListener('wheel', e => {
-    if(mode !== 'race' || cam.mode !== 'free' || c !== fcamCanvas()) return;   // フリーのときだけ（ほかのときはページのスクロール）
+    if(mode !== 'race') return;
+    if(cam.mode !== 'free' || c !== fcamCanvas()){           // フリー以外（2026-11）：ホイールで拡大の段階を切り替える（全体のときは寄ると先頭／担当を追う）
+      e.preventDefault();
+      const now = performance.now(); if(now - wAt > 400) wAcc = 0; wAt = now;
+      wAcc += e.deltaY * (e.deltaMode === 1 ? 33 : (e.deltaMode === 2 ? 400 : 1));
+      if(Math.abs(wAcc) < 80) return;
+      const dir = wAcc < 0 ? 1 : -1; wAcc = 0;
+      if(cam.mode === 'all' && dir < 0) return;               // 全体はいちばん引いた画面
+      cam.zi = cam.mode === 'all' ? 0 : clamp(cam.zi + dir, 0, CAM_ZOOMS.length - 1);   // 全体から寄るときは、いちばん引いた段階から
+      if(cam.mode === 'all'){ if(MY) setCam('car', MY); else setCam('lead'); }
+      updateCamUI(); renderStandings(true); dirty = true;
+      return;
+    }
     e.preventDefault();
     const dy = e.deltaY * (e.deltaMode === 1 ? 33 : (e.deltaMode === 2 ? 400 : 1));
     fcamZoomAt(c, e.clientX, e.clientY, fcam.z * Math.exp(-clamp(dy, -200, 200) * 0.0022));
@@ -6560,6 +6911,7 @@ function drawReplay(target){
     ctx.setTransform(rc.z/bgK,0,0,rc.z/bgK,X.e,X.f); ctx.drawImage(bg,0,0);
     ctx.setTransform(X.a,0,0,X.a,X.e,X.f);
     if(race.wet > 0.02){ ctx.fillStyle = `rgba(24,40,64,${(0.40*race.wet).toFixed(3)})`; ctx.fillRect(-W,-H,W*3,H*3); }
+    drawSphere();
     // タイヤ痕（その時点までに付いたもの）
     ctx.save(); ctx.lineCap = 'round'; ctx.lineWidth = 1.3;
     for(const k of P.skids || []){
@@ -6570,7 +6922,7 @@ function drawReplay(target){
     ctx.restore();
     const drawOne = s => {
       ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.h); ctx.scale(0.5, 0.37); drawF1Car(ctx, s.c.m.color, col2Of(s.c.m), s.c.m.tcam, s.out ? carLook(s.c) : null); ctx.restore();
-      if(!s.out) rpTags.push({ x: s.x, y: s.y - 14, pos: s.pos, color: s.c.m.color, m: null });
+      if(!s.out) rpTags.push({ x: s.x, y: s.y - 14, pos: s.pos, color: s.c.m.color, m: null, nm: s.c.m.name });
     };
     const rpTags = [];
     for(const s of f.cars) if(!onBridge(s.idx)) drawOne(s);
@@ -6636,6 +6988,7 @@ function drawViewInner(cm){
     ctx.fillStyle = `rgba(24,40,64,${(0.40*race.wet).toFixed(3)})`;
     ctx.fillRect(-W,-H,W*3,H*3);                 // 画面の外側に描き足した芝生も同じく暗く
   }
+  if(track && !(homeEd && !homeTrial)) drawSphere();   // ラスベガスGP：球体ビジョン（LEDなので夜も雨も明るいまま）
   // イエローフラッグ区間（時間で変わるのでキャッシュしない）
   // ミニセクター単位：ダブルイエローは濃く、シングルイエロー（事故の手前の区間など）は薄く
   if(track && mode === 'race' && yZones().length){
@@ -6925,7 +7278,8 @@ function roundRectPath(x, y, w, h, r){
    呼び出し側は (車のx, 車のy−14) を渡す（以前の書き方のまま） */
 const tagK = () => Math.min(1.7, clamp(viewZ, 1, 1.8)/viewZ);   // 画面上の大きさ：引きの画面では今までどおり、ズームしても1.8倍までしか大きくしない
 function tagPlace(cx, cy, extra = 0){
-  const tk = tagK(), ux = -Math.sin(viewRot), uy = -Math.cos(viewRot), d = 10.6 + 6.25*tk + 1.2 + extra*tk;
+  // 画面が小さい（スマホ）ときも、札が小さくなりすぎないように
+  const tk = Math.max(tagK(), TAG_MIN_PX/(TAG_PC_H*Math.max(0.05, scale*viewZ))), ux = -Math.sin(viewRot), uy = -Math.cos(viewRot), d = 10.6 + 6.25*tk + 1.2 + extra*tk;
   return { x: cx + ux*d, y: cy + 14 + uy*d, tk };
 }
 /* 順位の札（テレビ中継風の斜めカット）：濃紺の平行四辺形に白い斜体の数字、左端にチームカラーの斜めの帯。
@@ -6934,9 +7288,34 @@ function tagPlace(cx, cy, extra = 0){
 function tagPrio(pos, m){ const n = typeof pos === 'number' ? pos : 0; return (m && m === MY ? 2000 : 0) + (m && MY && m.team === MY.team ? 1000 : 0) + (100 - n); }
 function drawRankTags(list){        // list: [{x, y, pos, color, m}]
   list.sort((a, b) => tagPrio(a.pos, a.m) - tagPrio(b.pos, b.m));
-  for(const t of list){ drawRankTag(t.x, t.y, t.pos, t.color); if(t.m === MY) drawMyMark(t.x, t.y); }
+  for(const t of list){ drawRankTag(t.x, t.y, t.pos, t.color, t.nm || (t.m && t.m.name)); if(t.m === MY) drawMyMark(t.x, t.y); }
 }
-function drawRankTag(cx, cy, pos, color){
+/* 順位の札（2026-11。PC・スマホ共通）：すっきりした横長の札にして、寄ったときは略号（名前）も出す。
+   左にチームカラーの地に順位の数字、右に濃い地に白い略号。斜めのカット・太い白ふちはやめ、角を少し丸めた細い札にする。
+   予選（名前だけ）やSCは、左端にチームカラーの細い帯を付けた名前だけの札 */
+const TAG_PC_H = 9.6, TAG_MIN_PX = 10.5, TAG_NAME_SZ = 1.54;   // TAG_NAME_SZ：名前を出す寄り具合（画面上の拡大率＝scale×viewZ。PCの1.15×に当たる）。画面の小さいスマホは、カメラの3.0×以上で名前を出す
+function drawRankTagPC(cx, cy, pos, color, name){
+  const P = tagPlace(cx, cy), isNum = typeof pos === 'number';
+  const ptxt = isNum ? String(pos) : '', ntxt = isNum ? (scale*viewZ >= TAG_NAME_SZ || viewZ >= 3 ? name || '' : '') : String(pos);   // 引きの画面（コース全体など）では数字だけ。寄ったときだけ名前も出す
+  const fP = '700 7.8px "Chakra Petch",sans-serif', fN = '700 7.2px "Chakra Petch",sans-serif';
+  ctx.save();
+  ctx.translate(P.x, P.y); ctx.rotate(-viewRot); ctx.scale(P.tk, P.tk);
+  ctx.font = fN; const nw = ntxt ? ctx.measureText(ntxt).width + (ptxt ? 6 : 7.5) : 0;
+  ctx.font = fP; const pw = ptxt ? Math.max(9.5, ctx.measureText(ptxt).width + 4.5) : 0;
+  const h = TAG_PC_H, w = pw + nw, x0 = -w/2, y0 = -h/2, r = 2.2;
+  const shape = dy => { ctx.beginPath(); ctx.roundRect(x0, y0 + dy, w, h, r); };
+  const band = relLum(hexToRgb(color)) < 0.09 ? '#9aa3ad' : color;
+  ctx.fillStyle = 'rgba(0,0,0,.32)'; shape(1); ctx.fill();            // 影
+  ctx.fillStyle = 'rgba(14,17,24,.93)'; shape(0); ctx.fill();          // 本体
+  ctx.save(); shape(0); ctx.clip(); ctx.fillStyle = band; ctx.fillRect(x0, y0, ptxt ? pw : 2.2, h); ctx.restore();   // 順位の地（名前だけの札は細い帯）
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  if(ptxt){ ctx.font = fP; ctx.fillStyle = relLum(hexToRgb(band)) > 0.5 ? '#10131a' : '#ffffff'; ctx.fillText(ptxt, x0 + pw/2, 0.5); }
+  if(ntxt){ ctx.font = fN; ctx.fillStyle = '#ffffff'; ctx.fillText(ntxt, x0 + pw + nw/2 + (ptxt ? 0 : 1), 0.5); }
+  shape(0); ctx.lineWidth = 0.5; ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.stroke();   // ごく薄いふち
+  ctx.restore();
+}
+function drawRankTag(cx, cy, pos, color, name){
+  return drawRankTagPC(cx, cy, pos, color, name);   // 2026-11：スマホもPCと同じ札にした（下の斜めの札は使っていない）
   const P = tagPlace(cx, cy), txt = String(pos), two = txt.length > 1, nm = typeof pos === 'string';   // nm：名前（予選）
   const w = nm ? 28 : two ? 19.5 : 15.5, h = 11.5, k = 2.6, sw = 4.2;   // 幅・高さ・斜めのずれ・帯の太さ
   const para = dy => { ctx.beginPath(); ctx.moveTo(-w/2 + k, -h/2 + dy); ctx.lineTo(w/2 + k, -h/2 + dy); ctx.lineTo(w/2 - k, h/2 + dy); ctx.lineTo(-w/2 - k, h/2 + dy); ctx.closePath(); };
@@ -8035,7 +8414,7 @@ function trackSens(T){
   if(T.sens) return T.sens;
   const base = { speed: 5.5, accel: 5.5, corner: 5.5, brake: 5.5 }, t0 = estLap(T, base);
   const L = { speed: '最高速度', accel: '加速', corner: 'コーナリング', brake: 'ブレーキ' };
-  const ref = SENS_REF[mapSize] || SENS_REF.M;
+  const ref = SENS_REF[T.size || mapSize] || SENS_REF.M;
   const all = Object.keys(base).map(k => ({ k, label: L[k], d: (t0 - estLap(T, { ...base, [k]: 6.5 }))/t0*1000/ref[k] })).sort((a, b) => b.d - a.d);
   const top = all.filter(x => x.d >= 0.95).slice(0, 2);
   return (T.sens = top.length ? top : all.slice(0, 1));
@@ -8604,7 +8983,7 @@ function drawMyMark(cx, cy){                            // 順位の札のすぐ
   const P = tagPlace(cx, cy);
   ctx.save();
   ctx.translate(P.x, P.y); ctx.rotate(-viewRot); ctx.scale(P.tk, P.tk);
-  ctx.translate(0, -6.25 - 2.5);
+  ctx.translate(0, -TAG_PC_H/2 - 2.5);
   ctx.beginPath(); ctx.moveTo(-4.5, -6); ctx.lineTo(4.5, -6); ctx.lineTo(0, -0.5); ctx.closePath();
   ctx.fillStyle = '#00c8ff'; ctx.fill(); ctx.lineWidth = 1.1; ctx.strokeStyle = '#06222e'; ctx.stroke();
   ctx.restore();
@@ -10184,7 +10563,7 @@ function prepareGridBase(keepWx){                         // keepWx：天気と�
   pwReset(); tcPickFor = null;
   if(race.state === 'idle') race.laps = +lapsSel.value || race.laps;   // スタート前は選んでいる周回数を使う
   race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
-  race.bestLap = null; race.bestSplits = null; race.lapDone = []; race.sparks = []; race.dust = []; race.spray = []; race.smoke = []; race.debris = []; race.recov = []; race.wind = null; race.skids = []; race.greenUntil = 0; race.greenSec = -1; race.greens = []; race.red = null; race.form = null; race.redSkip = false; hideRecord(); clearFlags(); race.leader = null; race.leadCand = null;
+  race.bestLap = null; race.bestSplits = null; race.flCar = null; race.flT = -99; race.lapDone = []; race.sparks = []; race.dust = []; race.spray = []; race.smoke = []; race.debris = []; race.recov = []; race.wind = null; race.skids = []; race.greenUntil = 0; race.greenSec = -1; race.greens = []; race.red = null; race.form = null; race.redSkip = false; hideRecord(); clearFlags(); race.leader = null; race.leadCand = null;
   DIR.events = []; DIR.shot = null; DIR.next = 0; DIR.fade = null; DIR.fadeA = 0; DIR.pan = null;
   RP.buf = []; RP.pbuf = []; RP.lastRec = -1; RP.pending = null; stopReplay();
   if(!keepWx || !race.wPlan || race.trackT == null) setupWeather();
@@ -10562,10 +10941,11 @@ function redTyre(c){
 function assignRedSpot(c){
   const T = track, N = T.N, pl = T.pit, gap = Math.max(1, Math.round(13/T.sp));
   const first = (pl.exit - (pl.rampOut || pl.ramp) - 2 + N) % N, minIdx = (pl.entry + pl.ramp + 2) % N;
-  const room = (first - minIdx + N) % N;
-  const k = Math.min(race.red.queue++ * gap, room);
+  const room = (first - minIdx + N) % N, cap = Math.floor(room/gap) + 1;
+  // 1列で並びきれない分は、作業エリアに2列目を作る（以前は入りきらない車が同じ場所に重なり、ピットレーンで詰まっていた）
+  const q = race.red.queue++, row = q < cap ? 1 : 2, k = Math.min((row === 1 ? q : q - cap)*gap, room);
   if(c.garageIdx === undefined) c.garageIdx = c.boxIdx;
-  c.boxIdx = (first - k + N) % N; c.served = false; c.redSpot = true;
+  c.boxIdx = (first - k + N) % N; c.served = false; c.redSpot = true; c.redRow = row;
 }
 /* 赤旗中だけ「レース再開までスキップ」のボタンを出す。押すと、再開のシグナルまで高速で進める */
 function syncRedSkip(){
@@ -10618,11 +10998,12 @@ function redFreeze(c){
 function orderRedQueue(running){
   const T = track, N = T.N, pl = T.pit, gap = Math.max(1, Math.round(13/T.sp));
   const first = (pl.exit - (pl.rampOut || pl.ramp) - 2 + N) % N, minIdx = (pl.entry + pl.ramp + 2) % N;
-  const room = (first - minIdx + N) % N;
+  const room = (first - minIdx + N) % N, cap = Math.floor(room/gap) + 1;
   redOrder(running).forEach((c, i) => {
     redFreeze(c);
-    const idx = (first - Math.min(i*gap, room) + N) % N, p = T.pts[idx], o = pitOff(T, idx), pp = pitPos(T, idx);
-    Object.assign(c, { x: pp[0], y: pp[1], h: p.a, v: 0, idx, lastIdx: idx, lat: o*pitSide(T), lane: o*pitSide(T), boxIdx: idx,
+    const row = i < cap ? 1 : 2, idx = (first - Math.min((row === 1 ? i : i - cap)*gap, room) + N) % N, p = T.pts[idx], o = pitOff(T, idx) + (row === 2 ? PIT_BOX_LAT : 0);   // 入りきらない分は作業エリアの2列目
+    const pp = pitPos(T, idx, 0, row === 2 ? PIT_BOX_LAT : 0);
+    Object.assign(c, { x: pp[0], y: pp[1], h: p.a, v: 0, idx, lastIdx: idx, lat: o*pitSide(T), lane: o*pitSide(T), boxIdx: idx, redRow: row,
       prevR: (idx - T.startIdx + N) % N });
   });
 }
@@ -11024,7 +11405,8 @@ function onCross(c){
   if(race.red && c.redCross !== undefined){ c.cross++; return; }   // 中断中（ピットへ向かう間）にラインを越えても周回に数えない
   if(c.skipBack > 0){ c.skipBack--; c.cross++; return; }   // 逆走でラインを戻った分は、もう一度越えても周回に数えない
   c.cross++;
-  c.lapUse = 0;                                          // この周に使ったバッテリー（1周ごとに上限がある）
+  c.lapUse = 0;                                          // この周に使ったバッテリー（1周ごとに予算がある）
+  ersLapPlan(c);
   if(c.cross === 1 || c.finish !== null) return;
   const tx = lineTime(c, track.startIdx);
   if(c.skipCross){                                        // レッドフラッグ後の再スタート：周回には数えない
@@ -11042,7 +11424,7 @@ function onCross(c){
     if(c.best === null || lt < c.best) c.best = lt;
     // 全体のファステストラップが更新されたら速報を出す（レース最初の1周分は基準なので出さない）
     if(race.bestLap === null){ race.bestLap = lt; race.bestSplits = c.lastSec.slice(); }
-    else if(lt < race.bestLap){ race.bestLap = lt; race.bestSplits = c.lastSec.slice(); if(race.state !== 'quali') showRecord(c, lt); }
+    else if(lt < race.bestLap){ race.bestLap = lt; race.bestSplits = c.lastSec.slice(); if(race.state !== 'quali'){ showRecord(c, lt); race.flCar = c; race.flT = race.t; } }
   }
   // ラップチャートの順位：この周回を走り終えた順番（何台目にこの周を終えたか）をそのまま記録する。
   // 各車がラインを越えた瞬間の暫定順位ではなく「その周を終えた順」なので、同じ周に同じ順位が重ならない
@@ -12031,9 +12413,9 @@ function stepCar(c, dt){
   if((vBefore - c.v)/dt > 70) c.brakeUntil = race.t + 0.15;   // はっきり減速しているあいだはブレーキランプを点ける（ちらつかないよう少し残す）
   // バッテリー：ブレーキで回収し、ブーストで使う。OTモードは別枠の追加エネルギーを使う
   if(!c.drs){ c.ot = false; c.boost = false; }
-  if(vBefore > c.v && !c.inPit) c.ers = Math.min(1, c.ers + (vBefore - c.v)*ERS_HARV);
+  if(vBefore > c.v && !c.inPit){ const h = (vBefore - c.v)*ERS_HARV; c.ers = Math.min(1, c.ers + h); c.lapHarv = (c.lapHarv || 0) + h; }
   if(c.ers < CLIP_AT && c.v > c.vmax*0.8) c.ers = Math.min(1, c.ers + CLIP_HARV*dt);   // 残りわずかなら直線の終わりでも回収（その間は最高速が落ちる）
-  if(c.boost){ c.ers = Math.max(0, c.ers - BOOST_USE*dt*(hasAb(c, 'ers') ? 0.8 : 1)); c.lapUse = (c.lapUse || 0) + BOOST_USE*dt; }
+  if(c.boost){ c.ers = Math.max(0, c.ers - BOOST_USE*dt*(hasAb(c, 'ers') ? 0.8 : 1)); c.lapUse = (c.lapUse || 0) + BOOST_USE*dt; c.runUse = (c.runUse || 0) + BOOST_USE*dt; }
   if(c.ot) c.otPool = Math.max(0, c.otPool - OT_USE*dt);
 
   { const k = dt*(race.posK || 1); c.x += Math.cos(c.h)*c.v*k; c.y += Math.sin(c.h)*c.v*k; }   // posK：スキップの粗い刻みで速くなりすぎる分の補正（ふだんは1）
@@ -12200,9 +12582,46 @@ const LAP_CAP = 0.35, RES_ATT = 0.32, RES_DEF = 0.2;
    PACE_MIN より残っているときだけ、その周の上限の PACE_SHARE までにとどめる（残りは攻防のために取っておく） */
 const PACE_MIN = 0.55, PACE_SHARE = 0.6;
 const ERS_HARV = 0.00008 * ERS_HARV_K / ERS_CAP, CLIP_AT = 0.06, CLIP_V = 0.965, CLIP_HARV = 0.03 / ERS_CAP;
+/* ---------- バッテリーの使い方（2026-11 改良） ----------
+   以前は「1周35%まで」「タイムを縮めるのは残り55%以上のときだけ」と決まっていて、回収の多いコースでは満タンのまま回収分を捨て、
+   ほかのコースでも半分以上を残したまま最終周を迎えることが多かった。そこで：
+   A．コースに合わせた予算：選手ごとに1周で回収できた量（c.harvAvg）を覚え、毎周その分＋残量の余り（目標の残量を超えた分を数周で）を使ってよい
+   B．溢れそうなら使う：残量が ERS_FULL を超えたら、短い直線でも使う（回収した電気を捨てない）
+   C．長い直線を優先：1周の予算を直線の長さで割り振る。短い直線（いちばん長い直線の ERS_MINRUN 未満）ではタイムを縮めるためには使わない
+   D．終盤は逆算：残り ERS_END 周から、攻防のために残す量と目標の残量を少しずつ減らし、チェッカーで空に近づける
+   E．ペースの指示：プッシュは積極的に、セーブは控えめに（ERS_PACE） */
+const ERS_FULL = 0.9, ERS_MINRUN = 0.35, ERS_END = 4, ERS_FLOOR = 0.3, ERS_SPREAD = 3;
+const ERS_PACE = { push: 1.25, norm: 1, save: 0.8, qsafe: 1 };
+// 直線（カーブの半径が300以上の区間）を取り出し、長さと予算の割り当て（share）を決める
+function ersRuns(T){
+  if(T.ersR) return T.ersR;
+  const N = T.N, K = T.pts, of = new Int16Array(N).fill(-1), runs = [];
+  let s0 = 0; while(s0 < N && K[s0].r >= 300) s0++;                   // 直線でない点から数え始める（輪の継ぎ目で直線が2つに割れないように）
+  if(s0 >= N){ T.ersR = { of, runs: [{ len: N*T.sp, share: 1, use: true }] }; of.fill(0); return T.ersR; }
+  let cur = null;
+  for(let n = 1; n <= N; n++){
+    const i = (s0 + n) % N;
+    if(K[i].r >= 300){ if(!cur){ cur = { n: 0 }; runs.push(cur); } cur.n++; of[i] = runs.length - 1; }
+    else cur = null;
+  }
+  const mx = Math.max(1, ...runs.map(r => r.n));
+  let tot = 0; runs.forEach(r => { r.len = r.n*T.sp; r.use = r.n >= mx*ERS_MINRUN; if(r.use) tot += r.n; });
+  runs.forEach(r => r.share = r.use ? r.n/Math.max(1, tot) : 0);
+  return (T.ersR = { of, runs });
+}
+// 周の始め（コントロールラインを越えたとき）に、その周の予算を決める
+function ersLapPlan(c){
+  if(c.cross > 1 && c.lapHarv != null) c.harvAvg = c.harvAvg == null ? c.lapHarv : c.harvAvg*0.6 + c.lapHarv*0.4;   // 1周で回収できた量
+  c.lapHarv = 0;
+  const left = race.laps - Math.max(0, c.cross - 1);                // この周を含めた残り周回
+  const tgt = ERS_FLOOR*clamp((left - 1)/ERS_END, 0, 1);
+  c.lapBudget = c.harvAvg == null ? LAP_CAP : clamp(c.harvAvg*0.95 + Math.max(0, c.ers - tgt)/Math.max(1, Math.min(left, ERS_SPREAD)), 0.05, 0.9);
+}
 function boostDecision(c, T, best){
   const N = T.N, p = T.pts[best];
   if(p.r < 300 || c.ers < 0.05) return false;                      // 直線でだけ使う
+  const R = ersRuns(T), run = R.of[best];
+  if(run !== c.runId){ c.runId = run; c.runUse = 0; }              // 新しい直線に入った
   let ahead = Infinity, behind = null, bd = Infinity;
   for(const o of race.cars){
     if(o === c || o.out || o.inPit || o.finish !== null) continue;
@@ -12210,14 +12629,21 @@ function boostDecision(c, T, best){
     if(df > 0 && df < 200) ahead = Math.min(ahead, df / Math.max(c.v, 60));
     if(db > 0 && db < 120 && db < bd){ bd = db; behind = o; }
   }
-  const st = c.ersStyle;                                            // 1より大きいほど積極的
+  const st = c.ersStyle * (ERS_PACE[paceKeyOf(c.m)] || 1);          // 1より大きいほど積極的（マシンの性格×ペースの指示）
   const finalLap = c.laps.length >= race.laps - 1;
   if(finalLap && c.ers > 0.08) return true;                         // 最終周は出し切る
-  if((c.lapUse || 0) >= LAP_CAP) return false;                      // この周の使用上限に達した
-  if(ahead < 0.6*st && c.ers > RES_ATT/st) return true;             // 攻める（残量に余裕があるときだけ）
-  if(behind && (behind.drs) && bd / Math.max(behind.v, 60) < 0.5 && c.ers > RES_DEF/st) return true;   // 守る
-  if(c.ers > PACE_MIN/st && (c.lapUse || 0) < LAP_CAP*PACE_SHARE) return true;   // ペースアップ（余っている分でタイムを縮める）
-  return false;
+  if(c.ers > ERS_FULL) return true;                                 // B：溢れそう（回収した分を捨てないように使う）
+  const left = race.laps - c.laps.length, endK = clamp((left - 1)/ERS_END, 0, 1);   // D：終盤ほど残す量を減らす
+  const budget = c.lapBudget ?? LAP_CAP, used = c.lapUse || 0;
+  if(used < Math.max(budget, LAP_CAP)){
+    if(ahead < 0.6*st && c.ers > RES_ATT*endK/st) return true;     // 攻める
+    if(behind && (behind.drs) && bd / Math.max(behind.v, 60) < 0.5 && c.ers > RES_DEF*endK/st) return true;   // 守る
+  }
+  // ペースアップ：その周の予算を、直線の長さで割り振った分まで（C）。攻防のための最低限は残す
+  const r = R.runs[run];
+  if(!r || !r.use || used >= budget*Math.min(1.15, st)) return false;
+  if((c.runUse || 0) >= budget*r.share*st) return false;
+  return c.ers > ERS_FLOOR*endK/st;
 }
 // 検知地点の「OT」の札（コースの外、ピットと反対側に立てる）
 function drawOTSign(T, di){
@@ -13356,6 +13782,7 @@ function wxBoxSync(){
   }
 }
 function renderStandings(force){
+  try{ pcWxSync(); }catch(e){}
   if(Q && race.state === 'quali'){ qrTiming(force); wxBoxSync(); return; }   // 予選：同じ窓に予選のタイミング表を出す
   const now = performance.now();
   updateCtl();
@@ -13589,7 +14016,7 @@ function updateRaceHint(){
   const lap = leader ? Math.min(leader.laps.length+1, race.laps) : 1;
   const me = pw.drive ? myCar() : null;
   const dv = !me || race.state !== 'racing' ? '' : (me.autoWhy ? ` · 自動走行（${me.autoWhy}）` : (me.wrongT > 1 ? ' · 逆走中！' : ''));
-  const ht = race.state === 'finished' ? 'レース終了' : homeTrial ? `試走 ${leader ? leader.laps.length + 1 : 1}周目` : `LAP ${lap}/${race.laps}` + (race.paused ? ' · 一時停止中' : '') + dv;
+  const ht = race.state === 'finished' ? 'レース終了' : homeTrial ? `試走 ${leader ? leader.laps.length + 1 : 1}周目` : isPcCareerRace() ? (race.paused ? '一時停止中' : '') + dv.replace(/^ · /, '') : `LAP ${lap}/${race.laps}` + (race.paused ? ' · 一時停止中' : '') + dv;   // PCのキャリアの決勝：周回は順位表の見出しに出す
   if(h.textContent !== ht){ h.textContent = ht; fixOverlays(); }
 }
 function setSetupLocked(lock){
@@ -14270,6 +14697,18 @@ function makePayDriver(){
   d.rookie = true; d.nat = nat; d.face = makeFace(Math.random, nat); d.payDrv = true;
   return d;
 }
+/* スポンサー契約を、項目ごとのタイルにする（本部の概要）。説明が要る契約（持参金つきなど）は note に文章を添える */
+function sponsorTiles(s){
+  const M = v => money(v), P2 = v => `$${v.toFixed(2)}M`;
+  if(s.type === 'stable') return { t: [['毎戦', M(s.base)]] };
+  if(s.type === 'points') return { t: [['毎戦', M(s.base)], ['1ptごと', P2(s.perPt)], ['表彰台', M(s.podium)], ['優勝', M(s.win)]] };
+  if(s.type === 'quali') return { t: [['毎戦', M(s.base)], ['予選TOP10/台', M(s.top10)], ['TOP3で追加', M(s.top3)], ['ポール', M(s.pole)]] };
+  if(s.type === 'pass') return { t: [['毎戦', M(s.base)], ['追い抜き1回', P2(s.perPass*PASS_PAY_K)]] };
+  if(s.type === 'youth') return { t: [['毎戦', M(s.base)], [`${YOUTH_AGE}歳以下1人`, M(s.perYoung)]] };
+  if(s.type === 'pay') return { t: [['持参金', M(s.dowry)], ['毎戦', M(s.base)], [`${esc(s.drv)} 1pt`, P2(s.perPt)]], note: `${esc(s.drv)}の年俸はスポンサー負担。シーズン中に正ドライバーから外すと違約金 ${M(s.fine)}、以後の報酬なし` };
+  if(s.type === 'payres') return { t: [['持参金', M(s.dowry)], ['毎戦', M(s.base)], ['代役で走った戦', M(s.perStart)]], note: `${esc(s.drv)}の年俸はスポンサー負担。シーズン中にチームから外すと違約金 ${M(s.fine)}、以後の報酬なし` };
+  return { t: [['毎戦', M(s.base)], ['完走1台', M(s.perFin)], ['順位1つ上げ', P2(s.perGain)]] };
+}
 function sponsorTerms(s){
   if(s.type === 'stable') return `毎戦 ${money(s.base)}`;
   if(s.type === 'points') return `毎戦 ${money(s.base)} ＋ 1ポイントごと $${s.perPt.toFixed(2)}M ＋ 表彰台 ${money(s.podium)} ＋ 優勝 ${money(s.win)}`;
@@ -14359,7 +14798,8 @@ function guideHtml(){
     <p>能力は6項目（${DSTATS.map(x => x[1]).join('・')}）。表示は0〜100で、G〜Sのランクで色分けしています。</p>
     <div class="gRanks">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
     <p>他チームと移籍市場の選手はランクだけが見えます（スカウト部門をLv4にすると数値も分かります）。「伸びしろ」の★は、これから伸びる余地の目安です。</p>
-    <p>選手には項目ごとに見えない<b>限界値</b>があり、得意な項目ほど高く伸び、苦手な項目は早めに止まります。限界に達した項目は、能力バーの端に赤い線と「頭打ち」が出ます（自チームの選手と、数値が見える選手だけ）。覚醒や限界突破をすると、上がった項目の限界値も上がります。</p>
+    <p>選手には項目ごとに見えない<b>限界値</b>があり、得意な項目ほど高く伸び、苦手な項目は早めに止まります。その選手の限界に達した項目は、能力バーの端に赤い線と「MAX」が出ます（ランクの最高値という意味ではありません）（自チームの選手と、数値が見える選手だけ）。覚醒や限界突破をすると、上がった項目の限界値も上がります。</p>
+    <p><b>トレーニング合宿</b>：新シーズンの開幕前（オフシーズンの画面）に、お金を払って選手を合宿に送れます。ドライバー枠（自チームとセカンドチームのドライバー）とリザーブ枠に1人ずつ、毎年使えます。コースは基礎 ${money(CAMP_LV[1].cost)}（選んだ2項目が伸びる）・強化 ${money(CAMP_LV[2].cost)}（＋特殊能力のチャンス：赤特を1つ克服、なければ青特を1つ習得）・特別 ${money(CAMP_LV[3].cost)}（＋2項目の限界値が上がる。同じ選手が出るたびに上がり幅は小さくなる）。結果は大成功・成功・普通の3段階で、伸び幅が変わります。伸びは限界値までで、MAXの項目は特別合宿で限界値が上がった分だけ伸びます。</p>
     ${sub('abil', '特殊能力')}
     <p>青は長所、赤は短所です。条件を満たすと、レースの中で効果が出ます（自チームなら画面に知らせが出ます）。レースの内容によって、青を覚えたり、赤を克服したりします。</p>
     <div class="gAbil">${[...blue, ...red].map(([id, a]) => `<div>${abChip(id, false)}<span>${esc(a.d)}</span></div>`).join('')}</div>
@@ -14639,12 +15079,21 @@ function makeEvent(){
   const critic = LG.length >= 2 && noPts(LG[LG.length - 1]) && noPts(LG[LG.length - 2]);
   const extC = D.filter(c => { const d = career.drivers[c], r = myR.find(x => x.code === c); return d && d.con && d.con.yrs === 1 && !d.leave && d.extAsk !== career.season && ((r && r.pos && r.pos <= 5) || loveOf(d) >= 65); });
   const sickC = D.filter(c => career.drivers[c] && !career.drivers[c].inj);
+  // 調子の出来事（2026-11）：不調（スランプの相談）・好調（勢いに乗る）・明暗（片方が絶好調で、もう片方が不調）・調子の知らせ（絶好調／絶不調に変わった。ほかに出来事がないときだけ）
+  const fm = c => formOf(career.drivers[c]);
+  const slumpC = D.filter(c => career.drivers[c] && fm(c) <= -1 && !fmodOn(career.drivers[c])), hotC = D.filter(c => career.drivers[c] && fm(c) >= 1 && !fmodOn(career.drivers[c]));
+  const splitP = D.length === 2 ? (fm(D[0]) >= 2 && fm(D[1]) <= -1 ? [D[0], D[1]] : fm(D[1]) >= 2 && fm(D[0]) <= -1 ? [D[1], D[0]] : null) : null;
+  const fchg = ((career.last && career.last.form) || []).filter(x => D.includes(x.code) && Math.abs(x.to) === 2 && x.from !== x.to);
   const special = (party && party.why !== 'win') || critic;
-  if(Math.random() > (special ? 0.85 : EV_P)) return;
+  if(Math.random() > (special ? 0.85 : EV_P)){                    // 出来事なし：調子が絶好調・絶不調に変わった選手がいれば、お知らせだけ出す
+    if(fchg.length){ const x = fchg[0]; career.ev = { season: career.season, round: career.round, kind: 'formnote', code: x.code, to: x.to, done: true }; }
+    return;
+  }
   const hist = career.evHist || (career.evLast ? [career.evLast] : []);
-  const kinds = ['fix', 'strat', 'feud', 'media', 'cash', 'party', 'critic', 'extend', 'sick', 'sns', 'freight'].filter(k => !hist.includes(k));
+  const kinds = ['fix', 'strat', 'feud', 'media', 'cash', 'party', 'critic', 'extend', 'sick', 'sns', 'freight', 'slump', 'hot', 'split'].filter(k => !hist.includes(k));
   const w = { fix: 3, strat: 2, feud: 1.5, media: 2, cash: 0.8 + Math.max(0, (P - 1)*10),
-    party: party ? (party.why === 'win' ? 2.5 : 8) : 0, critic: critic ? 5 : 0, extend: extC.length ? 3 : 0, sick: sickC.length ? 1.2 : 0, sns: 1.2, freight: 1.2 };
+    party: party ? (party.why === 'win' ? 2.5 : 8) : 0, critic: critic ? 5 : 0, extend: extC.length ? 3 : 0, sick: sickC.length ? 1.2 : 0, sns: 1.2, freight: 1.2,
+    slump: slumpC.length ? 2.5 : 0, hot: hotC.length ? 2 : 0, split: splitP ? 4 : 0 };
   if(!kinds.some(k => w[k] > 0)) return;
   let r = Math.random()*kinds.reduce((a, k) => a + w[k], 0), kind = kinds[0];
   for(const k of kinds){ r -= w[k]; if(r <= 0){ kind = k; break; } }
@@ -14672,6 +15121,12 @@ function makeEvent(){
     career.ev = { ...at, kind, code: pick(D) };
   } else if(kind === 'freight'){
     career.ev = { ...at, kind };
+  } else if(kind === 'slump'){
+    career.ev = { ...at, kind, code: pick(slumpC) };
+  } else if(kind === 'hot'){
+    career.ev = { ...at, kind, code: pick(hotC) };
+  } else if(kind === 'split'){
+    career.ev = { ...at, kind, code: splitP[0], code2: splitP[1] };
   } else {
     const amt = r1(0.8 + Math.random()*0.8 + Math.max(0, P - 1)*12);
     career.money = r1(career.money + amt);
@@ -14690,8 +15145,13 @@ const EV_OPTS = {
   extend: e => [{ id: 'yes', t: '延長する', d: `今の年俸（${money(pr(payOf(e.code)))}/戦）のまま1年延長・${e.code}のチーム愛 +3` }, { id: 'no', t: '今は断る', d: `${e.code}のチーム愛 −2`, def: true }],
   sick: e => [{ id: 'rest', t: '休ませる', d: `次戦は${e.code}が欠場（リザーブか代役が走る）` }, { id: 'push', t: '出場させる', d: `${e.code}は次戦の予選が少し遅い（+0.5%）`, def: true }],
   sns: e => [{ id: 'sorry', t: '謝らせる', d: `人気度 −1・${e.code}のチーム愛 −2`, def: true }, { id: 'defend', t: 'かばう', d: `人気度 −3・${e.code}のチーム愛 +3` }],
-  freight: () => [{ id: 'air', t: '航空便に切り替える', d: `$${EV_AIR.toFixed(1)}M` }, { id: 'wait', t: 'そのまま待つ', d: '次戦は2台とも予選が少し遅い（+0.3%）', def: true }]
+  freight: () => [{ id: 'air', t: '航空便に切り替える', d: `$${EV_AIR.toFixed(1)}M` }, { id: 'wait', t: 'そのまま待つ', d: '次戦は2台とも予選が少し遅い（+0.3%）', def: true }],
+  slump: e => [{ id: 'trainer', t: 'メンタルトレーナーを付ける', d: `$${EV_TRAINER.toFixed(1)}M・次の2戦は${e.code}の調子が1段上がる` }, { id: 'rest', t: '休養を取らせる', d: `次戦は練習不足で予選が少し遅い（+0.4%）・その次の2戦は調子が1段上がる` }, { id: 'wait', t: '様子を見る', d: '何もしない', def: true }],
+  hot: e => [{ id: 'test', t: '追加のテスト走行', d: `$${EV_TEST.toFixed(1)}M・次の2戦は${e.code}の調子が今より下がらない` }, { id: 'media', t: 'メディアに出す', d: `人気度 +2` }, { id: 'none', t: 'いつも通り', d: '何もしない', def: true }],
+  split: e => [{ id: 'cheer', t: `${e.code2}を励ます`, d: `${e.code2}のチーム愛 +2` }, { id: 'no1', t: `${e.code2}にナンバー1待遇を約束`, d: `${e.code2} +4・${e.code} −3` }, { id: 'cold', t: '突き放す', d: `${e.code2}のチーム愛 −3`, def: true }],
+  formnote: () => [{ id: 'ok', t: '確認した', d: '', def: true }]
 };
+const EV_TRAINER = 0.8, EV_TEST = 1.0;
 const EV_PARTY = 1.0, EV_AIR = 1.5;
 function evHead(e){
   const d = c => career.drivers[c] ? career.drivers[c].name : c;
@@ -14705,10 +15165,14 @@ function evHead(e){
   if(e.kind === 'sick') return [`${e.code}が体調を崩した`, `${esc(d(e.code))}が熱を出している。次のレースまでに治るかは分からない。`];
   if(e.kind === 'sns') return [`${e.code}の発言がSNSで炎上`, `レース後のインタビューでの${esc(d(e.code))}のひと言が切り取られ、SNSで騒ぎになっている。`];
   if(e.kind === 'freight') return ['機材の輸送が遅れている', '次のレース用の機材を積んだ船が遅れている。このままでは、セットアップの時間が足りなくなる。'];
+  if(e.kind === 'slump') return [`${e.code}がスランプに悩んでいる`, `「最近どうも感覚がつかめない。何かきっかけがほしい」（${esc(d(e.code))}・調子：${FORM[formOf(career.drivers[e.code]) + 2].n}）`];
+  if(e.kind === 'hot') return [`${e.code}が勢いに乗っている`, `「今はマシンと一体になれている感じがする。この流れを逃したくない」（${esc(d(e.code))}・調子：${FORM[formOf(career.drivers[e.code]) + 2].n}）`];
+  if(e.kind === 'split') return [`${e.code}と${e.code2}で明暗が分かれた`, `絶好調の${e.code}に比べて、${e.code2}は調子が上がらない。${esc(d(e.code2))}は「チームは${e.code}ばかり見ている」と不満を漏らしている。`];
+  if(e.kind === 'formnote') return [e.to > 0 ? `${e.code}が絶好調に！` : `${e.code}が絶不調に…`, e.to > 0 ? `${esc(d(e.code))}の調子が最高潮に達した。次のレースは期待できそうだ。` : `${esc(d(e.code))}の調子がどん底まで落ちている。しばらくは我慢のときかもしれない。`];
   return ['臨時収入', `チームグッズの売れ行きが好調で、${money(e.amt)}の臨時収入があった（資金に加えました）。`];
 }
 function answerEvent(id, auto){
-  const e = career.ev; if(!e || e.done && e.kind !== 'cash') return;
+  const e = career.ev; if(!e || e.done && e.kind !== 'cash' && e.kind !== 'formnote') return;
   const d = c => career.drivers[c], me = myTeam(), o = career.owner;
   let msg = '';
   if(e.kind === 'fix'){
@@ -14742,6 +15206,20 @@ function answerEvent(id, auto){
   } else if(e.kind === 'sns'){
     if(id === 'defend'){ me.pop = Math.round(clamp(popOf(me) - 0.03, POP_MIN, POP_MAX)*1000)/1000; loveAdd(d(e.code), 3); msg = `${e.code}をかばいました（人気度 −3・チーム愛 +3）。`; }
     else { me.pop = Math.round(clamp(popOf(me) - 0.01, POP_MIN, POP_MAX)*1000)/1000; loveAdd(d(e.code), -2); msg = `${e.code}に謝らせました（人気度 −1・チーム愛 −2）。`; }
+  } else if(e.kind === 'slump'){
+    const x = d(e.code);
+    if(x && id === 'trainer'){ career.money = r1(career.money - EV_TRAINER); x.fmod = { s: e.season, r0: e.round, r1: e.round + 1, add: 1 }; msg = `${e.code}にメンタルトレーナーを付けました（$${EV_TRAINER.toFixed(1)}M・次の2戦は調子が1段上がります）。`; }
+    else if(x && id === 'rest'){ career.restQ = { season: e.season, round: e.round, code: e.code }; x.fmod = { s: e.season, r0: e.round + 1, r1: e.round + 2, add: 1 }; msg = `${e.code}に休養を取らせました（次戦は予選が少し遅く、その次の2戦は調子が1段上がります）。`; }
+    else msg = `${e.code}の様子を見ることにしました。`;
+  } else if(e.kind === 'hot'){
+    const x = d(e.code);
+    if(x && id === 'test'){ career.money = r1(career.money - EV_TEST); x.fmod = { s: e.season, r0: e.round, r1: e.round + 1, floor: formOf(x) }; msg = `${e.code}に追加のテスト走行をさせました（$${EV_TEST.toFixed(1)}M・次の2戦は調子が今より下がりません）。`; }
+    else if(id === 'media'){ me.pop = Math.round(clamp(popOf(me) + 0.02, POP_MIN, POP_MAX)*1000)/1000; msg = `${e.code}をメディアに出しました（人気度 +2）。`; }
+    else msg = 'いつも通りに過ごします。';
+  } else if(e.kind === 'split'){
+    if(id === 'cheer'){ loveAdd(d(e.code2), 2); msg = `${e.code2}を励ましました（チーム愛 +2）。`; }
+    else if(id === 'no1'){ loveAdd(d(e.code2), 4); loveAdd(d(e.code), -3); msg = `${e.code2}にナンバー1待遇を約束しました（${e.code2} +4・${e.code} −3）。`; }
+    else { loveAdd(d(e.code2), -3); msg = `${e.code2}を突き放しました（チーム愛 −3）。`; }
   } else if(e.kind === 'freight'){
     if(id === 'air'){ career.money = r1(career.money - EV_AIR); msg = `航空便に切り替えました（$${EV_AIR.toFixed(1)}M）。`; }
     else { career.freightQ = { season: e.season, round: e.round }; msg = '機材の到着を待ちます。次戦は2台とも予選が少し遅れます。'; }
@@ -15924,7 +16402,7 @@ const sgn = v => (v >= 0 ? '+' : '−') + (Math.abs(v)*10).toFixed(1);   // 0〜
 const growTxt = g => Object.entries(g || {}).filter(([, v]) => Math.abs(v) >= 0.005).map(([k, v]) => `<span class="${v >= 0 ? 'gr' : 'dc'}">${DLAB[k]}${sgn(v)}</span>`).join(' ');
 /* 能力の限界値（2026-11・パワプロ風の裏パラメーター）：d.cap[項目] = その項目が伸びられる上限（内部の1〜10）。画面には出さない。
    ・伸びしろ（d.pot）を中心に、得意な項目は高く、苦手な項目は低く散らす（今の能力が高い項目ほど得意になりやすい）
-   ・上限に近づくほど伸びが鈍り、上限で止まる（画面では「頭打ち」の印）。衰えは今まで通り
+   ・上限に近づくほど伸びが鈍り、上限で止まる（画面では「MAX」の印）。衰えは今まで通り
    ・覚醒・限界突破で、上がった項目の上限も上がる
    ・限界値を持っていない選手（以前のセーブ・新しく作った選手）は、最初に必要になったときに決める。今の能力より下にはしない */
 const CAP_SPREAD = [1.1, 0.5, 0, -0.6, -1.2, -1.8], CAP_NOISE = 0.5, CAP_MID = -0.5, CAP_NEAR = 0.1, CAP_SLOW = 0.8;
@@ -15939,7 +16417,7 @@ function capOf(d){
   return (d.cap = cap);
 }
 const capRoom = (d, k) => capOf(d)[k] - d.st[k];
-const capped = (d, k) => !!(d && d.st) && capRoom(d, k) < CAP_NEAR;           // 頭打ち（もうほとんど伸びない）
+const capped = (d, k) => !!(d && d.st) && capRoom(d, k) < CAP_NEAR;           // MAX表示（もうほとんど伸びない）
 const capCls = (d, k, vis) => vis && capped(d, k) ? ' capd' : '';
 function capRaise(d, k, add){ const c = capOf(d); c[k] = Math.round(clamp(Math.max(c[k], d.st[k]) + add, 1, 10)*100)/100; }
 /* 1つの項目を伸ばす（年齢と、伸びしろまでの余裕と、その項目の限界値までの余裕で伸び幅が変わる） */
@@ -16021,7 +16499,10 @@ const FORM = [
   { n:'絶不調', c:'#9b5cff', a: 90 }, { n:'不調', c:'#3f8cff', a: 45 }, { n:'普通', c:'#e8c21d', a: 0 }, { n:'好調', c:'#ff8a1f', a: -45 }, { n:'絶好調', c:'#ff3b3b', a: -90 }
 ];
 const FORM_K = [-1, -0.5, 0, 0.5, 1];
-const formOf = d => clamp(Math.round((d && d.form) || 0), -2, 2);
+const formRaw = d => clamp(Math.round((d && d.form) || 0), -2, 2);   // 波だけの調子
+// 出来事での一時的な上げ下げ（2026-11）：d.fmod = { s: シーズン, r0, r1: 効く戦（career.round の範囲）, add: 段階, floor: これより下がらない }。波そのものは変えない
+const fmodOn = d => { const m = d && d.fmod; return !!(m && career && m.s === career.season && career.round >= m.r0 && career.round <= m.r1); };
+const formOf = d => { let f = formRaw(d); if(fmodOn(d)){ const m = d.fmod; f = clamp(f + (m.add || 0), -2, 2); if(m.floor != null) f = Math.max(f, m.floor); } return f; };
 const formAdd = d => FORM_K[formOf(d) + 2];
 const formTag = (d, small) => { if(!d) return ''; const f = formOf(d), F = FORM[f + 2];
   return `<span class="formTag${small ? ' sm' : ''}" style="--fc:${F.c}" title="調子：${F.n}" aria-label="調子：${F.n}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h9M8 4l4 4-4 4" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(${F.a} 8 8)"/></svg>${small ? '' : `<i>${F.n}</i>`}</span>`; };
@@ -16040,7 +16521,7 @@ function formUpdate(order, mineCodes){
     if(!Array.isArray(d.fw)) d.fw = [Math.random()*2*Math.PI, per()];
     d.fw[0] = (d.fw[0] + 2*Math.PI/d.fw[1]) % (2*Math.PI);
     if(Math.random() < 0.1) d.fw[1] = per();
-    const f0 = formOf(d), v = W.amp*Math.sin(d.fw[0]) + gauss()*W.noise;
+    const f0 = formRaw(d), v = W.amp*Math.sin(d.fw[0]) + gauss()*W.noise;
     const f = Math.abs(v - f0) > W.hys ? clamp(Math.round(v), -2, 2) : f0;
     d.form = f;
     if(f !== f0 && mineCodes.includes(d.code)) out.push({ code: d.code, from: f0, to: f });
@@ -16164,6 +16645,159 @@ function showBreakFx(){
   el.addEventListener('click', e => { if(e.target === el) close(); });
   document.addEventListener('keydown', onKey);
   el.querySelector('.awkClose').focus({ preventScroll: true });
+}
+/* ---------- トレーニング合宿（2026-11） ----------
+   オフシーズン（新シーズンの開幕前）に、お金を払って選手を合宿に送る。余ったお金の使い道。
+   枠：ドライバー枠（自チームとセカンドチームのドライバーから1人）とリザーブ枠（自チームのリザーブから1人）。毎年のオフシーズンに1回ずつ。
+   コース：基礎 $20M（選んだ2項目が伸びる）／強化 $50M（＋特殊能力のチャンス）／特別 $100M（＋2項目の限界値が上がる）。
+   結果は 大成功・成功・普通 の3段階で、伸び幅が変わる。伸びは限界値まで（MAXの項目は、特別合宿で限界値が上がった分だけ伸びる）。
+   限界値の上がり幅は、同じ選手が特別合宿に出るたびに小さくなる（CAMP_CAP：1回目・2回目・3回目以降）。
+   特殊能力：赤特があれば1つ克服、なければ青特を1つ覚える（覚醒と同じ選び方） */
+const CAMP_LV = [null,
+  { n:'基礎', cost: 20,  amt: 0.35, ab: 0,   cap: false, d:'能力が伸びる' },
+  { n:'強化', cost: 50,  amt: 0.45, ab: 0.5, cap: false, d:'＋特殊能力' },
+  { n:'特別', cost: 100, amt: 0.5,  ab: 0.6, cap: true,  d:'＋限界値が上がる' }];
+const CAMP_CAP = [0.4, 0.25, 0.1];
+const CAMP_TIER = [{ n:'普通', k: 0.6, p: 0.25, abK: 0.4 }, { n:'成功', k: 1, p: 0.6, abK: 1 }, { n:'大成功', k: 1.4, p: 0.15, abK: Infinity }];
+const CAMP_SLOT = { drv: 'ドライバー枠', res: 'リザーブ枠' };
+const campOpen = () => !!(career && career.offseason && career.round === 0 && !career.fired);
+const campCapAdd = d => CAMP_CAP[Math.min(CAMP_CAP.length - 1, (d && d.campN) || 0)];
+function campState(){
+  if(!career.camp || career.camp.s !== career.season) career.camp = { s: career.season, drv: null, res: null };
+  return career.camp;
+}
+function campCands(slot){
+  const t = myTeam(); if(!t) return [];
+  const sis = career.sister ? teamOf(career.sister.id) : null;
+  const L = slot === 'res' ? resList(t) : [...(t.drivers || []), ...((sis && sis.drivers) || [])];
+  return L.filter(c => career.drivers[c] && career.drivers[c].st && !career.drivers[c].retired);
+}
+const campSub = (slot, code) => { const sis = career.sister ? teamOf(career.sister.id) : null; return slot === 'res' ? 'リザーブ' : sis && (sis.drivers || []).includes(code) ? 'セカンド' : ageNow(career.drivers[code]) + '歳'; };
+let CAMP_UI = null;
+function openCamp(slot){
+  if(!campOpen() || campState()[slot]) return;
+  const L = campCands(slot); if(!L.length) return;
+  CAMP_UI = { slot, code: L[0], lv: 0, ks: [] };
+  const old = $('#campModal'); if(old) old.remove();
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal campModal'; m.id = 'campModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'campTitle');
+  m.innerHTML = `<div class="ciSheet"></div>`;
+  try{ m.style.setProperty('--tc', teamTheme(myTeam()).c); }catch(err){}
+  document.body.appendChild(m);
+  campRender();
+  const close = () => { m.classList.add('closing'); setTimeout(() => m.remove(), 200); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if(e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  m.addEventListener('click', e => {
+    if(e.target === m) return close();
+    const b = e.target.closest('button'); if(!b || b.disabled) return;
+    const U = CAMP_UI;
+    if(b.classList.contains('ciX')) return close();
+    if(b.dataset.cpc){ if(U.code !== b.dataset.cpc){ U.code = b.dataset.cpc; U.ks = []; } }
+    else if(b.dataset.cpl) U.lv = +b.dataset.cpl;
+    else if(b.dataset.cpk){ const k = b.dataset.cpk; U.ks = U.ks.includes(k) ? U.ks.filter(x => x !== k) : [...U.ks, k].slice(-2); }
+    else if(b.dataset.cpgo){ close(); runCamp(); return; }
+    else return;
+    campRender();
+    const f = m.querySelector(`[data-cpc="${U.code}"]`) && (b.dataset.cpc ? m.querySelector(`[data-cpc="${U.code}"]`) : b.dataset.cpl ? m.querySelector(`[data-cpl="${U.lv}"]`) : m.querySelector(`[data-cpk="${b.dataset.cpk}"]`));
+    if(f) f.focus({ preventScroll: true });
+  });
+  const f0 = m.querySelector('[data-cpc]'); if(f0) f0.focus({ preventScroll: true });
+}
+function campRender(){
+  const m = $('#campModal'), U = CAMP_UI; if(!m || !U) return;
+  const sh = m.querySelector('.ciSheet'), top = sh.scrollTop;
+  const d = career.drivers[U.code], L = CAMP_LV[U.lv], cost = L ? L.cost : 0, ready = d && L && U.ks.length === 2 && career.money >= cost;
+  const capA = campCapAdd(d), lo = L ? Math.max(1, Math.round(L.amt*CAMP_TIER[0].k*10)) : 0, hi = L ? Math.round(L.amt*CAMP_TIER[2].k*10) : 0;
+  const capKs = U.ks.filter(k => capped(d, k)), nth = ((d && d.campN) || 0) + 1;
+  sh.innerHTML = `<div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead"><div class="ciTt"><small>トレーニング合宿</small><b id="campTitle">${CAMP_SLOT[U.slot]}</b></div><button type="button" class="ciX" aria-label="閉じる">×</button></div>
+    <div class="ciBody">
+      <h3>1. 選手</h3>
+      <div class="cpPicks">${campCands(U.slot).map(c => `<button type="button" class="cpPick" data-cpc="${c}" aria-pressed="${c === U.code}"><b class="num">${c}</b><small>${esc(campSub(U.slot, c))}</small></button>`).join('')}</div>
+      ${d ? `<p class="note cpNote">${esc(d.name)} ・ 総合 ${pt100(ovr(d))}${d.con ? ` ・ 契約残り${d.con.yrs}年` : ''}${d.campN ? ` ・ 特別合宿 ${d.campN}回参加` : ''}</p>` : ''}
+      <h3>2. コース</h3>
+      <div class="cpLvs">${[1, 2, 3].map(i => { const x = CAMP_LV[i], short = career.money < x.cost;
+        return `<button type="button" class="cpLv" data-cpl="${i}" aria-pressed="${U.lv === i}"${short ? ' disabled' : ''}><b>${x.n}</b><b class="num">${money(x.cost)}</b><small>${short ? '資金が足りません' : x.d}</small></button>`; }).join('')}</div>
+      <h3>3. 伸ばす項目（2つ）<small class="muted">${U.ks.length}/2</small></h3>
+      <div class="cpKs">${DSTATS.map(([k, lab]) => `<button type="button" class="cpK" data-cpk="${k}" aria-pressed="${U.ks.includes(k)}"><span>${lab}</span><span><b class="num">${pt100(d.st[k])}</b>${capped(d, k) ? '<small class="cpMax">MAX</small>' : ''}</span></button>`).join('')}</div>
+      ${capKs.length && L && !L.cap ? `<p class="note cpWarn">MAXの項目（${capKs.map(k => DSTATS.find(x => x[0] === k)[1]).join('・')}）は、基礎・強化ではもう伸びません。特別合宿なら限界値が上がるぶん伸びます。</p>` : ''}
+      ${L ? `<div class="cpEst"><b>見込み（結果で上下します）</b>
+        <span>・選んだ2項目が それぞれ <b>+${lo}〜+${hi}</b>（限界値まで）</span>
+        ${L.cap ? `<span>・2項目の限界値が <b>+${Math.round(capA*10)}</b>（この選手の特別合宿${nth}回目。回を重ねるほど小さくなる）</span>` : ''}
+        ${L.ab ? `<span>・特殊能力：赤特を1つ克服、なければ青特を1つ覚える チャンス（成功で約${Math.round(L.ab*100)}%・大成功なら必ず）</span>` : ''}
+        <span class="muted">結果：大成功 ${Math.round(CAMP_TIER[2].p*100)}% ・ 成功 ${Math.round(CAMP_TIER[1].p*100)}% ・ 普通 ${Math.round(CAMP_TIER[0].p*100)}%</span></div>` : '<p class="note">コースを選ぶと、見込みが出ます。</p>'}
+      <div class="cpGo"><button type="button" class="b go" data-cpgo="1"${ready ? '' : ' disabled'}>${L ? `${money(cost)} で合宿に送る` : 'コースを選んでください'}</button>
+        <small class="muted">資金 ${money(career.money)}${L ? ` → ${money(r1(career.money - cost))}` : ''} ・ 1回のオフシーズンに${CAMP_SLOT[U.slot]}は1人まで</small></div>
+    </div>`;
+  sh.scrollTop = top;
+}
+function runCamp(){
+  const U = CAMP_UI; if(!U || !campOpen()) return;
+  const st = campState(), d = career.drivers[U.code], L = CAMP_LV[U.lv];
+  if(st[U.slot] || !d || !L || U.ks.length !== 2 || career.money < L.cost || !campCands(U.slot).includes(U.code)) return;
+  career.money = r1(career.money - L.cost);
+  const r = Math.random(), tier = r < CAMP_TIER[2].p ? 2 : r < CAMP_TIER[2].p + CAMP_TIER[0].p ? 0 : 1, T = CAMP_TIER[tier];
+  const capA = L.cap ? campCapAdd(d) : 0, g = {};
+  U.ks.forEach(k => {
+    if(capA) capRaise(d, k, capA);
+    const b = d.st[k], cp = capOf(d)[k];
+    if(b >= cp){ g[k] = 0; return; }
+    d.st[k] = Math.round(clamp(Math.min(b + L.amt*T.k*(0.9 + Math.random()*0.2), cp), 1, 10)*1000)/1000;
+    g[k] = Math.round((d.st[k] - b)*1000)/1000;
+  });
+  if(L.cap) d.campN = (d.campN || 0) + 1;
+  let ab = null;
+  if(L.ab && Math.random() < L.ab*T.abK){
+    if(!d.ab) d.ab = [];
+    const reds = d.ab.filter(x => ABIL[x] && !ABIL[x].blue);
+    if(reds.length){ const id = reds[Math.floor(Math.random()*reds.length)]; d.ab = d.ab.filter(x => x !== id); ab = { id, kind: 'lose' }; }
+    else if(d.ab.filter(x => ABIL[x] && ABIL[x].blue).length < AB_MAXBLUE){
+      const cand = BLUE_IDS.filter(id => !d.ab.includes(id) && !(ABIL[id].vs && d.ab.includes(ABIL[id].vs)));
+      if(cand.length){ const id = cand[Math.floor(Math.random()*cand.length)]; d.ab.push(id); ab = { id, kind: 'gain' }; }
+    }
+  }
+  const res = { code: d.code, lv: U.lv, ks: U.ks.slice(), tier, g, capA, ab };
+  st[U.slot] = res; CAMP_UI = null;
+  saveCareer(); renderHQ(`${d.code}をトレーニング合宿（${L.n}・${money(L.cost)}）に送りました。結果：${T.n}。`);
+  showCampFx(res);
+}
+/* 結果の演出：大成功は金色（限界突破と同じ）、成功は青、普通は灰色 */
+function showCampFx(x){
+  const d = career.drivers[x.code] || {}, L = CAMP_LV[x.lv], T = CAMP_TIER[x.tier];
+  const old = document.querySelector('.awkFx'); if(old) old.remove();
+  const el = document.createElement('div');
+  el.className = 'awkFx campFx ' + (x.tier === 2 ? 'brkFx' : x.tier === 1 ? 'cpOk' : 'cpDull'); el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'トレーニング合宿の結果');
+  const lab = k => DSTATS.find(y => y[0] === k)[1];
+  el.innerHTML = `<div class="awkBox"><div class="awkIn"><div class="awkKick">TRAINING CAMP ・ ${esc(L.n)}合宿</div><div class="awkTitle">${T.n}${x.tier === 2 ? '！' : ''}</div>
+    <div class="awkOne"><div class="awkWho"><span class="code">${x.code}</span>${natFlag(x.code, 14)}${esc(d.name || x.code)}</div>
+      <div class="awkSt">${x.ks.map(k => `<span>${lab(k)}<b>${x.g[k] > 0 ? '+' + Math.max(1, Math.round(x.g[k]*10)) : '+0'}</b>${x.g[k] > 0 ? '' : '<small>MAX</small>'}</span>`).join('')}</div>
+      ${x.capA ? `<div class="brkGt">${x.ks.map(lab).join('・')}の<b>限界値 +${Math.round(x.capA*10)}</b></div>` : ''}
+      ${x.ab ? `<div class="awkAb">${abChip(x.ab.id)} ${x.ab.kind === 'gain' ? 'を習得' : 'を克服'}</div>` : ''}</div>
+    <button type="button" class="b go awkClose">閉じる</button></div></div>`;
+  document.body.append(el);
+  const close = () => { el.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if(e.key === 'Escape') close(); };
+  el.querySelector('.awkClose').onclick = close;
+  el.addEventListener('click', e => { if(e.target === el) close(); });
+  document.addEventListener('keydown', onKey);
+  el.querySelector('.awkClose').focus({ preventScroll: true });
+}
+/* オフシーズンの画面のカード */
+function campCardHtml(){
+  if(!campOpen()) return '';
+  const st = campState(), lab = k => DSTATS.find(y => y[0] === k)[1];
+  const slot = s => { const x = st[s];
+    if(x){ const d = career.drivers[x.code] || {}, L = CAMP_LV[x.lv];
+      return `<div class="cpSlot done"><div class="cpSH"><small>${CAMP_SLOT[s]}</small><span class="cpTier t${x.tier}">${CAMP_TIER[x.tier].n}</span></div>
+        <div class="cpWho"><b class="num">${x.code}</b> ${esc(d.name || '')}<small class="muted">${esc(L.n)}合宿 ・ ${money(L.cost)}</small></div>
+        <div class="cpGain">${x.ks.map(k => `<span>${lab(k)} <b class="gainT">+${x.g[k] > 0 ? Math.max(1, Math.round(x.g[k]*10)) : 0}</b></span>`).join('')}${x.capA ? '<span>限界値 <b class="gainT">↑</b></span>' : ''}${x.ab ? abChip(x.ab.id) + (x.ab.kind === 'lose' ? '<span>克服</span>' : '') : ''}</div></div>`; }
+    const n = campCands(s).length;
+    return `<div class="cpSlot"><div class="cpSE"><small>${CAMP_SLOT[s]}</small><span>${n ? 'まだ選んでいません' : s === 'res' ? 'リザーブがいません' : '対象の選手がいません'}</span></div><button type="button" class="b sm go" data-camp="${s}"${n ? '' : ' disabled'}>選ぶ</button></div>`; };
+  return `<div class="osBlk cpCard"><span class="osLab">トレーニング合宿<small>開幕前まで</small></span>
+    <p class="cpLead">お金を払って、選手を合宿に送ります。ドライバー枠（自チーム・セカンドチーム）とリザーブ枠に1人ずつ、毎年のオフシーズンに使えます。</p>
+    ${slot('drv')}${slot('res')}
+    <small class="muted">${[1, 2, 3].map(i => `${CAMP_LV[i].n} ${money(CAMP_LV[i].cost)}`).join(' ・ ')}</small></div>`;
 }
 /* 自チームの選手が覚醒したら、チーム本部に戻ったときに一度だけ演出を出す */
 function showAwakenFx(){
@@ -16559,6 +17193,7 @@ let standView = 'drivers';
 /* チーム本部のタブ（概要・マシン開発・ドライバー・施設・移籍市場・記録）。最後に見ていたタブを覚えておく */
 const HQ_TAB_KEY = 'rtm.hqTab.v1';
 const HQ_TABS = [['ov','概要'],['dev','マシン開発'],['drv','ドライバー'],['fac','施設'],['mkt','移籍市場'],['rec','記録']];
+const HQ_TAB_SHORT = { dev: '開発', mkt: '市場' };   // スマホの下のタブでは短い名前
 /* タブのアイコン（24×24の線画）。概要＝旗、ドライバー＝ヘルメット、マシン開発＝レンチ、施設＝建物、移籍市場＝入れ替えの矢印、記録＝トロフィー */
 const HQ_TAB_ICO = {
   ov:  'M6 21V4M6 4h11l-2.5 4L17 12H6',
@@ -16630,7 +17265,19 @@ let armed = { key: '', until: 0 };     // 2回押して確定する操作（画�
 const saveCareer = () => { if(career) lsSet(LS_CAREER, career); };
 const teamOf = id => career.teams.find(t => t.id === id);
 const myTeam = () => teamOf(career.team);
-const palOf = t => t.col ? [t.col, t.short || '', t.col2] : PALETTE[t.pal % PALETTE.length];   // オリジナルチームは自分で決めた2色
+const palOf = t => t.col ? [t.col, t.short || '', t.col2] : PALETTE[t.pal % PALETTE.length];
+/* 本部の見た目（2026-11 UI改善）：チームカラーから、ヘッダーのグラデーション・白文字を載せられる濃さのアクセントを作る */
+const hexRGB = c => { const m = /^#?([0-9a-f]{6})$/i.exec(String(c || '').trim()); if(!m) return [128, 128, 128]; const n = parseInt(m[1], 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const hexMix = (a, b, t) => { const A = hexRGB(a), B = hexRGB(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v)*t).toString(16).padStart(2, '0')).join(''); };
+const lumOf = c => { const [r, g, b] = hexRGB(c).map(v => { v /= 255; return v <= 0.03928 ? v/12.92 : ((v + 0.055)/1.055)**2.4; }); return 0.2126*r + 0.7152*g + 0.0722*b; };
+function teamTheme(t){
+  const P = palOf(t); let c = P[0];
+  if(lumOf(c) > 0.7 && P[2] && lumOf(P[2]) < 0.5) c = P[2];        // 白・銀のチームは2色目を主役に
+  const L = lumOf(c), solid = L > 0.3 ? hexMix(c, '#000000', Math.min(0.55, 0.2 + (L - 0.3))) : c;   // 白文字を載せても読める濃さ
+  const dark = P[2] && lumOf(P[2]) < 0.06 && P[2] !== c ? P[2] : hexMix(c, '#0b1020', 0.6);
+  return { c, solid, dark, top: L > 0.3 ? solid : c };
+}
+const teamThemeVars = t => { const T = teamTheme(t); return `--tc:${T.c};--tcs:${T.solid};--tcd:${T.dark};--tct:${T.top}`; };   // オリジナルチームは自分で決めた2色
 
 /* 新しいキャリアの選手（25人）をランダムに作る。国籍・名前・略号・年齢・能力はすべて毎回変わる。
    腕前の幅はこれまでの固定の選手と同じ（DRIVER_POOL の腕前に少しの揺らぎを足す）。
@@ -16696,6 +17343,34 @@ const GP_RAIN = {
   'イギリス': [0.3, 0.5], 'カナダ': [0.3, 0.4], '中国': [0.3, 0.5], '日本': [0.3, 0.5],
   'ベルギー': [0.4, 0.5], 'ブラジル': [0.4, 0.2], 'シンガポール': [0.4, 0.2]
 };
+/* GPごとの説明（実際のF1での特徴・1〜2行）。サーキット名・コーナー名は載せない。固定コースのないGP・作ったコースはタイプの説明 */
+const GP_DESC = {
+  'オーストラリア': '公園の湖を囲む半常設のコース。改修で高速区間が増え、流れるようなリズムの中で壁が近い',
+  '中国': '巻き込むように長く回る1〜2コーナーと、カレンダー屈指の長いバックストレートが名物。タイヤの左前に厳しい',
+  '日本': '8の字に立体交差する世界でも珍しいレイアウト。前半のS字の連続と高速コーナーでマシンの総合力が試される',
+  'バーレーン': '砂漠のナイトレース。強いブレーキングと加速が続き、ざらついた路面と砂でタイヤの後輪がたれやすい',
+  'サウジアラビア': '海沿いの高速市街地コース。壁に囲まれた見通しの悪い高速コーナーが連続し、平均速度はカレンダー屈指',
+  'アメリカ': '急な上り坂の先にある1コーナーが名物。各地の名コーナーを組み合わせたような多彩なレイアウトで、路面のでこぼこも多い',
+  'カナダ': '川の中の島に作られた半常設コース。ストレートとシケインが続くストップ＆ゴーで、ブレーキに厳しく、壁も近い',
+  'モナコ': '狭く曲がりくねった港町の市街地コース。追い抜きはほぼ不可能で、予選の順位が結果を大きく左右する',
+  'スペイン': '長いストレートと多彩なコーナーをそろえた、テスト走行でもおなじみのコース。マシンの総合力が出やすく、追い抜きは難しめ',
+  'オーストリア': '山あいの丘を上り下りする短いコース。コーナーが少なくストレートが多いので、1周のタイム差が小さく接戦になりやすい',
+  'イギリス': '旧飛行場に作られた高速コース。高速コーナーが連続し、ダウンフォースとドライバーの度胸が試される。天気も変わりやすい',
+  'ベルギー': '森の中を大きく上り下りするカレンダー最長級のコース。名物の高速の登りコーナーがあり、場所によって天気が違うこともある',
+  'ハンガリー': '低速〜中速のコーナーが休みなく続くテクニカルコース。追い抜きが難しく、夏の暑さでタイヤとドライバーに厳しい',
+  'オランダ': '海辺の砂丘に作られた狭いコース。すり鉢のように傾いたバンクのコーナーがあり、追い抜きは難しい',
+  'イタリア': '「スピードの殿堂」と呼ばれる超高速コース。ダウンフォースを削って最高速を伸ばし、スリップストリームでの抜き合いが多い',
+  'アゼルバイジャン': '旧市街の城壁の脇を抜ける極端に狭い区間と、2km級の長い全開区間が同居する市街地コース。荒れたレースになりやすい',
+  'シンガポール': '高温多湿の中、多くのコーナーを走るナイトレース。体力的に過酷で、壁が近くセーフティカーが出やすい',
+  'メキシコ': '標高の高さで空気が薄く、ダウンフォースもエンジンの冷却も不足しがち。野球場の中を抜ける区間が名物',
+  'ブラジル': '反時計回りで、すり鉢状の土地を大きく上り下りするコース。天気が急に変わりやすく、波乱が起きやすい',
+  'カタール': '砂漠の中の高速コース。中・高速コーナーが流れるように続き、タイヤと首への負担が大きい。ナイトレースで開催',
+  'アブダビ': 'マリーナとホテルの間を走る、シーズン最終戦の常連。夕暮れから夜へと移る中で行われ、長いストレートとテクニカルな区間を併せ持つ',
+  'マイアミ': 'スタジアムの周りに作られた仮設の市街地コース。長いストレートと狭い低速区間があり、暑さと滑りやすい路面がポイント',
+  'ラスベガス': '夜の大通りと巨大な球体ビジョンの横を全開で駆け抜ける市街地コース。長いストレートで最高速が伸びる一方、夜は気温が低くタイヤが温まりにくい',
+  'マドリード': '2026年から開催の、公道と専用区間を組み合わせたコース。すり鉢のように大きく傾いた長いバンクのコーナーが名物'
+};
+const gpDesc = rd => GP_DESC[String((rd && rd.name) || '').replace(/GP$/, '')] || (COURSE_TYPES[rd && rd.type] || {}).desc || '';
 const gpRain = rd => GP_RAIN[String((rd && rd.name) || '').replace(/GP$/, '')] || [0.2, 0.4];
 function makeCalendar(){
   // 固定コース：開催国ごとにタイプが決まっている。4タイプを1戦ずつ入れ、残りはほかの国から選ぶ（市街地は STREET_MAX 戦まで）。
@@ -16927,6 +17602,7 @@ function machineFor(team, code){
   if(!isRes(team, code)) m.qK *= 1 - resSupport(team)*RES_Q;
   if(team.id === career.team && evActive(career.mediaQ, code)) m.qK *= 1.004;
   if(team.id === career.team && evActive(career.sickQ, code)) m.qK *= 1.005;   // 体調不良のまま出場
+  if(team.id === career.team && evActive(career.restQ, code)) m.qK *= 1.004;   // 休養明け（練習不足）
   if(team.id === career.team && evActive(career.freightQ)) m.qK *= 1.003;      // 機材の到着が遅れた：セットアップの時間不足   // 取材を受けた：準備不足で予選が少し遅い        // リザーブのシミュレーター作業：レギュラーの予選が少し速い
   if(team.id === career.team) m.tyre = career.startTyre[code] || 'M';
   else { const r = Math.random(); m.tyre = r < 0.5 ? 'M' : r < 0.8 ? 'S' : 'H'; }
@@ -18657,7 +19333,7 @@ const tiePos = r => r.tie ? `<span class="tieT">T</span>${r.pos}` : `${r.pos}`;
 /* ---------- 描画 ---------- */
 function drawMini(canvas, rd){
   const g = canvas.getContext('2d'), dprm = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth || 150, h = w*0.7;
+  const w = canvas.clientWidth || 150, h = canvas.clientHeight || w*0.7;   // 縦横の比は CSS の大きさに合わせる（スマホの横長の帯でもつぶれないように）
   canvas.width = Math.round(w*dprm); canvas.height = Math.round(h*dprm);
   g.setTransform(dprm, 0, 0, dprm, 0, 0); g.clearRect(0, 0, w, h);
   const P = rd.points; if(!P || P.length < 3) return;
@@ -20037,6 +20713,207 @@ function renderHQ(msg){
   try{ pcInline(); }catch(e){}
   return r;
 }
+
+/* ---------- カレンダー：コース情報のシート（2026-11）----------
+   これからのレースを押すと、スマホは下からせり上がるシート、PCは中央のポップアップで開く。
+   ①コース図とプロフィール ②天気の傾向 ③マシンとの相性（このコースで効く性能と、自チームのその性能の順位）④過去の成績（折りたたみ） */
+const CI_CACHE = new Map();
+function courseInfoTrack(rd){
+  if(!ensureCourse(rd) || !rd.points) return null;
+  const key = `${rd.name}|${rd.type}|${rd.points.length}|${rd.points[0].x},${rd.points[0].y}`;
+  if(CI_CACHE.has(key)) return CI_CACHE.get(key);
+  const pts = rd.points.map(p => ({ x: +p.x, y: +p.y })), size = MAP_SIZES[rd.size] ? rd.size : fitSize(pts);
+  let T = null;
+  try{ T = buildTrack({ points: pts, width: trackW(size)*(rd.type === 'street' ? STREET_W : 1), startPos: +rd.startPos || 0, closed: true, type: rd.type, size }); if(T) T.size = size; }catch(e){ console.error(e); T = null; }
+  CI_CACHE.set(key, T); return T;
+}
+const CI_AB = [['speed', '最高速度', t => t.car.power + 0.35*(t.car.eff - t.car.df)], ['accel', '加速', t => t.car.drive], ['corner', 'コーナリング', t => t.car.df], ['brake', 'ブレーキ', t => t.car.bpow]];
+function courseFit(T){                                           // このコースで効く性能（4つ全部・効く順）と、自チームのその性能の順位
+  if(!T) return null;
+  if(!T.fitAll){
+    const base = { speed: 5.5, accel: 5.5, corner: 5.5, brake: 5.5 }, t0 = estLap(T, base), ref = SENS_REF[T.size || mapSize] || SENS_REF.M;
+    T.fitAll = CI_AB.map(([k, l]) => ({ k, label: l, d: (t0 - estLap(T, { ...base, [k]: 6.5 }))/t0*1000/ref[k] })).sort((a, b) => b.d - a.d);
+  }
+  const me = myTeam(), n = career.teams.length;
+  return T.fitAll.map(x => { const f = CI_AB.find(a => a[0] === x.k)[2], mv = f(me), rank = 1 + career.teams.filter(t => t.id !== me.id && f(t) > mv + 1e-9).length;
+    return { ...x, v: mv, rank, n, word: x.d >= 1.15 ? 'かなり効く' : x.d >= 0.95 ? '効く' : x.d >= 0.8 ? '平均くらい' : '効きにくい' }; });
+}
+const rainWord = p => p < 0.08 ? 'ほとんど降らない' : p < 0.18 ? '降りにくい' : p < 0.28 ? 'ふつう' : p < 0.38 ? 'やや降りやすい' : '降りやすい';
+function courseInfoHtml(i){
+  const rd = career.calendar[i]; if(!rd) return '';
+  const T = courseInfoTrack(rd), ct = COURSE_TYPES[rd.type] || {}, now = i === career.round, N = career.calendar.length;
+  const pf = T ? cornerProfile(T) : null, fit = T ? courseFit(T) : null;
+  const key = fit ? fit.filter(x => x.d >= 0.95).slice(0, 2) : [], kk = key.length ? key : (fit || []).slice(0, 1);
+  const avg = kk.length ? kk.reduce((a, x) => a + x.rank, 0)/kk.length : 0, nT = career.teams.length;
+  const badge = !kk.length ? '' : avg <= 3 ? ['得意', 'ciGood'] : avg >= nT - 2 ? ['苦手', 'ciBad'] : ['ふつう', ''];
+  const rainP = gpRain(rd)[0], air = rd.month ? Math.round(airTempOf(rd)) : null;
+  // 過去の成績：このGPの名前で全シーズンの記録をたどる（今季の分も含む）
+  const L = (career.raceLog || []).filter(r => r.name === rd.name).sort((a, b) => b.season - a.season || b.round - a.round);
+  const myBest = L.length ? Math.min(...L.flatMap(r => (r.my || []).map(m => m.pos || 99))) : 99;
+  const wins = L.filter(r => r.winTeam === career.team).length, pods = L.filter(r => (r.my || []).some(m => m.pos && m.pos <= 3)).length;
+  const posTxt = m => m.pos ? `${m.pos}位` : 'リタイア';
+  const hist = L.length ? `<div class="ciTiles c3"><div><small>自チーム最高</small><b class="num">${myBest < 99 ? myBest + '位' : '—'}</b></div><div><small>優勝</small><b class="num">${wins}回</b></div><div><small>表彰台</small><b class="num">${pods}回</b></div></div>
+      <div class="ciHistL">${L.slice(0, 10).map(r => { const wt = teamOf(r.winTeam), my = (r.my || []).slice().sort((a, b) => (a.pos || 99) - (b.pos || 99));
+        return `<button type="button" class="ciHR" data-cir="r:${r.season}:${r.round}" aria-label="${SY(r.season)}年の${esc(rd.name)}の結果を見る"><span class="num">${SY(r.season)}</span><span>${my.length ? my.map((m, j) => j ? posTxt(m) : `<b>${posTxt(m)}</b>`).join(' ・ ') : '—'}</span><span class="ciW">${wt ? `<i style="background:${palOf(wt)[0]}"></i>` : ''}${esc(r.winner || '—')}</span></button>`; }).join('')}</div>
+      <p class="note" style="margin:6px 0 0">年を押すと、その年のレース結果が開きます</p>` : '<p class="note" style="margin:0">まだこのGPを走った記録がありません。</p>';
+  const yrs = L.length ? (L[L.length - 1].season === L[0].season ? `${SY(L[0].season)}年` : `${SY(L[L.length - 1].season)}〜${SY(L[0].season)}年`) : '記録なし';
+  return `<div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead">${gpFlag(rd.name, 22)}<div class="ciTt"><b id="ciTitle">${esc(rd.name)}</b><small>ROUND ${i + 1}/${N}${rd.month ? ` ・ ${rd.month}月` : ''}${now ? ' ・ 次戦' : ''}</small></div><button type="button" class="ciX" aria-label="閉じる">×</button></div>
+    <div class="ciBody">
+      <div class="ciMap"><canvas id="ciMini" aria-label="${esc(rd.name)}のコース図"></canvas><div class="ciTags"><span class="chip">${esc(ct.name || '')}</span>${isNightGP(rd) ? '<span class="chip nightChip">ナイトレース</span>' : ''}${rd.home ? '<span class="chip">ホーム</span>' : ''}</div></div>
+      <div class="ciTiles c3"><div><small>周回</small><b class="num">${career.laps}</b></div><div><small>コーナー</small><b class="num">${T ? countCorners(T) : '—'}</b></div><div><small>追い抜き所</small><b class="num">${T && T.zones ? T.zones.length : '—'}</b></div></div>
+      ${gpDesc(rd) ? `<p class="ciDesc">${esc(gpDesc(rd))}</p>` : ''}
+      ${pf ? `<p class="ciDesc muted" style="margin-top:-6px">コーナー：低速 ${pf.slow}・中速 ${pf.mid}・高速 ${pf.fast}</p>` : ''}
+      <h3>天気の傾向</h3>
+      <div class="ciTiles c2 ciWx">
+        <div><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#ff8a4c"><path d="M10 14V4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0z"/></svg><span><b class="num">${air != null ? `約${air}°C` : '—'}</b><small>${rd.month ? `${rd.month}月の気温の目安` : '気温の目安'}</small></span></div>
+        <div><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#2563eb"><path d="M7 15a4 4 0 1 1 1-7.9A5 5 0 0 1 17.6 9 3.5 3.5 0 0 1 17 16H7z"/><path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2"/></svg><span><b class="num">雨 ${Math.round(rainP*100)}%</b><small>${rainWord(rainP)}</small></span></div>
+      </div>
+      ${now && rd.rainP != null ? `<p class="note" style="margin:6px 0 0">今の予報：雨の確率 ${rd.rainP}%（くわしくは「次のレース」カード）</p>` : ''}
+      <h3>マシンとの相性${badge ? `<span class="ciBadge ${badge[1]}">${badge[0]}</span>` : ''}</h3>
+      ${fit ? `<div class="ciFit">${fit.map(x => `<div class="${x.d >= 0.95 ? 'key' : ''}"><span>${x.label}<small> ・ ${x.word}</small></span><span class="pbar"><i style="width:${clamp(x.v*10, 4, 100)}%;background:${x.d >= 0.95 ? 'var(--tc)' : '#9aa1a8'}"></i></span><b class="num ${x.rank <= 3 ? 'gainT' : x.rank >= x.n - 2 ? 'lossT' : ''}">${x.rank}位</b></div>`).join('')}</div>
+      <p class="note" style="margin:6px 0 0">「効く」などは、ほかのコースと比べた目安です。右の順位は、自チームのその性能の全${nT}チーム中の順位です（ドライバーの腕は含みません）。</p>` : '<p class="note">コースの情報を読み込めませんでした。</p>'}
+      <details class="ciHist"><summary>過去の成績<small>${yrs}</small></summary>${hist}</details>
+    </div>`;
+}
+let ciKey = null;
+function closeCourseInfo(){
+  const m = $('#ciModal'); if(!m) return;
+  m.classList.add('closing'); document.removeEventListener('keydown', ciKey);
+  setTimeout(() => m.remove(), 200);
+}
+function openCourseInfo(i){
+  if(!career || !career.calendar[i]) return;
+  const old = $('#ciModal'); if(old) old.remove();
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal'; m.id = 'ciModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'ciTitle');
+  m.innerHTML = `<div class="ciSheet">${courseInfoHtml(i)}</div>`;
+  try{ m.style.setProperty('--tc', teamTheme(myTeam()).c); }catch(e){}
+  document.body.appendChild(m);
+  const sheet = m.querySelector('.ciSheet');
+  m.addEventListener('click', e => { if(e.target === m) closeCourseInfo(); });
+  m.querySelector('.ciX').onclick = closeCourseInfo;
+  m.querySelectorAll('[data-cir]').forEach(b => b.onclick = () => { closeCourseInfo(); openProf(b.dataset.cir); });
+  ciKey = e => { if(e.key === 'Escape') closeCourseInfo(); }; document.addEventListener('keydown', ciKey);
+  const cv = m.querySelector('#ciMini'); if(cv) requestAnimationFrame(() => { try{ drawMini(cv, career.calendar[i]); }catch(e){} });
+  // つまみ・見出しを下へスワイプして閉じる（シートの中身を一番上までスクロールしているときは、中身からも）
+  let y0 = null, dy = 0;
+  const start = e => { const t = e.touches[0]; if(e.target.closest('.ciBody') && sheet.scrollTop > 0) return; y0 = t.clientY; dy = 0; sheet.style.transition = 'none'; };
+  const move = e => { if(y0 == null) return; dy = Math.max(0, e.touches[0].clientY - y0); if(dy > 0){ sheet.style.transform = `translateY(${dy}px)`; if(e.cancelable) e.preventDefault(); } };
+  const end = () => { if(y0 == null) return; y0 = null; sheet.style.transition = ''; if(dy > 90) closeCourseInfo(); else sheet.style.transform = ''; };
+  sheet.addEventListener('touchstart', start, { passive: true }); sheet.addEventListener('touchmove', move, { passive: false }); sheet.addEventListener('touchend', end); sheet.addEventListener('touchcancel', end);
+  sheet.focus && m.querySelector('.ciX').focus({ preventScroll: true });
+}
+
+
+/* ---------- チームの出来事のポップアップ（2026-11）----------
+   レースのあと本部に戻ったら、出来事を1件ポップアップで出す（1件につき1回だけ）。「あとで決める」で閉じると、概要タブのカードに残る */
+function evPopupHtml(e){
+  const [hd, body] = evHead(e), opts = EV_OPTS[e.kind](e), me = myTeam(), info = e.kind === 'cash' || e.kind === 'formnote';
+  const who = [e.code, e.code2].filter(c => c && career.drivers[c]);
+  const faces = who.length ? `<div class="evpWho">${who.map(c => `<div class="evpD">${driverFace(c, teamSuit(me), 56)}<span><b>${c}</b>${formTag(career.drivers[c])}</span></div>`).join('')}</div>` : '';
+  const def = opts.find(x => x.def);
+  return `<div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead"><div class="ciTt"><small>${info ? 'お知らせ' : 'チームの出来事'}</small><b id="evpTitle">${esc(hd)}</b></div><button type="button" class="ciX" aria-label="${info ? '閉じる' : 'あとで決める'}">×</button></div>
+    <div class="ciBody">
+      ${faces}
+      <p class="evpB">${body}</p>
+      <div class="evOpts evpOpts">${opts.map(o => `<button type="button" class="evOpt" data-evp="${o.id}"><b>${esc(o.t)}${o.def && !info ? ' ★' : ''}</b>${o.d ? `<small>${esc(o.d)}</small>` : ''}</button>`).join('')}</div>
+      ${info ? '' : `<button type="button" class="b sm ghost evpLater">あとで決める</button><p class="note" style="margin:0;text-align:center">あとで決めるときは、概要タブのカードから返事できます。返事をせずに予選へ進むと「${esc(def.t)}」（★）になります。</p>`}
+    </div>`;
+}
+function closeEvPopup(){ const m = $('#evModal'); if(m){ m.classList.add('closing'); setTimeout(() => { m.remove(); evPopTimer = setTimeout(() => maybeEvPopup(), 300); }, 200); } }   // 閉じたら、次のポップアップ（スポンサーの依頼）があれば続けて出す
+function showEvPopup(){
+  const e = career && career.ev; if(!e) return;
+  const old = $('#evModal'); if(old) old.remove();
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal evModal'; m.id = 'evModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'evpTitle');
+  m.innerHTML = `<div class="ciSheet">${evPopupHtml(e)}</div>`;
+  try{ m.style.setProperty('--tc', teamTheme(myTeam()).c); }catch(err){}
+  document.body.appendChild(m);
+  m.querySelector('.ciX').onclick = closeEvPopup;
+  const later = m.querySelector('.evpLater'); if(later) later.onclick = closeEvPopup;
+  m.querySelectorAll('[data-evp]').forEach(b => b.onclick = () => { closeEvPopup(); answerEvent(b.dataset.evp); });
+  m.querySelector('.evOpt').focus({ preventScroll: true });
+}
+/* スポンサーからの依頼のポップアップ（出来事のあとに続けて出す。1件につき1回だけ） */
+const sreqPending = () => { const q = career && career.sreq; return q && q.state === 'offer' && q.season === career.season && q.round === career.round && career.round < career.calendar.length ? q : null; };
+function showSreqPopup(){
+  const q = sreqPending(); if(!q) return;
+  const old = $('#evModal'); if(old) old.remove();
+  const rd = career.calendar[career.round], sp = career.sponsor;
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal evModal'; m.id = 'evModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'evpTitle');
+  m.innerHTML = `<div class="ciSheet"><div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead"><div class="ciTt"><small>スポンサーからの依頼</small><b id="evpTitle">次戦で「${esc(goalText(q.g))}」</b></div><button type="button" class="ciX" aria-label="あとで決める">×</button></div>
+    <div class="ciBody">
+      ${q.from ? `<div class="evpWho"><div class="evpD sreqFrom">${sp ? sponsorLogo(sp.name, 26) : `<b>${esc(q.from)}</b>`}</div></div>` : ''}
+      <p class="evpB">次戦（${rd ? esc(rd.name) : ''}）で <b>「${esc(goalText(q.g))}」</b> を達成してほしい、と依頼が来た。</p>
+      <div class="ciTiles c2"><div><small>達成したら（残り${q.left}戦）</small><b class="num gainT">毎戦 +${money(pr(q.up))}</b></div><div><small>失敗したら（残り${q.left}戦）</small><b class="num lossT">毎戦 −${money(pr(q.down))}</b></div></div>
+      <div class="evOpts evpOpts"><button type="button" class="evOpt" data-sqp="1"><b>受ける</b><small>次戦で達成を狙う。結果で基本スポンサー収入が上下する</small></button><button type="button" class="evOpt" data-sqp="0"><b>断る ★</b><small>何も起きない</small></button></div>
+      <button type="button" class="b sm ghost evpLater">あとで決める</button><p class="note" style="margin:0;text-align:center">あとで決めるときは、概要タブのカードから返事できます。返事をせずにレースを始めると、断ったことになります。</p>
+    </div></div>`;
+  try{ m.style.setProperty('--tc', teamTheme(myTeam()).c); }catch(err){}
+  document.body.appendChild(m);
+  m.querySelector('.ciX').onclick = closeEvPopup; m.querySelector('.evpLater').onclick = closeEvPopup;
+  m.querySelectorAll('[data-sqp]').forEach(b => b.onclick = () => { const ok = b.dataset.sqp === '1'; const mm = $('#evModal'); if(mm) mm.remove(); answerSreq(ok); });
+  m.querySelector('.evOpt').focus({ preventScroll: true });
+}
+let evPopTimer = null;
+function maybeEvPopup(tries = 0){                                // 本部が見えていて、ほかのポップアップや演出が出ていないときに出す（出来事 → スポンサーの依頼の順）
+  clearTimeout(evPopTimer);
+  const e = career && career.ev, q = sreqPending();
+  const wantE = e && !e.pop, wantQ = q && !q.pop;
+  if((!wantE && !wantQ) || hqView !== 'hq') return;
+  const hq = $('#hq'), busy = document.querySelector('.modal.show, .awkFx, .updOv');
+  if(!hq || !hq.offsetParent || busy || document.body.classList.contains('raceView')){ if(tries < 20) evPopTimer = setTimeout(() => maybeEvPopup(tries + 1), 700); return; }
+  if(wantE){ e.pop = true; saveCareer(); showEvPopup(); }
+  else { q.pop = true; saveCareer(); showSreqPopup(); }
+}
+/* ---------- 設定メニュー（2026-11）：セーブの書き出し・読み込み、キャリアのやり直し、アップデート情報。以前は本部の各タブの一番下にあった ---------- */
+function closeSettings(){ const m = $('#setModal'); if(m){ m.classList.add('closing'); setTimeout(() => m.remove(), 200); } }
+function openSettings(){
+  const old = $('#setModal'); if(old) old.remove();
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal setModal'; m.id = 'setModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'setTitle');
+  const has = !!career;
+  m.innerHTML = `<div class="ciSheet"><div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead"><div class="ciTt"><b id="setTitle">設定</b><small>ver ${APP_VER}</small></div><button type="button" class="ciX" aria-label="閉じる">×</button></div>
+    <div class="ciBody setBody">
+      <h3>セーブデータ</h3>
+      <button type="button" class="setRow" id="setSave"${has ? '' : ' disabled'}><span><b>セーブの書き出し・読み込み</b><small>今のキャリアをファイルに保存したり、保存したファイルから続きを遊んだりします</small></span><i aria-hidden="true">›</i></button>
+      <button type="button" class="setRow" id="setUpd"><span><b>アップデート情報</b><small>これまでの変更点</small></span><i aria-hidden="true">›</i></button>
+      <h3 class="danger">リセット</h3>
+      <button type="button" class="setRow danger" id="setReset"${has ? '' : ' disabled'}><span><b>キャリアを最初からやり直す</b><small>今のキャリアのデータを消します。元に戻せません</small></span><i aria-hidden="true">›</i></button>
+    </div></div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if(e.target === m) closeSettings(); });
+  m.querySelector('.ciX').onclick = closeSettings;
+  const k = e => { if(e.key === 'Escape'){ closeSettings(); document.removeEventListener('keydown', k); } }; document.addEventListener('keydown', k);
+  m.querySelector('#setSave').onclick = () => { closeSettings(); openSaveIO(); };
+  m.querySelector('#setUpd').onclick = () => { closeSettings(); showUpdates(); };
+  let armedAt = 0;
+  m.querySelector('#setReset').onclick = e => {
+    const b = e.currentTarget, now = performance.now();
+    if(now - armedAt > 4000){ armedAt = now; b.classList.add('armed'); b.querySelector('b').textContent = 'もう一度押すとデータを消してやり直します'; return; }   // 2回押して確定
+    try{ localStorage.removeItem(LS_CAREER); }catch(err){}
+    closeSettings(); career = null; careerRace = null; hqView = 'new'; resetRace(); syncTabs('hq'); renderHQ();
+  };
+  m.querySelector('.ciX').focus({ preventScroll: true });
+}
+document.addEventListener('click', e => { if(e.target.closest && e.target.closest('#setBtn')) openSettings(); });
+/* 本部のチームカラーと、固定タブの位置（上のヘッダーの高さ）・ヘッダーが見えなくなったら細い帯を出す */
+let hqObs = null;
+function hqTheme(el, me){
+  const T = teamTheme(me); el.style.setProperty('--tc', T.c); el.style.setProperty('--tcs', T.solid); el.style.setProperty('--tcd', T.dark); el.style.setProperty('--tct', T.top);
+  const hd = document.querySelector('body > header'); if(hd) document.documentElement.style.setProperty('--hdrH', hd.offsetHeight + 'px');
+  if(hqObs){ hqObs.disconnect(); hqObs = null; }
+  const hero = $('#hqHero'), st = $('#hqStick'); if(!hero || !st || !('IntersectionObserver' in window)) return;
+  { const off = (hd ? hd.offsetHeight : 0) + 8; st.classList.add('noAnim'); st.classList.toggle('away', hero.getBoundingClientRect().bottom < off);   // 描き直した直後は、今の位置の状態からアニメなしで始める
+    requestAnimationFrame(() => requestAnimationFrame(() => st.classList.remove('noAnim'))); }
+  hqObs = new IntersectionObserver(es => es.forEach(e => st.classList.toggle('away', !e.isIntersecting)), { rootMargin: `-${(hd ? hd.offsetHeight : 0) + 8}px 0px 0px 0px` });
+  hqObs.observe(hero);
+}
 function renderHQView(msg){
   const el = $('#hq');
   if(career && !career.fired && hqView !== 'new'){ const pm = checkPayDeal(); if(pm) msg = pm + (msg ? ' ' + msg : ''); }
@@ -20067,7 +20944,7 @@ function renderHQView(msg){
         <div>
           <div class="nrName">${gpFlag(rd.name, 18)}${esc(rd.name)}</div>
           <div class="nrMeta"><span class="chip">${esc(ct.name)}</span>${/^シンガポール/.test(rd.name) ? '<span class="chip nightChip">ナイトレース</span>' : ''}<span class="chip">${career.laps}周</span>${rd.month ? `<span class="chip">${rd.month}月${rd.air != null ? `・気温 約${rd.air}℃` : ''}</span>` : ''}</div>
-          <p class="nrDesc">${esc(ct.desc)}</p>
+          <p class="nrDesc">${esc(gpDesc(rd))}</p>
         </div>
       </div>
       ${(() => { ensureForecast(rd); const [a, b] = ttRange(rd), fit = tyreFit(rd);
@@ -20231,6 +21108,7 @@ function renderHQView(msg){
       <h2>オフシーズンの変化<span class="kick">SEASON ${SY(career.season)}</span></h2>
       <div class="osGrid">
       ${todoB}
+      ${campCardHtml()}
       ${off.take ? `<div class="osBlk"><span class="osLab">チームの身売り</span>${takeCardHtml(off.take, false)}</div>` : ''}
       <div class="osBlk osPrev"><span class="osLab">前シーズンの精算</span>
         ${off.sisSeason ? `<div style="margin-bottom:6px">セカンドチーム（${esc(off.sisSeason.name)}）はコンストラクターズ${off.sisSeason.pos}位。シーズン賞金の分配 <b class="gainT">+${money(off.sisSeason.v)}</b></div>` : ''}
@@ -20252,7 +21130,7 @@ function renderHQView(msg){
         const st = c.res ? `<span class="chRes${best <= 3 ? ' pod' : best <= 10 ? ' pts' : ''}">${my.join(' / ')}</span><small>優勝 ${c.res.winner || '—'}</small>` : now ? '<span class="chNext">次戦</span>' : `<small>${COURSE_TYPES[c.type].short}</small>`;
         const inner = `${c.home ? '<span class="chHome">HOME</span>' : ''}<span class="chRd">R${i + 1}${c.month ? `<i class="chMo">${c.month}月</i>` : ''}</span><span class="chFlag">${gpFlag(c.name, 22)}</span><span class="chNm">${esc(c.name.replace(/GP$/, ''))}</span>${st}`;
         const lg = c.res && (career.raceLog || []).some(r => r.season === career.season && r.round === i + 1);   // 終わったレースは押すと結果を表示する
-        return `<li class="ch${now ? ' now' : ''}${c.res ? ' done' : ''}${c.home ? ' home' : ''}${lg ? ' link' : ''}">${lg ? `<button type="button" class="chBtn" data-calr="r:${career.season}:${i + 1}" aria-label="第${i + 1}戦 ${esc(c.name)}の結果を見る">${inner}</button>` : inner}</li>`;
+        return `<li class="ch${now ? ' now' : ''}${c.res ? ' done' : ''}${c.home ? ' home' : ''} link">${lg ? `<button type="button" class="chBtn" data-calr="r:${career.season}:${i + 1}" aria-label="第${i + 1}戦 ${esc(c.name)}の結果を見る">${inner}</button>` : `<button type="button" class="chBtn" data-calinfo="${i}" aria-label="第${i + 1}戦 ${esc(c.name)}のコース情報を見る">${inner}</button>`}</li>`;   // これからのレースは押すとコース情報
       }).join('')}</ol>
     </div>`;
   const drivers = (() => {
@@ -20540,6 +21418,10 @@ function renderHQView(msg){
       <div class="gLegend" aria-label="ランクの区切り">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
     </div>`;
   /* オーナーの目標（概要タブ）：性格・主目標・副目標と進み具合。第3戦のあとからは中間評価の一言 */
+  const spCard = sp ? (() => { const T = sponsorTiles(sp);
+    return `<div class="sec spSec"><h2><span class="spHd">${sponsorLogo(sp.name, 26)}</span><span class="kick spTier">${SPONSOR_TYPES[sp.type].n}</span></h2>
+      <div class="spTiles" style="grid-template-columns:repeat(${Math.min(4, T.t.length)},minmax(0,1fr))">${T.t.map(([l, v]) => `<div><small>${l}</small><b class="num">${v}</b></div>`).join('')}</div>
+      ${T.note ? `<p class="note" style="margin:8px 0 0">${T.note}</p>` : ''}</div>`; })() : '';
   const ownerCard = (() => {
     const o = career.owner; if(!o || !o.subs) return '';
     const P = OWNER_PERS[o.pers] || OWNER_PERS.thrift, started = career.round > 0, GS = ownerGoalStat(), mainOk = GS.ok, mainLive = GS.g.kind === 'rank' || GS.g.kind === 'rival' || GS.g.kind === 'points';
@@ -20549,15 +21431,20 @@ function renderHQView(msg){
     const good = (mainOk ? 1 : 0) + SR.filter(x => x.ok).length;
     const voice = career.round >= 3 && !seasonOver ? (good >= 3 ? '期待以上だ。この調子で最後まで頼むよ。' : good === 2 ? '悪くない。だが、まだ物足りない所がある。' : mainOk ? '順位はいい。ほかの約束も忘れないでくれ。' : 'このままでは困る。後半で巻き返してくれ。') : '';
     const pk = OWNER_PERS[o.pers] ? o.pers : 'thrift', focus = Object.entries(P.w).filter(([, v]) => v >= 3).sort((a, b) => b[1] - a[1]).map(([k]) => OWNER_FOCUS[k]);
-    return `<div class="sec ownSec"><h2>オーナーの目標</h2>
-      <div class="ownPers op-${pk}"><span class="opMark" aria-hidden="true">${OWNER_MARK[pk]}</span><div class="opBody"><div class="opHead"><small>オーナーの方針</small><b>${esc(P.n)}</b></div><p>${esc(P.d)}</p>${focus.length ? `<div class="opFocus"><small>重く見る目標</small>${focus.map(f => `<span>${esc(f)}</span>`).join('')}</div>` : ''}</div></div>
+    const tc = o.trust >= 60 ? 'var(--hqGood)' : o.trust >= 30 ? '#e0a800' : 'var(--hqBad)';
+    const regN = regAnnounced() && !resBlocked() ? (GS.g.kind !== 'rank' ? `来季への投資：先行研究${resNeed(0)}回以上で、主目標に少し届かなくても達成扱い${resEase(myRes()) ? `・現在 <b>${resEase(myRes())}段ゆるめ</b>` : ''}` : `来季への投資：先行研究${resNeed(0)}回で${Math.min(10, o.target + 1)}位、${resNeed(1)}回で${Math.min(10, o.target + 2)}位までを達成扱い${resEase(myRes()) ? `・現在 <b>${Math.min(10, o.target + resEase(myRes()))}位まで</b>` : ''}`) : '';
+    return `<div class="sec ownSec"><h2>オーナー<span class="ownPill op-${pk}">${esc(P.n)}</span></h2>
+      <div class="ownTrust" title="オーナーの信頼度。シーズンの目標の達成度で増減し、0になると解任されます"><div><span>信頼度</span><b class="num">${o.trust} / 100</b></div><span class="pbar"><i style="width:${o.trust}%;background:${tc}"></i></span></div>
+      <details class="ownMore"><summary>オーナーの方針</summary><div class="ownPers op-${pk}"><span class="opMark" aria-hidden="true">${OWNER_MARK[pk]}</span><div class="opBody"><div class="opHead"><small>オーナーの方針</small><b>${esc(P.n)}</b></div><p>${esc(P.d)}</p>${focus.length ? `<div class="opFocus"><small>重く見る目標</small>${focus.map(f => `<span>${esc(f)}</span>`).join('')}</div>` : ''}</div></div></details>
       <div class="ogList">
         ${row('主目標', esc(GS.t) + (goalGreatTxt(GS.g) ? `<small class="ogGreat">${esc(goalGreatTxt(GS.g))}</small>` : ''), esc(GS.p), mainOk ? 'ok' : started && (mainLive || !GS.pace) ? 'ng' : '')}
         ${SR.map(x => row('副目標', esc(x.t), esc(x.p), cls(x.ok, x.live))).join('')}
       </div>
       ${voice ? `<p class="ogVoice"><b>オーナー</b>「${voice}」</p>` : ''}
+      ${regN ? `<p class="note">${regN}</p>` : ''}
       <p class="note">副目標は1つ達成するごとにボーナス +${money(SUB_REWARD.bonus)}・信頼度 +${SUB_REWARD.trust}（未達は ${SUB_REWARD.miss}）。</p></div>`;
   })();
+  const todoTabs = {};                                              // タブごとの「やること」の件数（タブに数字を出す）
   const todo = (() => {
     const it = [];   // [重さ, 文, 開くタブ]
     pendingContracts().forEach(x => it.push(['bad', x, 'drv']));
@@ -20574,7 +21461,8 @@ function renderHQView(msg){
       const noTr = me.drivers.filter(c => !trainOf(c)); if(noTr.length) it.push(['info', `${noTr.join('・')}のトレーニングが未設定`, 'drv']);
     }
     const ico = { bad:'!', warn:'▲', info:'・' };
-    return `<div class="sec todoSec"><h2>やること<span class="kick">${it.length ? it.length + '件' : 'なし'}</span></h2>${it.length ? `<div class="todoL">${it.map(([lv, t, tab]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"><i aria-hidden="true">${ico[lv]}</i><span>${esc(t)}</span><small>${HQ_TABS.find(x => x[0] === tab)[1]} ›</small></button>`).join('')}</div>` : '<p class="muted" style="margin:0;font-size:12.5px">いま対応が必要なことはありません。</p>'}</div>`;
+    it.forEach(x => { if(x[2] !== 'ov') todoTabs[x[2]] = (todoTabs[x[2]] || 0) + 1; });
+    return `<div class="sec todoSec"><h2>やること${it.length ? `<span class="todoN num">${it.length}</span>` : '<span class="kick">なし</span>'}</h2>${it.length ? `<div class="todoL">${it.map(([lv, t, tab]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"><i aria-hidden="true">${ico[lv]}</i><span>${esc(t)}</span><small>${HQ_TABS.find(x => x[0] === tab)[1]} ›</small></button>`).join('')}</div>` : '<p class="muted" style="margin:0;font-size:12.5px">いま対応が必要なことはありません。</p>'}</div>`;
   })();
   const sreqCard = (() => { const q = career.sreq; if(!q || q.season !== career.season || q.round !== career.round || seasonOver) return '';
     const body = `次戦（${rd ? esc(rd.name) : ''}）で <b>「${esc(goalText(q.g))}」</b> を達成したら、今季の残り（${q.left}戦）は基本スポンサー収入が毎戦 <b class="gainT">+${money(pr(q.up))}</b>。失敗すると毎戦 <b class="lossT">−${money(pr(q.down))}</b>。`;
@@ -20583,10 +21471,11 @@ function renderHQView(msg){
       ${q.state === 'offer' ? `<div class="cActs"><button type="button" class="b sm go" data-sreq="1" ${inProgress ? 'disabled' : ''}>受ける</button><button type="button" class="b sm" data-sreq="0" ${inProgress ? 'disabled' : ''}>断る</button><span class="muted" style="font-size:11.5px">返事をせずにレースを始めると、断ったことになります</span></div>` : '<p class="muted" style="margin:4px 0 0;font-size:12px">結果は次戦のあとに反映されます。</p>'}</div>`; })();
   const evCard = (() => { const e = career.ev; if(!e || seasonOver) return '';
     const [h, b] = evHead(e), opts = EV_OPTS[e.kind](e), def = opts.find(x => x.def);
-    return `<div class="sec evSec ${e.kind === 'cash' ? 'good' : ''}"><h2>チームの出来事<span class="kick">${e.kind === 'cash' ? 'お知らせ' : '返事待ち'}</span></h2>
+    const info = e.kind === 'cash' || e.kind === 'formnote';
+    return `<div class="sec evSec ${info ? 'good' : ''}"><h2>チームの出来事<span class="kick">${info ? 'お知らせ' : '返事待ち'}</span></h2>
       <p class="evH"><b>${esc(h)}</b></p><p class="evB">${b}</p>
-      <div class="evOpts">${opts.map(o => `<button type="button" class="evOpt" data-evo="${o.id}" ${inProgress ? 'disabled' : ''}><b>${esc(o.t)}${o.def && e.kind !== 'cash' ? ' ★' : ''}</b>${o.d ? `<small>${esc(o.d)}</small>` : ''}</button>`).join('')}</div>
-      ${e.kind !== 'cash' ? `<p class="muted" style="margin:6px 0 0;font-size:11.5px">返事をせずに予選へ進むと「${esc(def.t)}」（★）になります。</p>` : ''}</div>`; })();
+      <div class="evOpts">${opts.map(o => `<button type="button" class="evOpt" data-evo="${o.id}" ${inProgress ? 'disabled' : ''}><b>${esc(o.t)}${o.def && !info ? ' ★' : ''}</b>${o.d ? `<small>${esc(o.d)}</small>` : ''}</button>`).join('')}</div>
+      ${!info ? `<p class="muted" style="margin:6px 0 0;font-size:11.5px">返事をせずに予選へ進むと「${esc(def.t)}」（★）になります。</p>` : ''}</div>`; })();
   const miniStand = (() => {
     if(career.round === 0 && !seasonOver) return '';
     const G = career.last && career.last.gain;
@@ -20608,39 +21497,38 @@ function renderHQView(msg){
       <div class="cActs"><button type="button" class="b sm ${armed.key === 'loan' ? 'go' : ''}" id="loanBtn" ${canB ? '' : 'disabled'}>${armed.key === 'loan' ? 'もう一度押して借りる' : `${money(LOAN.step)}借りる（返済 ${money(loanDue(L))}${nRt > LOAN.rate ? `・利息${Math.round(nRt*100)}%` : ''}）`}</button>${L.bal > 0 ? `<button type="button" class="b sm ${armed.key === 'repay' ? 'go' : ''}" id="repayBtn" ${canR ? '' : 'disabled'}>${armed.key === 'repay' ? 'もう一度押して返す' : `全額返す ${money(L.bal)}`}</button>` : ''}</div></div>
       <p class="note" style="margin:6px 0 0">返済は毎戦の収支から自動で引かれます。${hqTab === 'fac' ? '施設は1段階下げて、建設費の半分を受け取ることもできます。' : ''}</p></div>`; })();
   el.innerHTML = `
-    ${(() => { const o = career.owner, GS = ownerGoalStat(), ok = GS.ok || (GS.g.kind !== 'rank' && GS.g.kind !== 'rival' && GS.pace), tc = o.trust >= 60 ? '#1f9d5a' : o.trust >= 30 ? '#e0a800' : '#d7263d';
-      const P = popOf(me), pd = career.last && career.last.pop ? career.last.pop.d : 0, ln = career.loan && career.loan.bal > 0 ? career.loan.bal : 0;
-      return `<div class="hqCards">
-      <div class="hc hcTeam">${teamLogo(me, 40)}<div style="min-width:0"><span class="kick">TEAM PRINCIPAL${me.short ? ` · ${esc(me.short)}` : ''}</span><b>${esc(me.name)}</b><small class="muted">${SY(career.season)}年シーズン ・ ${seasonOver ? '全戦終了' : `第${career.round + 1}戦 / ${career.calendar.length}戦`}</small></div></div>
-      <div class="hc hcNum"><span class="kick">資金</span><b class="${career.money < 0 ? 'lossT' : ''}">${money(career.money)}</b><small class="muted">${ln ? `融資残高 ${money(ln)}` : '融資なし'}</small></div>
-      <div class="hc hcNum"><span class="kick">選手権</span><b>P${myPos}</b><small class="muted">${career.cpts[me.id] || 0} ポイント</small></div>
-      <button type="button" class="hc hcNum hcPop" id="popCard" aria-haspopup="dialog" aria-label="人気度と収入の詳細を見る"><span class="kick">人気度<span class="hcMore">詳しく ›</span></span><b>${Math.round(P*100)}${pd ? `<i class="${pd > 0 ? 'up' : 'down'}">${pd > 0 ? '▲' : '▼'}${Math.abs(Math.round(pd*1000)/10)}</i>` : ''}</b><small class="muted">基本収入 ${money(pr(r1(baseSpons(me) + (career.sadj || 0))))}/戦</small></button>
-      <div class="hc hcOwner"><span class="kick">オーナー</span><div class="hoGoal">目標 <b>${esc(GS.short)}</b>${GS.g.kind === 'rank' || GS.g.kind === 'rival' ? '' : `<small class="hoProg">${esc(GS.p)}</small>`}${career.round > 0 && !seasonOver ? `<b class="hoPace ${ok ? 'ok' : 'ng'}">${GS.ok ? '達成' : ok ? '達成ペース' : '目標未達'}</b>` : ''}</div><div class="trust" title="オーナーの信頼度。シーズンの目標の達成度で増減し、0になると解任されます">信頼度 <span class="tmeter"><i style="width:${o.trust}%;background:${tc}"></i></span><b>${o.trust}</b></div>
-        ${regAnnounced() && !resBlocked() && GS.g.kind !== 'rank' ? `<small class="hbNote">来季への投資：先行研究${resNeed(0)}回以上で、主目標に少し届かなくても達成扱い${resEase(myRes()) ? `・現在 <b>${resEase(myRes())}段ゆるめ</b>` : ''}</small>` : ''}${regAnnounced() && !resBlocked() && GS.g.kind === 'rank' ? `<small class="hbNote">来季への投資：先行研究${resNeed(0)}回で${Math.min(10, o.target + 1)}位、${resNeed(1)}回で${Math.min(10, o.target + 2)}位までを達成扱い${resEase(myRes()) ? `・現在 <b>${Math.min(10, o.target + resEase(myRes()))}位まで</b>` : ''}</small>` : ''}</div>
-      ${sp ? `<div class="hc hcSp"><span class="kick">スポンサー</span><div class="hsHead">${sponsorLogo(sp.name, 26)}<span class="tier">${SPONSOR_TYPES[sp.type].n}</span></div><small class="muted hsTerms">契約：${sponsorTerms(sp)}</small></div>` : ''}
+    ${(() => { const P = popOf(me), pd = career.last && career.last.pop ? career.last.pop.d : 0, ln = career.loan && career.loan.bal > 0 ? career.loan.bal : 0;
+      return `<div class="hqHero${hqTab === 'ov' ? '' : ' sm'}" id="hqHero">
+      <div class="hhTop">${teamLogo(me, 56)}<div class="hhName"><span class="kick">TEAM PRINCIPAL${me.short ? ` · ${esc(me.short)}` : ''}</span><b>${esc(me.name)}</b><small>${SY(career.season)}年シーズン ・ ${seasonOver ? '全戦終了' : `第${career.round + 1}戦 / ${career.calendar.length}戦`}</small></div></div>
+      <div class="hhTiles">
+        <div class="hht"><span>選手権</span><b class="num">P${myPos}</b><small>${career.cpts[me.id] || 0} pt</small></div>
+        <div class="hht"><span>資金</span><b class="num ${career.money < 0 ? 'neg' : ''}">${money(career.money)}</b><small>${ln ? `融資 ${money(ln)}` : '融資なし'}</small></div>
+        <button type="button" class="hht hcPop" id="popCard" aria-haspopup="dialog" aria-label="人気度と収入の詳細を見る"><span>人気 ›</span><b class="num">${Math.round(P*100)}${pd ? `<i class="${pd > 0 ? 'up' : 'down'}">${pd > 0 ? '▲' : '▼'}${Math.abs(Math.round(pd*1000)/10)}</i>` : ''}</b><small>${money(pr(r1(baseSpons(me) + (career.sadj || 0))))}/戦</small></button>
+      </div>
     </div>`; })()}
     ${sp ? '' : sponsorCard}
-    ${!guideSeen() && hqTab === 'ov' ? `<div class="guideHint"><span class="gq" aria-hidden="true">?</span><div><b>はじめてですか？</b><span>「遊び方」の「3ステップで始める」だけ読めば遊べます（約30秒）。</span></div><button type="button" class="b sm go" data-guide="start">遊び方を見る</button><button type="button" class="b sm ghost" id="guideDismiss">閉じる</button></div>` : ''}
+    ${!guideSeen() && hqTab === 'ov' ? `<div class="guideHint"><span>はじめての方は「3ステップで始める」へ（約30秒）</span><button type="button" class="b sm go" data-guide="start">遊び方</button><button type="button" class="ghX" id="guideDismiss" aria-label="案内を閉じる">×</button></div>` : ''}
     ${msg ? `<p class="warn">${esc(msg)}</p>` : ''}
     ${career.money < 0 ? '<p class="warn">資金がマイナスです。開発や契約はできません。ポイントを取って賞金を稼ぎましょう。</p>' : ''}
     ${regAnnounced() ? `<div class="regBar"><span class="kick">REGULATIONS</span><span>来季（${SY(career.reg.at)}年シーズン）に<b>${esc(REG_THEMES[career.reg.theme].n)}の大規則変更</b>。${resBlocked() ? 'PUはメーカー製のため、先行研究はできません（来季のPUはメーカーの研究で決まります）' : `マシン開発タブで先行研究ができます（今季 ${myRes()}回）`}。</span></div>`
       : regFirstYear() ? `<div class="regBar now"><span class="kick">NEW REGULATIONS</span><span>新規則1年目（${esc(REG_THEMES[career.reg.cur.theme].n)}）。変わった部分の開発がよく伸びます（×${REG_BOOST}）。</span></div>` : ''}
     ${(() => { const pend = pendingContracts().length;
-      return `<nav class="hqTabs" role="tablist" aria-label="チーム本部の表示">${HQ_TABS.map(([k, l]) => `<button type="button" role="tab" data-hqt="${k}" class="${hqTab === k ? 'on' : ''}" aria-selected="${hqTab === k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${HQ_TAB_ICO[k]}"/></svg><span>${l}</span>${k === 'drv' && pend ? '<i class="tDot" title="契約の手続きが残っています"></i>' : ''}${k === 'fac' && Object.keys(career.facRen || {}).length ? '<i class="tDot" title="老朽化した施設の改修を決めてください"></i>' : ''}</button>`).join('')}</nav>`; })()}
+      const badge = k => { const n = todoTabs[k] || 0, dot = (k === 'drv' && pend) || (k === 'fac' && Object.keys(career.facRen || {}).length);
+        return n ? `<i class="tBadge num" title="やること ${n}件">${n}</i>` : dot ? '<i class="tDot" title="手続きが残っています"></i>' : ''; };
+      return `<div class="hqStick" id="hqStick"><div class="hqMB" aria-hidden="true">${teamLogo(me, 26)}<b>${esc(me.name)}</b><span class="num">P${myPos}</span><span class="num ${career.money < 0 ? 'neg' : ''}">${money(career.money)}</span></div>
+      <nav class="hqTabs" role="tablist" aria-label="チーム本部の表示">${HQ_TABS.map(([k, l]) => `<button type="button" role="tab" data-hqt="${k}" class="${hqTab === k ? 'on' : ''}" aria-selected="${hqTab === k}" aria-label="${l}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${HQ_TAB_ICO[k]}"/></svg><span class="tl">${l}</span>${HQ_TAB_SHORT[k] ? `<span class="ts" aria-hidden="true">${HQ_TAB_SHORT[k]}</span>` : ''}${badge(k)}</button>`).join('')}</nav></div>`; })()}
     ${hqTab === 'ov' ? `<div class="hqGrid">
       <div class="hqCol">${conCard}${evCard}${sreqCard}${nextCard}${offCard}${todo}</div>
-      <div class="hqCol">${ownerCard}${last}${miniStand}</div>
+      <div class="hqCol">${ownerCard}${spCard}${last}${miniStand}</div>
     </div>${cal}` : ''}
     ${hqTab === 'drv' ? `${conCard}${drivers}${reserveCard}${acadCard}${sisDrvCard}${loanCard}` : ''}
     ${hqTab === 'dev' ? dev + loanCard : ''}
     ${hqTab === 'fac' ? facHtml() + loanCard : ''}
     ${hqTab === 'mkt' ? market + loanCard : ''}
-    ${hqTab === 'rec' ? `${stand}${renderRecords()}` : ''}
-    <div class="row" style="justify-content:flex-end;gap:8px;flex-wrap:wrap">
-      <button class="b sm ghost" type="button" id="saveIO">セーブの書き出し・読み込み</button>
-      <button class="b sm ${armed.key === 'reset' ? 'go' : 'ghost'}" type="button" id="resetCareer">${armed.key === 'reset' ? 'もう一度押すとデータを消してやり直します' : 'キャリアを最初からやり直す'}</button>
-    </div>
+    ${hqTab === 'rec' ? renderRecords() : ''}
     ${rd ? `<div class="raceBar ${hqTab === 'ov' ? 'onOv' : ''}"><div class="rbIn"><span class="rbInfo">${gpFlag(rd.name, 12)}<b>${esc(rd.name)}</b><small>ROUND ${career.round + 1}/${career.calendar.length}${rd.month ? `・${rd.month}月` : ''}</small></span>${rbMoneyHtml()}${!inProgress ? '<button class="b skipBtn" type="button" id="skipRaceBar" title="予選と決勝を計算だけで進め、結果とハイライトを出します">スキップ</button>' : ''}<button class="b go" type="button" id="goRaceBar">${inProgress ? 'レースに戻る' : Q ? '予選に戻る' : '予選へ'}</button></div></div>` : ''}`;
+  hqTheme(el, me);
+  if(!seasonOver && ((career.ev && !career.ev.pop) || (sreqPending() && !sreqPending().pop))) evPopTimer = setTimeout(() => maybeEvPopup(), 450);   // 出来事・スポンサーの依頼のポップアップ
   const mt = $('#miniTrack'); if(mt && rd) requestAnimationFrame(() => drawMini(mt, rd));
   el.querySelectorAll('[data-up]').forEach(b => b.onclick = () => upgrade(b.dataset.up));
   el.querySelectorAll('[data-dd]').forEach(b => b.onclick = () => { const k = b.dataset.dd; devDD.has(k) ? devDD.delete(k) : devDD.add(k); renderHQ(); });
@@ -20691,6 +21579,8 @@ function renderHQView(msg){
   { const gd = $('#guideDismiss'); if(gd) gd.onclick = () => { lsSet(GUIDE_KEY, true); renderHQ(); }; }
   const rb = $('#repayBtn'); if(rb) rb.onclick = repayAll;
   el.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { recView = b.dataset.rv; recPick = null; renderHQ(); });
+  el.querySelectorAll('[data-rg]').forEach(b => b.onclick = () => { const g = REC_NAV.find(x => x[0] === b.dataset.rg); if(!g) return; recView = recLastIn[g[0]] || g[2][0][0]; recPick = null; renderHQ(); });
+  el.querySelectorAll('[data-rall]').forEach(b => b.onclick = () => { recAllRows = !recAllRows; renderHQ(); });
   el.querySelectorAll('[data-rp]').forEach(b => b.onclick = () => openProf(b.dataset.rp));   // 名前：戦績を画面の上に重ねて出す（表の上に差し込むと、押した行が下に押し出されるため）
   el.querySelectorAll('[data-rsn]').forEach(b => b.onclick = () => { const n = +b.dataset.rsn; recView = 'season'; recSeason = n === career.season ? null : n; recPick = null; renderHQ(); });
   { const sel = el.querySelector('#rcSnSel'); if(sel) sel.onchange = () => { const n = +sel.value; recView = 'season'; recSeason = n === career.season ? null : n; recPick = null; renderHQ(); }; }
@@ -20709,6 +21599,8 @@ function renderHQView(msg){
   el.querySelectorAll('[data-dswap]').forEach(b => b.onclick = () => { const t = myTeam(); t.drivers.reverse(); saveCareer(); renderHQ(); });
   el.querySelectorAll('[data-prof]').forEach(b => b.onclick = () => openProf(b.dataset.prof));   // カードの「戦績」
   el.querySelectorAll('[data-calr]').forEach(b => b.onclick = () => openProf(b.dataset.calr));   // カレンダー：終わったレースの結果
+  el.querySelectorAll('[data-calinfo]').forEach(b => b.onclick = () => openCourseInfo(+b.dataset.calinfo));
+  el.querySelectorAll('[data-camp]').forEach(b => b.onclick = () => openCamp(b.dataset.camp));   // オフシーズン：トレーニング合宿   // カレンダー：これからのレースのコース情報
   el.querySelectorAll('[data-spk]').forEach(b => b.onclick = () => { const k = b.dataset.spk; if(k) openProf(k); });   // 選手権の名前：戦績を画面の上に重ねて出す（記録タブ・ドライバータブと同じ）
   el.querySelectorAll('[data-mkopen]').forEach(b => b.onclick = () => { mktOpen = mktOpen === b.dataset.mkopen ? null : b.dataset.mkopen; if(mktOpen) signYrs = 2; renderHQ(); });   // 開くたびに2年から
   el.querySelectorAll('[data-pchwhy]').forEach(b => b.onclick = () => { const k = b.dataset.pchwhy; pchWhyOpen.has(k) ? pchWhyOpen.delete(k) : pchWhyOpen.add(k); renderHQ(); });
@@ -20745,21 +21637,16 @@ function renderHQView(msg){
   const grb = $('#goRaceBar'); if(grb) grb.onclick = () => { sndInit(); skipPending = false; goRace(); };
   ['#skipRace', '#skipRaceBar'].forEach(id => { const b = $(id); if(b) b.onclick = skipChoose; });   // 予選だけか、決勝までかを選ぶ
   el.querySelectorAll('[data-hqt]').forEach(b => b.onclick = () => {
-    const fromNav = !!b.closest('.hqTabs');
+    hqHit = null;                                                       // タブを切り替えたら、押したボタンの位置は保たない
     hqTab = b.dataset.hqt; lsSet(HQ_TAB_KEY, hqTab); renderHQ();
-    const nav = el.querySelector('.hqTabs'), hh = ($('header') || {}).offsetHeight || 0;
-    if(nav && !fromNav){ window.scrollTo({ top: Math.max(0, window.scrollY + nav.getBoundingClientRect().top - hh - 8), behavior: 'instant' }); return; }   // 「やること」などからタブへ移るときは、タブの先頭から見せる
-    if(nav && nav.getBoundingClientRect().top < hh) window.scrollTo({ top: window.scrollY + nav.getBoundingClientRect().top - hh - 8 });   // タブが画面の上に隠れていたら、タブの位置まで戻す
+    const hq = $('#hq'); if(hq) hq.style.paddingBottom = '';
+    window.scrollTo({ top: 0, behavior: 'instant' });                   // どのタブも、開いたら毎回いちばん上から
   });
   el.querySelectorAll('details[data-fold]').forEach(d => d.addEventListener('toggle', () => { d.open ? hqOpen.add(d.dataset.fold) : hqOpen.delete(d.dataset.fold); }));
   const ns = $('#nextSeason'); if(ns) ns.onclick = nextSeason;
   if(hqView !== 'new'){ showAwakenFx(); showBreakFx(); }
   if($('#saveIO')) $('#saveIO').onclick = openSaveIO;
-  if($('#resetCareer')) $('#resetCareer').onclick = () => {
-    if(!confirmTwice('reset')) return;
-    try{ localStorage.removeItem(LS_CAREER); }catch(e){}
-    career = null; careerRace = null; hqView = 'new'; resetRace(); syncTabs('hq'); renderHQ();
-  };
+
 }
 
 
@@ -20938,7 +21825,9 @@ function phoneLayout(){
   document.body.classList.toggle('pcRace', on && pc);
   if(!(on && pc)) document.body.classList.remove('showTiming', 'showLap');
   { const hud = $('#stage .hud'), wx = $('#wxbox');                   // PC：天気・路面温度は上部の情報バー（周回・旗と同じ帯）に入れる
-    if(hud && wx){ if(on && pc){ if(wx.parentElement !== hud) hud.append(wx); } else if(wx.parentElement !== $('#stage')) hud.after(wx); } }
+    try{ pcUiSetup(); }catch(e){}
+    const slot = $('#pcWxSlot'), pcc = on && pc && document.body.classList.contains('career') && slot;   // PCのキャリアの決勝：天気・路面のパネルの中へ
+    if(hud && wx){ if(pcc){ if(wx.parentElement !== slot) slot.append(wx); } else if(on && pc){ if(wx.parentElement !== hud) hud.append(wx); } else if(wx.parentElement !== $('#stage')) hud.after(wx); } }
   { const rd = $('#raceData'), home = on && pc ? $('#stage') : $('#raceRight');   // PC：タイミング表・ラップチャートはコース画面の中に重ねる
     if(rd && home && rd.parentElement !== home) home.append(rd); }
   syncDataBtns();
@@ -20984,6 +21873,7 @@ function syncDock(){
   document.querySelectorAll('#dkMode button').forEach(b => { const on = b.dataset.m === pw.mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   dkBoxSync();
   document.querySelectorAll('#dock .dkPitRow').forEach(r => r.hidden = !MY);
+  try{ pcDockSync(); }catch(e){}
 }
 {
   const dk = $('#dock');
@@ -21215,7 +22105,7 @@ function syncTel(){
   const skel = cars.map(c => c.m.id + ':' + machines.indexOf(c.m)).join(',');
   if(telKey !== skel){
     telKey = skel;
-    box.innerHTML = cars.map(c => `<div class="tc" data-mi="${machines.indexOf(c.m)}" role="button" tabindex="0"><div class="secBar" aria-hidden="true"><i><b>S1</b></i><i><b>S2</b></i><i><b>S3</b></i></div><div class="tcHead"><span class="dot" style="background:${swatchBg(c.m)}"></span>${esc(c.m.name)}${formTag(career.drivers[c.m.name], true)}${myTeam().drivers.includes(c.m.name) ? '' : `<span class="tcSub" title="${esc(career.drivers[c.m.name] ? career.drivers[c.m.name].name : '')}が代わりに走ります">${isRes(myTeam(), c.m.name) ? 'リザーブ' : '代役'}</span>`}<span class="abAct"></span><span class="tag"></span></div><div class="tcRow t1"></div><div class="tcRow t2"></div><div class="tcRow t3"></div><div class="tcPace" role="group" aria-label="${esc(c.m.name)}のペース">${['save','norm','push'].map(p => `<button type="button" data-p="${p}" class="pc-${p}" aria-label="${esc(c.m.name)}のペース：${PACE[p].name}" title="${PACE[p].name}">${PACE_ICO[p]}<span class="pcLab">${PACE[p].name}</span></button>`).join('')}</div><div class="tcStart" role="group" aria-label="${esc(c.m.name)}のスタートタイヤ"></div><div class="tcSet"><div class="tsLab"><span>セッティング</span><small class="tcSetV"></small></div><span class="qtSetW"><small>DF</small><input type="range" class="qtSet" min="-3" max="3" step="1" aria-label="${esc(c.m.name)}のセッティング（左：ダウンフォース寄り、右：最高速寄り）"><small>最高速</small></span></div><div class="tcBoxW"><button type="button" class="tcBox" aria-label="${esc(c.m.name)}をピットに入れる"><b>BOX</b></button><div class="tcPick" role="group" aria-label="${esc(c.m.name)}に履かせるタイヤ" hidden><span class="tpLab">タイヤを選ぶ</span>${TYRE_KEYS_ALL.map(k => `<button type="button" data-tc="${k}"><span class="tring" style="border-color:${TYRES[k].color}"></span>${k}</button>`).join('')}<button type="button" class="tpX" aria-label="閉じる">×</button></div></div></div>`).join('');
+    box.innerHTML = cars.map(c => `<div class="tc" data-mi="${machines.indexOf(c.m)}" role="button" tabindex="0"><div class="secBar" aria-hidden="true"><i><b>S1</b></i><i><b>S2</b></i><i><b>S3</b></i></div><div class="tcSide"><span class="tcFace" aria-hidden="true"></span><small class="tcLapN"></small><b class="tcLapT num"></b></div><div class="tcTabs" role="group" aria-label="${esc(c.m.name)}の表示"><button type="button" data-tt="s">作戦</button><button type="button" data-tt="t">タイム</button><span class="tcGap"></span></div><div class="tcTime"></div><div class="tcHead"><span class="dot" style="background:${swatchBg(c.m)}"></span>${esc(c.m.name)}${formTag(career.drivers[c.m.name], true)}${myTeam().drivers.includes(c.m.name) ? '' : `<span class="tcSub" title="${esc(career.drivers[c.m.name] ? career.drivers[c.m.name].name : '')}が代わりに走ります">${isRes(myTeam(), c.m.name) ? 'リザーブ' : '代役'}</span>`}<span class="abAct"></span><span class="tag"></span></div><div class="tcRow t1"></div><div class="tcRow t2"></div><div class="tcRow t3"></div><div class="tcPace" role="group" aria-label="${esc(c.m.name)}のペース">${['save','norm','push'].map(p => `<button type="button" data-p="${p}" class="pc-${p}" aria-label="${esc(c.m.name)}のペース：${PACE[p].name}" title="${PACE[p].name}">${PACE_ICO[p]}<span class="pcLab">${PACE[p].name}</span></button>`).join('')}</div><div class="tcStart" role="group" aria-label="${esc(c.m.name)}のスタートタイヤ"></div><div class="tcSet"><div class="tsLab"><span>セッティング</span><small class="tcSetV"></small></div><span class="qtSetW"><small>DF</small><input type="range" class="qtSet" min="-3" max="3" step="1" aria-label="${esc(c.m.name)}のセッティング（左：ダウンフォース寄り、右：最高速寄り）"><small>最高速</small></span></div><div class="tcBoxW"><button type="button" class="tcBox" aria-label="${esc(c.m.name)}をピットに入れる"><b>BOX</b></button><div class="tcPick" role="group" aria-label="${esc(c.m.name)}に履かせるタイヤ" hidden><span class="tpLab">タイヤを選ぶ</span>${TYRE_KEYS_ALL.map(k => `<button type="button" data-tc="${k}"><span class="tring" style="border-color:${TYRES[k].color}"></span>${k}</button>`).join('')}<button type="button" class="tpX" aria-label="閉じる">×</button></div></div></div>`).join('');
   }
   // innerHTML は、ブラウザが書き直した形（属性の書き方など）で返ってくるので、書いた文字列と比べると毎回ちがって見える。
   // （レース画面では説明文の title を消す見張りもあり、中身はさらに変わる）。そのため書いた文字列を覚えておいて比べる
@@ -21290,10 +22180,107 @@ function syncTel(){
     });
     if(abCh) abStack(wrap);
   });
+  if(isPcCareerRace()) pcTelExtra(cars, order);
   if(box.hidden) box.hidden = false;
   if(document.body.classList.contains('pcRace')){   // PC：カードと操作ボタンは同じ段に並ぶので、高いほうを下の段の高さにする
     st.style.setProperty('--dockH', Math.max(dk ? dk.offsetHeight : 0, ...[...box.children].map(x => x.offsetHeight)) + 'px'); st.style.setProperty('--telH', '0px');
   } else st.style.setProperty('--telH', box.offsetHeight + 'px');
+}
+/* ---------- PC版レース画面（2026-11 UI改善） ----------
+   1. 順位表：見出しの帯に「RACE・LAP」、右の列を ‹ › で切り替え（前との差・トップとの差・タイヤ・ピット回数）、
+      追っている車の行を白く反転、行を押すとその車を追う
+   2. 天気・路面のパネル：ミニマップの下に、TRACK の表示（路面・温度・予報）と、雨・濡れ具合・路面温度
+   3. 自チームのカード：顔・今の周のタイム・前後との差・「作戦／タイム」のタブ
+   4. チームラジオ：話している車のドライバーの顔
+   5. 操作バー：1段（一時停止・速度 ‹×1›・カメラ ‹中継›・ズーム・設定）。SCで×1・ピット判断・オーダー・追従視点・3Dは設定のメニューへ
+   スマホの画面は変えない（PCのキャリアの決勝だけ） */
+const MT_COLS = [['int', '前との差'], ['lead', 'トップとの差'], ['tyre', 'タイヤ（使った周）'], ['pit', 'ピット回数']];
+let mtCol = (() => { const v = lsGet('rtm.mtcol.v1', 'int'); return MT_COLS.some(x => x[0] === v) ? v : 'int'; })();
+const TC_TAB = {};
+const isPcCareerRace = () => document.body.classList.contains('pcRace') && document.body.classList.contains('career');
+const PC_CAMS = ['#camAll', '#camAuto', '#camMy', '#camLead', '#camFree'];
+function pcMove(el, to){ if(!el) return; if(!el._home){ el._home = el.parentNode; el._next = el.nextSibling; } if(to){ if(el.parentNode !== to) to.append(el); } else if(el.parentNode !== el._home) el._home.insertBefore(el, el._next && el._next.parentNode === el._home ? el._next : null); }
+function pcUiSetup(){
+  const on = isPcCareerRace();
+  // 順位表：列の切り替えと、行を押してカメラで追う
+  if($('#miniTower') && !$('#mtCol')){
+    $('#mtHead').insertAdjacentHTML('afterend', `<div class="mtCol" id="mtCol"><button type="button" data-mc="-1" aria-label="前の列">‹</button><span id="mtColLab"></span><button type="button" data-mc="1" aria-label="次の列">›</button></div>`);
+    $('#mtCol').addEventListener('click', e => { const b = e.target.closest('[data-mc]'); if(!b) return; e.stopPropagation(); const i = MT_COLS.findIndex(x => x[0] === mtCol); mtCol = MT_COLS[(i + +b.dataset.mc + MT_COLS.length) % MT_COLS.length][0]; lsSet('rtm.mtcol.v1', mtCol); mtAt = 0; drawMiniTower(true); });
+    $('#mtRows').addEventListener('click', e => { if(!isPcCareerRace()) return; const r = e.target.closest('.mtR[data-k]'); if(!r) return; const c = race.cars.find(x => x.m.name === r.dataset.k); if(!c) return;
+      if(cam.mode === 'car' && cam.follow === c.m) setCam('all'); else setCam('car', c.m); mtAt = 0; drawMiniTower(true); });
+  }
+  // カードのタブ（作戦／タイム）：カードを押したとき（担当の切り替え）より先に受け取る
+  { const tt = $('#teamTel'); if(tt && !tt._tt){ tt._tt = 1; tt.addEventListener('click', e => { const b = e.target.closest('[data-tt]'); if(!b) return; e.stopPropagation(); e.preventDefault(); const el = b.closest('.tc'), m = el && machines[+el.dataset.mi]; if(m){ TC_TAB[m.id] = b.dataset.tt; syncTel(); } }, true); } }
+  // 天気・路面のパネル
+  if(!$('#pcWx')) $('#stage').insertAdjacentHTML('beforeend', `<section class="pcWx" id="pcWx" aria-label="天気と路面"><div class="pwH"><span>WEATHER ・ TRACK</span></div><div class="pwSlot" id="pcWxSlot"></div><div class="pwRows" id="pcWxRows"></div></section>`);
+  // 操作バー：速度とカメラの ‹ ›、設定のメニュー
+  const dk = $('#dock');
+  if(dk && !$('#pcSpd')){
+    $('#dkSpeed').insertAdjacentHTML('afterend', `<div class="pcStep" id="pcSpd" role="group" aria-label="再生速度"><button type="button" data-sd="-1" aria-label="遅く">‹</button><b id="pcSpdV">×1</b><button type="button" data-sd="1" aria-label="速く">›</button></div>`);
+    $('#pcSpd').addEventListener('click', e => { const b = e.target.closest('[data-sd]'); if(!b) return; const L = [1, 2, 4, 8], i = Math.max(0, L.indexOf(race.timeScale)), v = L[clamp(i + +b.dataset.sd, 0, L.length - 1)]; const t = $(`#dkSpeed button[data-ts="${v}"]`); if(t) t.click(); pcDockSync(); });
+    const ico = $('#camctl .camIco');
+    if(ico) ico.insertAdjacentHTML('afterend', `<span class="pcStep pcCam" id="pcCam" role="group" aria-label="カメラ"><button type="button" data-cd="-1" aria-label="前のカメラ">‹</button><b id="pcCamV">全体</b><button type="button" data-cd="1" aria-label="次のカメラ">›</button></span>`);
+    $('#pcCam').addEventListener('click', e => { const b = e.target.closest('[data-cd]'); if(!b) return; e.stopPropagation();
+      const L = PC_CAMS.map(q => $(q)).filter(x => x && !x.hidden), i = Math.max(0, L.findIndex(x => x.classList.contains('on'))), n = L[(i + +b.dataset.cd + L.length) % L.length]; if(n) n.click(); pcDockSync(); });
+    $('#dkTy').insertAdjacentHTML('beforeend', `<button type="button" class="dkIco pcGear" id="pcGear" aria-label="レースの設定" aria-expanded="false" aria-controls="pcMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>`);
+    dk.insertAdjacentHTML('beforeend', `<div class="pcMenu" id="pcMenu" hidden role="group" aria-label="レースの設定"><b class="pmT">レースの設定</b><div class="pmRow" id="pmSc"></div><div class="pmRow" id="pmPit"></div><div class="pmRow" id="pmTo"></div><button type="button" class="pmTg" data-px="#camRot"><span>追従視点</span><i></i></button><button type="button" class="pmTg" data-px="#camTilt"><span>3D表示</span><i></i></button></div>`);
+    const menu = $('#pcMenu'), gear = $('#pcGear');
+    const close = () => { menu.hidden = true; gear.setAttribute('aria-expanded', 'false'); gear.classList.remove('on'); };
+    gear.addEventListener('click', e => { e.stopPropagation(); const open = menu.hidden; menu.hidden = !open; gear.setAttribute('aria-expanded', String(open)); gear.classList.toggle('on', open); pcDockSync(); });
+    menu.addEventListener('click', e => { e.stopPropagation(); const t = e.target.closest('[data-px]'); if(t){ const src = $(t.dataset.px); if(src) src.click(); pcDockSync(); } });
+    document.addEventListener('click', e => { if(!menu.hidden && !menu.contains(e.target) && e.target !== gear) close(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape' && !menu.hidden){ close(); gear.focus(); } });
+  }
+  // PCのキャリアの決勝のときだけ、SCで×1・ピット判断・オーダーを設定のメニューへ移す（ほかのときは元の場所へ戻す）
+  pcMove($('#dkScX1'), on ? $('#pmSc') : null);
+  pcMove($('#dkMode'), on ? $('#pmPit') : null);
+  pcMove($('#dkTOW'), on ? $('#pmTo') : null);
+  if(!on && $('#pcMenu')) $('#pcMenu').hidden = true;
+  pcDockSync();
+}
+function pcDockSync(){
+  const v = $('#pcSpdV'); if(v) v.textContent = '×' + (race.timeScale || 1);
+  const L = PC_CAMS.map(q => $(q)).filter(x => x && !x.hidden), cur = L.find(x => x.classList.contains('on')), cv_ = $('#pcCamV');
+  if(cv_) cv_.textContent = cur ? cur.textContent.trim() : (cam.mode === 'car' && cam.follow ? cam.follow.name : '—');
+  document.querySelectorAll('#pcMenu [data-px]').forEach(t => { const src = $(t.dataset.px), on = !!src && src.classList.contains('on'); t.classList.toggle('on', on); t.setAttribute('aria-pressed', String(on)); });
+}
+// 天気・路面のパネルの中身（TRACK の表示はパネルの中へ移してある）
+function pcWxSync(){
+  const el = $('#pcWx'); if(!el) return;
+  const on = isPcCareerRace() && mode === 'race' && !(Q && race.state === 'quali');
+  if(el.hidden === on) el.hidden = !on;
+  if(!on) return;
+  const mm = $('#miniMap');
+  if(mm && !mm.hidden && mm.offsetWidth){ const st = $('#stage'); el.style.top = (mm.offsetTop + mm.offsetHeight + 8) + 'px'; el.style.right = (st.clientWidth - mm.offsetLeft - mm.offsetWidth) + 'px'; el.style.width = mm.offsetWidth + 'px'; }
+  const T = race.trackT == null ? '—' : Math.round(race.trackT) + '℃';
+  const rn = race.rain > 0.55 ? '大雨' : race.rain > 0.15 ? '雨' : race.rain > 0.02 ? '小雨' : 'なし';
+  const h = `<div><span>雨</span><b>${rn}</b></div><div><span>路面の濡れ具合</span><b class="num">${Math.round(race.wet*100)}%</b></div><div><span>路面温度</span><b class="num">${T}</b></div>`;
+  const r = $('#pcWxRows'); if(r && r._hv !== h){ r.innerHTML = h; r._hv = h; }
+}
+// 自チームのカード（PC）：顔・今の周のタイム・前後との差・タブ
+const lapClock = t => { if(t == null || !isFinite(t) || t < 0) return '—'; const m = Math.floor(t/60), s = t - m*60; return m + ':' + s.toFixed(1).padStart(4, '0'); };
+function pcTelExtra(cars, order){
+  const box = $('#teamTel'); if(!box) return;
+  const allBest = [0, 1, 2].map(k => Math.min(...race.cars.map(o => o.bestSec[k] ?? Infinity)));
+  cars.forEach((c, n) => {
+    const el = box.children[n]; if(!el) return;
+    const set = (q, v) => { const e = el.querySelector(q); if(e && e._hv !== v){ e.innerHTML = v; e._hv = v; } };
+    const f = el.querySelector('.tcFace'); if(f && !f._hv){ const h = driverFace(c.m.name, teamSuit(myTeam()), 52); f.innerHTML = h; f._hv = h || ' '; }
+    const tab = TC_TAB[c.m.id] || 's';
+    if(el.classList.contains('tabT') !== (tab === 't')) el.classList.toggle('tabT', tab === 't');
+    el.querySelectorAll('[data-tt]').forEach(b => { const on = b.dataset.tt === tab; if(b.classList.contains('on') !== on){ b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); } });
+    const lapN = Math.min(c.laps.length + 1, race.laps), racing = race.state === 'racing' && !c.out && c.finish === null && (c.cross || 0) >= 1;
+    set('.tcLapN', c.out ? 'OUT' : c.finish !== null ? 'FINISH' : `LAP ${lapN}/${race.laps}`);
+    set('.tcLapT', racing ? lapClock(race.t - (c.lastCross || 0)) : '—');
+    const i = order.indexOf(c), a = i > 0 ? intCache.get(c) : null, nb = order[i + 1], b = nb && !nb.out ? intCache.get(nb) : null;
+    set('.tcGap', c.out ? '' : `前 <b>${i === 0 ? '—' : esc(String(a ?? '—'))}</b> ・ 後 <b>${b ? esc(String(b).replace('+', '−')) : '—'}</b>`);
+    if(tab === 't'){
+      const secs = c.lastSec.some(v => v != null) ? c.lastSec : c.cur;
+      const seg = k => { const v = secs[k], cls = v == null ? '' : v <= allBest[k] ? 'p' : v <= (c.bestSec[k] ?? Infinity) ? 'g' : 'y'; return `<div class="tsc ${cls}"><small>S${k + 1}</small><b class="num">${v == null ? '—' : v.toFixed(3)}</b></div>`; };
+      const last = c.laps.length ? c.laps[c.laps.length - 1] : null, stint = Math.max(0, c.laps.length - (c.fitLap || 0));
+      set('.tcTime', `<div class="tsecs">${[0, 1, 2].map(seg).join('')}</div><div class="tln"><span>前の周 <b class="num">${last == null ? '—' : fmt(last)}</b></span><span>ベスト <b class="num${c.best != null && race.bestLap != null && c.best <= race.bestLap ? ' p' : ''}">${c.best == null ? '—' : fmt(c.best)}</b></span></div><div class="tln"><span>このタイヤで <b class="num">${stint}周</b></span><span>ピット <b class="num">${c.pits || 0}回</b></span></div>`);
+    }
+  });
 }
 /* ---------- キャリアのチームラジオ：会話（エンジニアとドライバーの掛け合い）を1つの吹き出しにまとめる ----------
    同じ掛け合い（conv）の台詞は、同じ吹き出しに行を足す。新しい吹き出しのときだけ前のSEを鳴らす */
@@ -21341,7 +22328,7 @@ function radioLine(m, who, text, conv){
   const side = [...($('#teamTel') || { children: [] }).children].findIndex(x => machines[+x.dataset.mi] === m);
   el.className = 'radio' + (mate ? ' mate' : '') + (side === 1 ? ' sR' : ' sL'); el.setAttribute('role', 'status');
   el.dataset.m = m.id; el.dataset.conv = conv ? String(conv) : ''; el.dataset.open = '1'; el._t = now; el._n = 1; el._showAt = now + Math.max(0, wait);
-  el.innerHTML = `<div class="rh">${RADIO_ICO.replace('width="17" height="17"', 'width="13" height="13"')}<span class="rhT">TEAM RADIO</span><i class="tdot" style="background:${m.color}"></i><b>${esc(d ? d.name : m.name)}</b>${mate ? '<span class="mt">チームメイト</span>' : ''}</div><div class="rb">${line}</div>`;
+  el.innerHTML = `<span class="rFace" aria-hidden="true">${d ? driverFace(m.name, teamSuit(myTeam()), 40) : ''}</span><div class="rMain"><div class="rh">${RADIO_ICO.replace('width="17" height="17"', 'width="13" height="13"')}<span class="rhT">TEAM RADIO</span><i class="tdot" style="background:${m.color}"></i><b>${esc(d ? d.name : m.name)}</b>${mate ? '<span class="mt">チームメイト</span>' : ''}</div><div class="rb">${line}</div></div>`;
   box.append(el);
   while(box.children.length > 2) box.firstElementChild.remove();
   const t0 = race.t;
@@ -21858,7 +22845,7 @@ function landFar(T){
    1) 土地の区分け：なめらかなノイズで、森・畑・村・工業地帯・草地を分ける（タイプごとに割合が違う）
    2) 分割：主な道の向きにそろえて土地を長方形に分割し、区画ごとに中身を詰める（大きな切れ目は道路、小さな切れ目は生け垣）
    3) サーキットの施設：外周のサービス道路、メインゲートからの進入路、観客用駐車場、キャンプ場
-   4) インフィールド：コースの内側は芝生にし、サービス道路・ヘリポート・メディカルセンターなどを置く
+   4) インフィールド：コースの内側は芝生にし、サービス道路・ホスピタリティなどを置く
    光は左上から当たる前提で、建物と木の影を右下にそろえる
    ===================================================================== */
 const LAND = {
@@ -22144,7 +23131,7 @@ function drawLand(T){
     main.restore();
     break;
   }
-  // ---- インフィールドの施設：ヘリポート、メディカルセンター、木立 ----
+  // ---- インフィールドの施設：ホスピタリティ、駐車場、木立（ヘリポート・メディカルセンターは削除） ----
   {
     const spots = [];
     for(let n = 0; n < 900 && spots.length < 7; n++){
@@ -22154,13 +23141,7 @@ function drawLand(T){
       spots.push([x, y]);
     }
     spots.forEach(([x, y], i) => {
-      if(i === 0){                                                   // ヘリポート
-        main.fillStyle = '#5c6167'; main.beginPath(); main.arc(x, y, 20, 0, 7); main.fill();
-        main.strokeStyle = '#f4f4f4'; main.lineWidth = 1.6; main.beginPath(); main.arc(x, y, 16, 0, 7); main.stroke();
-        main.fillStyle = '#f4f4f4'; main.font = '700 16px "Chakra Petch",sans-serif'; main.textAlign = 'center'; main.textBaseline = 'middle'; main.fillText('H', x, y + 1);
-      } else if(i === 1){                                            // メディカルセンター
-        landBox(main, x, y, 38, 24, th, '#e9ecef');
-        main.save(); main.translate(x, y); main.rotate(th); main.fillStyle = '#d7263d'; main.fillRect(-2, -7, 4, 14); main.fillRect(-7, -2, 14, 4); main.restore();
+      if(i === 0 || i === 1){                                         // （ヘリポート・メディカルセンターは2026-11に削除。場所は芝生のまま空けておく）
       } else if(i === 2){                                            // ホスピタリティのテント
         for(let k = 0; k < 3; k++){ const tx = x - 22 + k*22; main.fillStyle = 'rgba(0,0,0,.2)'; main.fillRect(tx - 8 + SH.x, y - 8 + SH.y, 16, 16); main.fillStyle = '#f4f4f2'; main.fillRect(tx - 8, y - 8, 16, 16); main.strokeStyle = 'rgba(0,0,0,.18)'; main.lineWidth = 0.8; main.beginPath(); main.moveTo(tx - 8, y - 8); main.lineTo(tx + 8, y + 8); main.moveTo(tx + 8, y - 8); main.lineTo(tx - 8, y + 8); main.stroke(); }
       } else if(i === 3){                                            // スタッフ用の駐車場
@@ -22268,7 +23249,8 @@ function cityPlan(T){
     if(d > 0.8 && n2 < 0.45) return 'factory';
     return n2 > 0.58 ? 'old' : 'home';
   };
-  return (T.cityPlan = { seed, rnd, nz, xs, ys, cx, cy, S, rail, diags, tlines, free: diags.concat(tlines), canal, rounds, zoneOf, th, ct, st, toL, toW });
+  const VS = vegasSphere(T), dome = VS ? (([x, y]) => ({ x, y, r: VS.plaza + 4 }))(toL(VS.x, VS.y)) : null;
+  return (T.cityPlan = { seed, rnd, nz, xs, ys, cx, cy, S, rail, diags, tlines, free: diags.concat(tlines), canal, rounds, dome, zoneOf, th, ct, st, toL, toW });
 }
 /* コースの直線（向きがほぼ変わらない区間）を取り出す */
 function cityStraights(T){
@@ -22307,6 +23289,7 @@ function cityBlocked(plan, x0, y0, x1, y1){                            // 斜め
     if(Math.abs(s) < 4 || mn < d.hw + 3) return true;
   }
   for(const r of plan.rounds) if(Math.hypot(mx - r.x, my - r.y) < rr + (r.big ? 40 : 30)) return true;
+  const D = plan.dome; if(D && Math.hypot(mx - D.x, my - D.y) < rr + D.r) return true;   // ラスベガスGPの球体の広場
   const C = plan.canal;
   if(C){ const P = C.pts; for(let i = 1; i < P.length; i++){ if(Math.abs(P[i][0] - mx) > rr + 60 && Math.abs(P[i][1] - my) > rr + 60) continue; if(cityDistSeg(mx, my, P[i-1][0], P[i-1][1], P[i][0], P[i][1]) < rr*0.85 + C.hw + 4) return true; } }
   return false;
@@ -22829,6 +23812,151 @@ function netDraw(g, T, wx0, wy0, wx1, wy1, opt){
   g.restore();
 }
 /* 市街地の背景（drawScenery から） */
+/* ---------- ラスベガスGP：巨大な球体ビジョン（2026-11） ----------
+   固定コース（GP_FIXED['ラスベガス']）のときだけ、コースの内側のくぼみ（SPH_HINT のあたり）に、
+   外側一面がLEDの球体の建物を置く。背景には広場と球体の土台だけを描き、映像は毎フレーム背景の上に重ねて夜でも明るく見せる。
+   映像はレースの状況で変わる（0.5秒に1回だけ描き直す）：
+   赤旗＝赤／SC・VSC＝黄色／ファステストラップ＝紫（6秒）／チェッカー後＝チェッカーフラッグと優勝者／ふだん＝首位のチームカラーと略号。
+   レース前や予選は、全チームの色が回る待ち受け映像。施設の名前は出さない */
+const SPH_HINT = { x: 1440, y: 1010 }, SPH_R_MAX = 88, SPH_PX = 256, SPH_EVERY = 500;
+function vegasSphere(T){
+  if(!T) return null;
+  if(T.sphere !== undefined) return T.sphere;
+  T.sphere = null;
+  const fx = GP_FIXED['ラスベガス'];
+  if(!fx || !course || !/^ラスベガス/.test(String(course.name || '')) || (T.type || '') !== 'street' || netCity(T)) return null;
+  if(!course.points || course.points.length*2 !== fx.d.length || Math.round(course.points[0].x) !== fx.d[0] || Math.round(course.points[0].y) !== fx.d[1]) return null;   // 固定の形のときだけ
+  const K = T.pts, N = T.N;
+  const md = (x, y) => { let m = 1e18; for(let i = 0; i < N; i++){ const d = (K[i].x - x)**2 + (K[i].y - y)**2; if(d < m) m = d; } return Math.sqrt(m); };
+  let best = null;                                       // くぼみの中で、コースからいちばん離れた所
+  for(let dy = -60; dy <= 60; dy += 6) for(let dx = -60; dx <= 60; dx += 6){ const x = SPH_HINT.x + dx, y = SPH_HINT.y + dy, d = md(x, y); if(!best || d > best.d) best = { x, y, d }; }
+  const r = Math.min(SPH_R_MAX, best.d - (T.width/2 + escW(T) + CITY_GAP + 18));
+  if(r < 36) return null;
+  return (T.sphere = { x: best.x, y: best.y, r, plaza: r + 12 });
+}
+/* 背景：広場と球体の土台（映像を重ねる前の暗い球） */
+function drawSpherePlaza(g, T){
+  const S = vegasSphere(T); if(!S) return;
+  const { x, y, r, plaza } = S;
+  g.save();
+  g.fillStyle = '#b4b8bd'; g.beginPath(); g.arc(x, y, plaza, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1;
+  for(let k = 1; k <= 3; k++){ g.beginPath(); g.arc(x, y, r + k*3, 0, 7); g.stroke(); }
+  g.strokeStyle = '#8c9197'; g.lineWidth = 1.6; g.beginPath(); g.arc(x, y, plaza, 0, 7); g.stroke();
+  g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.arc(x + 4, y + 5, r + 1, 0, 7); g.fill();   // 影
+  g.fillStyle = '#1a1d23'; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+  g.restore();
+}
+const SPH = { cv: null, ov: null, key: '', at: 0, col: '#ffffff', tick: 0 };
+const sphInk = c => { const [r, g, b] = sphRgb(c); return 0.2126*r + 0.7152*g + 0.0722*b > 170 ? '#16181d' : '#ffffff'; };   // 背景の色に合う文字色
+const sphRgb = c => { const m = /^#?([0-9a-f]{6})$/i.exec(String(c || '')); const n = m ? parseInt(m[1], 16) : 0xffffff; return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+/* 球体の丸み（ふちを暗く、左上を明るく）と、LEDの粒の格子。1回だけ作っておく */
+function sphereOverlay(){
+  if(SPH.ov) return SPH.ov;
+  const P = SPH_PX, c = document.createElement('canvas'); c.width = c.height = P;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgba(0,0,0,.26)';
+  for(let i = 0; i < P; i += 4){ g.fillRect(i, 0, 1, P); g.fillRect(0, i, P, 1); }
+  let gr = g.createRadialGradient(P/2, P/2, P*0.18, P/2, P/2, P/2);
+  gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.72, 'rgba(0,0,0,.12)'); gr.addColorStop(1, 'rgba(0,0,0,.62)');
+  g.fillStyle = gr; g.fillRect(0, 0, P, P);
+  gr = g.createRadialGradient(P*0.36, P*0.32, 0, P*0.36, P*0.32, P*0.4);
+  gr.addColorStop(0, 'rgba(255,255,255,.22)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, P, P);
+  return (SPH.ov = c);
+}
+/* 今の場面（映像の種類と中身） */
+function sphereScene(){
+  const live = mode === 'race' && race.cars.length && (race.state === 'racing' || race.state === 'finished');
+  if(!live) return { k: 'idle' };
+  if(race.red) return { k: 'red' };
+  if(race.state === 'finished' || race.firstFinish !== null){ const w = ranking()[0]; return w ? { k: 'win', c: w } : { k: 'idle' }; }
+  if(race.sc) return { k: 'sc' };
+  if(race.vsc) return { k: 'vsc' };
+  if(race.flCar && race.t - race.flT < 6) return { k: 'fl', c: race.flCar };
+  const L = ranking()[0];
+  return L ? { k: 'lead', c: L } : { k: 'idle' };
+}
+function sphereScreen(){
+  const now = performance.now(), sc = sphereScene();
+  const key = sc.k + ':' + (sc.c ? sc.c.m.id : '');
+  if(SPH.cv && key === SPH.key && now - SPH.at < SPH_EVERY) return SPH.cv;
+  if(key !== SPH.key) SPH.tick = 0; else SPH.tick++;
+  SPH.key = key; SPH.at = now;
+  const P = SPH_PX, h = P/2;
+  if(!SPH.cv){ SPH.cv = document.createElement('canvas'); SPH.cv.width = SPH.cv.height = P; }
+  const g = SPH.cv.getContext('2d'), t = SPH.tick;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, P, P);
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  const font = (w, px) => `${w} ${px}px "Chakra Petch",sans-serif`;
+  const text = (str, y, px, col, w = 700) => { g.font = font(w, px); if(col === '#ffffff' || col === '#fff'){ g.lineJoin = 'round'; g.lineWidth = Math.max(3, px*0.12); g.strokeStyle = 'rgba(0,0,0,.45)'; g.strokeText(str, h, y); } g.fillStyle = col; g.fillText(str, h, y); };
+  const teamBg = m => { fill(m.color); g.fillStyle = col2Of(m); g.fillRect(0, P*0.78, P, P*0.22); g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(0, P*0.78 - 4, P, 4); };
+  const fill = c => { g.fillStyle = c; g.fillRect(0, 0, P, P); };
+  if(sc.k === 'red'){
+    fill(t % 2 ? '#b0101a' : '#e5323b');
+    text('RED', h - 22, 62, '#fff', 800); text('FLAG', h + 34, 40, '#fff', 800);
+    SPH.col = '#ff3340';
+  } else if(sc.k === 'sc' || sc.k === 'vsc'){
+    fill('#f4c400');
+    g.fillStyle = '#1b1b1b'; for(let i = -P; i < P*2; i += 40) { g.beginPath(); g.moveTo(i + (t % 2)*20, 0); g.lineTo(i + 20 + (t % 2)*20, 0); g.lineTo(i - P + 20 + (t % 2)*20, P); g.lineTo(i - P + (t % 2)*20, P); g.closePath(); g.globalAlpha = 0.16; g.fill(); g.globalAlpha = 1; }
+    if(sc.k === 'sc'){ text('SC', h - 14, 84, '#1b1b1b', 800); text('SAFETY CAR', h + 50, 22, '#1b1b1b'); }
+    else { text('VSC', h - 14, 70, '#1b1b1b', 800); text('VIRTUAL SC', h + 50, 22, '#1b1b1b'); }
+    SPH.col = '#ffd21a';
+  } else if(sc.k === 'fl'){
+    fill(t % 2 ? '#6a1fb0' : '#8e44ad');
+    text('FASTEST LAP', h - 40, 22, '#f1dcff'); text(sc.c.m.name, h + 8, 66, '#fff', 800);
+    g.fillStyle = sc.c.m.color; g.fillRect(h - 46, h + 50, 92, 8);
+    SPH.col = '#b15cff';
+  } else if(sc.k === 'win'){
+    const m = sc.c.m;
+    if(t % 4 < 2){                                       // チェッカーフラッグ
+      const q = 32, off = (t % 2)*q;
+      fill('#f4f4f4'); g.fillStyle = '#141414';
+      for(let yy = 0; yy < P/q; yy++) for(let xx = -1; xx < P/q + 1; xx++) if((xx + yy) % 2 === 0) g.fillRect(xx*q + off, yy*q, q, q);
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, h - 34, P, 68);
+      text(m.name, h, 52, '#fff', 800);
+      SPH.col = '#ffffff';
+    } else {                                             // 優勝チームの色
+      teamBg(m); const ink = sphInk(m.color);
+      text('WINNER', h - 50, 24, ink); text(m.name, h + 4, 72, ink, 800);
+      text(teamOf(m.team) ? tShort(teamOf(m.team)) : '', P*0.89, 18, sphInk(col2Of(m)), 700);
+      SPH.col = m.color;
+    }
+  } else if(sc.k === 'lead'){
+    const m = sc.c.m, mine = career && m.team === career.team;
+    teamBg(m); const ink = sphInk(m.color);
+    text('P1', h - 44, 28, ink); text(m.name, h + 8, 72, ink, 800);
+    if(mine){                                            // 自チームが首位：光の輪が広がる
+      g.strokeStyle = ink === '#ffffff' ? 'rgba(255,255,255,.9)' : 'rgba(20,22,28,.8)'; g.lineWidth = 9;
+      for(let k = 0; k < 2; k++){ const rr = ((t + k*2) % 4)/4*h*0.95 + 8; g.globalAlpha = 1 - rr/h; g.beginPath(); g.arc(h, h, rr, 0, 7); g.stroke(); }
+      g.globalAlpha = 1;
+    }
+    SPH.col = m.color;
+  } else {                                               // 待ち受け：全チームの色が回る
+    const ts = (career && career.teams) ? career.teams.map(x => palOf(x)[0]) : ['#e63946', '#1d6fe0', '#f4b400', '#2a9d4b', '#8e44ad'];
+    const n = Math.max(3, ts.length), a0 = t*0.35;
+    for(let i = 0; i < n; i++){ g.fillStyle = ts[i % ts.length]; g.beginPath(); g.moveTo(h, h); g.arc(h, h, P, a0 + i/n*Math.PI*2, a0 + (i + 1)/n*Math.PI*2 + 0.01); g.closePath(); g.fill(); }
+    g.fillStyle = 'rgba(10,12,18,.55)'; g.beginPath(); g.arc(h, h, h*0.62, 0, 7); g.fill();
+    text('LAS VEGAS', h - 26, 20, '#fff'); text('GP', h + 14, 56, '#fff', 800);
+    SPH.col = ts[t % ts.length];
+  }
+  g.drawImage(sphereOverlay(), 0, 0);
+  return SPH.cv;
+}
+/* 映像を重ねる（ワールド座標で描く。背景の上・車の下） */
+function drawSphere(){
+  const S = vegasSphere(track); if(!S) return;
+  const img = sphereScreen(), [cr, cg, cb] = sphRgb(SPH.col);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';               // まわりの地面ににじむ光
+  const gr = ctx.createRadialGradient(S.x, S.y, S.r*0.85, S.x, S.y, S.r*1.75);
+  gr.addColorStop(0, `rgba(${cr},${cg},${cb},${isNightCourse() ? .34 : .14})`); gr.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(S.x, S.y, S.r*1.75, 0, 7); ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.beginPath(); ctx.arc(S.x, S.y, S.r, 0, 7); ctx.clip();
+  ctx.drawImage(img, S.x - S.r, S.y - S.r, S.r*2, S.r*2);
+  ctx.restore();
+}
 /* ---------- モナコGP：南側の海と港（ポール・エルキュール） ----------
    固定コース（GP_FIXED['モナコ']）の点の番号で、区間を決める：
    25〜65＝ポルティエからトンネル・シケインを抜けて港の北岸へ、65〜81＝タバコからプールの区間（港の西岸）。
@@ -23075,8 +24203,10 @@ function drawCity(T){
   g.lineJoin = 'round'; g.lineCap = 'round'; g.lineWidth = T.width + 2*(E + CITY_GAP); g.stroke(path);
   for(const p of scenePaddockSpots(T)){ g.beginPath(); g.arc(p.x, p.y, 34, 0, 7); g.fill(); }
   for(const s of tmp.stands){ g.save(); g.translate(s.x, s.y); g.rotate(s.a); g.fillRect(-s.L/2 - 4, -s.dep/2 - 4, s.L + 8, s.dep + 8); g.restore(); }
+  { const VS = vegasSphere(T); if(VS){ g.beginPath(); g.arc(VS.x, VS.y, VS.plaza, 0, 7); g.fill(); } }
   g.restore();
   main.save(); main.setTransform(1, 0, 0, 1, 0, 0); main.drawImage(off, 0, 0); main.restore();
+  drawSpherePlaza(main, T);                                          // ラスベガスGP：球体ビジョンの広場と土台
   drawMonacoSea(main, T);                                            // モナコGP：南側の海と港
   drawStreetSea(main, T);                                            // サウジアラビア・アゼルバイジャン：海沿いの市街地
   // 仮設スタンドのまわりは歩道
@@ -24531,7 +25661,7 @@ function profPanel(key){
     const gW = v => known ? v*10 : (GRADES.find(([g]) => pt100(v) >= g*10)[0] === -Infinity ? 15 : GRADES.find(([g]) => pt100(v) >= g*10)[0]*10 + 5);
     const s = statD(id), seasons = Object.entries(s.seasons || {}).sort((a, b) => b[0] - a[0]);
     const pos = driverTable().findIndex(x => x.code === id) + 1;
-    return `<div class="recDetail prPanel"><div class="prHead">${natFlag(id, 14)}<b class="prCode">${id}</b><span class="prName">${esc(d.name)}</span><small class="muted">${[d.birth || d.st ? (ensureBirth(d), birthTxt(d)) : '', d.retired ? (d.lower ? '下位カテゴリーへ' : '引退') : ''].filter(Boolean).join('・')}</small>${t ? `<button type="button" class="recLink prTeam" data-spk="t:${t.id}">${teamLogo(t, 16)}${esc(t.name)}${isRes(t, id) ? '（リザーブ）' : ''}</button>` : '<span class="muted">移籍市場</span>'}${close}</div>
+    return `<div class="recDetail prPanel"><div class="prHead">${natFlag(id, 14)}<b class="prCode">${id}</b><span class="prName">${esc(d.name)}</span><small class="muted">${[d.retired ? '' : `${ageNow(d)}歳`, d.birth || d.st ? (ensureBirth(d), birthTxt(d)) : '', d.retired ? (d.lower ? '下位カテゴリーへ' : '引退') : ''].filter(Boolean).join('・')}</small>${t ? `<button type="button" class="recLink prTeam" data-spk="t:${t.id}">${teamLogo(t, 16)}${esc(t.name)}${isRes(t, id) ? '（リザーブ）' : ''}</button>` : '<span class="muted">移籍市場</span>'}${close}</div>
       <div class="prGrid">
         <div class="prBox"><h4>能力<span class="muted">${known ? '' : '（ランクのみ。スカウト部門Lv4で数値）'}</span></h4>
           <div class="prOvr">総合 ${gradeTag(ovr(d), known)}<span class="muted">伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span></span></div>
@@ -24565,6 +25695,11 @@ function profPanel(key){
    過去のシーズン：career.stats の seasons[シーズン]（最終順位・ポイント・優勝・表彰台）から作る。
    戦ごとの結果とポイント推移：career.raceLog の res（全員の順位とポイント。この機能を入れた後のレースから記録）を使う */
 const REC_TABS = [['season','シーズン別'],['alltime','歴代記録'],['champs','歴代チャンピオン'],['teams','チーム通算'],['drivers','ドライバー通算'],['races','レース履歴'],['mine','自チームの歩み']];
+/* 記録の切り替えを3つのまとまりに（2026-11）：シーズン／歴代／履歴。まとまりの中は横に流れる1行のチップ */
+const REC_NAV = [['sn', 'シーズン', [['season', '順位と結果']]], ['all', '歴代', [['alltime', '歴代記録'], ['champs', 'チャンピオン'], ['drivers', 'ドライバー通算'], ['teams', 'チーム通算']]], ['log', '履歴', [['races', 'レース履歴'], ['mine', '自チームの歩み']]]];
+const recNavOf = v => (REC_NAV.find(g => g[2].some(x => x[0] === v)) || REC_NAV[0]);
+const recLastIn = {};
+let recAllRows = false;                                          // シーズンの順位表：上位10人＋自チームだけか、全員か
 let recSeason = null, recSide = 'd', recSub = 'table';
 const recSort = { teams: ['titles', -1], drivers: ['titles', -1] };
 const recDark = () => { const th = document.documentElement.dataset.theme; return th ? th === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); };
@@ -24627,13 +25762,15 @@ function recStand(D){
   const hasPrev = D.sn > 1 && (career.history || []).some(h => h.season === D.sn - 1);
   if(recSide === 'd'){
     if(!D.drv.length) return '<p class="note">このシーズンの記録がありません。</p>';
-    const lead = D.drv[0].pts;
-    return `<table class="stand rcStand"><tr><th>POS</th><th>ドライバー</th><th>チーム</th><th class="n">優勝</th><th class="n">表彰台</th><th class="n opt">ポール</th><th class="n">PTS</th><th class="n opt">差</th></tr>${D.drv.map(x => {
+    const lead = D.drv[0].pts, cut = D.drv.length > 12 && !recAllRows, rows = cut ? D.drv.filter((x, i) => i < 10 || x.team === career.team) : D.drv;   // 上位10人＋自チーム（「全員を見る」で全員）
+    const more = D.drv.length > 12 ? `<button type="button" class="b sm ghost rcMore" data-rall>${recAllRows ? '上位10人と自チームだけにする' : `全員を見る（${D.drv.length}人）`}</button>` : '';
+    return `<table class="stand rcStand"><tr><th>POS</th><th>ドライバー</th><th>チーム</th><th class="n">優勝</th><th class="n">表彰台</th><th class="n opt">ポール</th><th class="n">PTS</th><th class="n opt">差</th></tr>${rows.map((x, i) => {
+      const gapRow = cut && i > 0 && rows[i - 1] && D.drv.indexOf(x) - D.drv.indexOf(rows[i - 1]) > 1 ? '<tr class="rcGapRow" aria-hidden="true"><td colspan="8">⋯</td></tr>' : '';
       const t = teamAt(x.team, D.sn), dd = career.drivers[x.code];
-      return `<tr class="${x.team === career.team ? 'mine' : ''}"><td class="rcPos"><span class="rcP ${rcMedal(x.pos)}">${x.pos ?? '—'}</span>${recChg(x.pos, recPrev('d', x.code, D.sn), hasPrev)}</td>
-        <td><button type="button" class="recLink" data-rp="d:${x.code}">${natFlag(x.code)}<b>${x.code}</b> <span class="muted">${dd ? esc(dd.name) : ''}</span></button></td>
+      return `${gapRow}<tr class="${x.team === career.team ? 'mine' : ''}"><td class="rcPos"><span class="rcP ${rcMedal(x.pos)}">${x.pos ?? '—'}</span>${recChg(x.pos, recPrev('d', x.code, D.sn), hasPrev)}</td>
+        <td><button type="button" class="recLink rcDrv" data-rp="d:${x.code}">${natFlag(x.code)}<span class="rcNm"><b>${x.code}</b><span class="muted">${dd ? esc(dd.name) : ''}</span></span></button></td>
         <td>${t ? `<span class="rcTeam" title="${esc(t.name)}">${teamLogo(t, 16)}<span class="tn">${esc(tShort(t))}</span></span>` : '<span class="muted">—</span>'}</td>
-        <td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n opt">${x.poles}</td><td class="n rcPts">${x.pts}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join('')}</table>`;
+        <td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n opt">${x.poles}</td><td class="n rcPts">${x.pts}${x.pos === 1 || x.pts === lead ? '' : `<small class="rcGap">−${lead - x.pts}</small>`}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join('')}</table>${more}`;
   }
   if(!D.tms.length) return '<p class="note">このシーズンの記録がありません。</p>';
   const lead = D.tms[0].pts;
@@ -24641,7 +25778,7 @@ function recStand(D){
     const t = teamAt(x.id, D.sn), tp = x.pos != null ? TR[i] : null;
     return `<tr class="${x.id === career.team ? 'mine' : ''}"><td class="rcPos"><span class="rcP ${rcMedal(tp ? tp.pos : x.pos)}">${tp ? tiePos(tp) : '—'}</span>${recChg(x.pos, recPrev('t', x.id, D.sn), hasPrev)}</td>
       <td>${t ? `<button type="button" class="recLink" data-rp="t:${x.id}">${teamLogo(t, 18)}${esc(t.name)}</button>` : '—'}</td>
-      <td class="muted opt">${(x.drivers || []).join(' / ')}</td><td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n rcPts">${x.pts}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join(''); })()}</table>`;
+      <td class="muted opt">${(x.drivers || []).join(' / ')}</td><td class="n">${x.wins}</td><td class="n">${x.podiums}</td><td class="n rcPts">${x.pts}${x.pos === 1 || x.pts === lead ? '' : `<small class="rcGap">−${lead - x.pts}</small>`}</td><td class="n muted opt">${x.pos === 1 || x.pts === lead ? '' : '−' + (lead - x.pts)}</td></tr>`; }).join(''); })()}</table>`;
 }
 /* C：戦ごとの結果（縦にドライバー／チーム、横にラウンド） */
 const rgCls = p => p == null ? 'dnf' : p === 1 ? 'p1' : p === 2 ? 'p2' : p === 3 ? 'p3' : p <= 10 ? 'pt' : '';
@@ -24841,7 +25978,10 @@ function renderRecords(){
   }
   const hint = { alltime: '水色は自チームの選手。名前を押すと通算の戦績を表示します。', season: '名前を押すと通算の戦績、シーズンを押すとその年の順位表に切り替わります。', teams: '見出しで並べ替え、名前でシーズンごとの成績を表示します。', drivers: '見出しで並べ替え、名前でシーズンごとの成績を表示します。' }[recView];
   return `<div class="sec" id="records">
-    <h2>記録<button type="button" class="qm" data-guide="hq" aria-label="遊び方を見る">?</button><div class="seg2">${REC_TABS.map(([k, l]) => `<button type="button" data-rv="${k}" class="${recView === k ? 'on' : ''}">${l}</button>`).join('')}</div></h2>
+    <h2>記録<button type="button" class="qm" data-guide="hq" aria-label="遊び方を見る">?</button></h2>
+    ${(() => { const G = recNavOf(recView); recLastIn[G[0]] = recView;
+      return `<div class="recGrp" role="tablist" aria-label="記録の種類">${REC_NAV.map(g => `<button type="button" role="tab" data-rg="${g[0]}" class="${g === G ? 'on' : ''}" aria-selected="${g === G}">${g[1]}</button>`).join('')}</div>
+      ${G[2].length > 1 ? `<div class="recChips" role="group" aria-label="${G[1]}の表示">${G[2].map(([k, l]) => `<button type="button" data-rv="${k}" class="${recView === k ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}`; })()}
     ${detail}
     ${body}
     ${hint ? `<p class="note">${hint}</p>` : ''}
@@ -25134,13 +26274,23 @@ function drawMiniTower(show){
   const rowH = Math.round(clamp(Math.floor((bottom - top - 6)/Math.max(1, n)), 8, pcR ? 26 : 15)*MT_K*10)/10;   // PCは画面が高いので行も大きく
   el.style.setProperty('--mtH', rowH + 'px'); el.style.setProperty('--mtF', Math.max(6, Math.round(rowH*0.74*10)/10) + 'px');
   const me = myCar();
+  { const hs = $('#mtHead span'), lead = order[0], lapN = lead ? Math.min(lead.laps.length + 1, race.laps) : 1;   // PCのキャリア：見出しは「RACE・LAP」、列の名前
+    const hh = isPcCareerRace() ? `<b class="mtRace">RACE</b><span class="mtLap">LAP <b>${race.state === 'finished' ? race.laps : lapN}</b>/${race.laps}</span>` : '順位';
+    if(hs && hs._hv !== hh){ hs.innerHTML = hh; hs._hv = hh; }
+    const cl = $('#mtColLab'), cn = (MT_COLS.find(x => x[0] === mtCol) || MT_COLS[0])[1]; if(cl && cl.textContent !== cn) cl.textContent = cn; }
   if(el.classList.contains('fold')) return;                    // 畳んでいるときは書き換えない
+  const pcCol = isPcCareerRace() ? mtCol : 'int';
+  let leadAcc = 0, leadLap = '';
+  const leadGap = (c, i) => { if(i === 0) return 'LEADER'; const v = String(intCache.get(c) ?? ''); if(/LAP/.test(v)) leadLap = v; const x = parseFloat(v.replace('+', '')); if(isFinite(x)) leadAcc += x; return leadLap || '+' + leadAcc.toFixed(leadAcc >= 10 ? 1 : 2); };
   const bestAll = Math.min(...order.map(c => c.best ?? Infinity));
   const rowHtml = (c, i) => {
     const fl = isFinite(bestAll) && c.best != null && c.best === bestAll;
-    const gap = c.out ? 'OUT' : c.finish !== null && i === 0 ? 'FIN' : c.inPit && c.finish === null && race.state !== 'finished' ? 'PIT' : i === 0 ? 'INT' : String(intCache.get(c) ?? '—').replace('LEADER', '—');
-    const mine = me && (c === me || c.pitTeam === me.pitTeam);
-    return `<div class="mtR${i === 0 ? ' mtP1' : ''}${mine ? ' mine' : ''}${!mine && isSisCar(c) ? ' sis' : ''}${c.out ? ' out' : ''}${c.inPit && !c.out ? ' pit' : ''}" data-k="${esc(c.m.name)}"><span class="mtP">${c.out ? '—' : i + 1}</span><span class="mtC" style="background:${c.m.color}"></span><span>${esc(c.m.name)}</span><span class="mtG">${gap}</span><span class="mtT" style="color:${c.out || tyreHidden(c) ? '#7d838b' : TYRES[c.comp].color}">${c.out ? '' : tyreHidden(c) ? '?' : c.comp}</span><span class="mtF" title="${fl ? 'ファステストラップ' : ''}">${fl ? STOPWATCH : ''}</span></div>`;
+    const lg = pcCol === 'lead' ? leadGap(c, i) : '';
+    const gap = c.out ? 'OUT' : c.finish !== null && i === 0 ? 'FIN' : c.inPit && c.finish === null && race.state !== 'finished' ? 'PIT'
+      : pcCol === 'tyre' ? Math.max(0, c.laps.length - (c.fitLap || 0)) + '周' : pcCol === 'pit' ? (c.pits || 0) + '回' : pcCol === 'lead' ? (i === 0 ? 'LEADER' : lg)
+      : i === 0 ? 'INT' : String(intCache.get(c) ?? '—').replace('LEADER', '—');
+    const mine = me && (c === me || c.pitTeam === me.pitTeam), camOn = isPcCareerRace() && cam.mode === 'car' && cam.follow === c.m;
+    return `<div class="mtR${i === 0 ? ' mtP1' : ''}${mine ? ' mine' : ''}${camOn ? ' cam' : ''}${!mine && isSisCar(c) ? ' sis' : ''}${c.out ? ' out' : ''}${c.inPit && !c.out ? ' pit' : ''}" data-k="${esc(c.m.name)}"><span class="mtP">${c.out ? '—' : i + 1}</span><span class="mtC" style="background:${c.m.color}"></span><span>${esc(c.m.name)}</span><span class="mtG">${gap}</span><span class="mtT" style="color:${c.out || tyreHidden(c) ? '#7d838b' : TYRES[c.comp].color}">${c.out ? '' : tyreHidden(c) ? '?' : c.comp}</span><span class="mtF" title="${fl ? 'ファステストラップ' : ''}">${fl ? STOPWATCH : ''}</span></div>`;
   };
   const skipRow = '<div class="mtR mtSkip" aria-hidden="true"><span class="mtP">⋮</span></div>';
   flipRowsSet($('#mtRows'), pick
@@ -25703,7 +26853,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.6.0';
+const APP_VER = '1.7.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -25743,6 +26893,28 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.7.0', items: [
+    ['本部', [
+      'チームカラーを生かした見た目に。スマホはタブを画面の下に',
+      'カレンダーのGPを押すとコース情報（特徴・天気・相性・過去の成績）',
+      '記録タブを見やすく、設定メニューを追加',
+      'レース後の出来事・スポンサーの依頼をポップアップで',
+      'オフシーズンにトレーニング合宿（$20M〜$100M）',
+    ]],
+    ['ドライバー', [
+      '調子が絡む出来事を追加',
+      '限界に達した能力は「MAX」表示',
+      'シーズン成績の詳細に年齢',
+    ]],
+    ['レース', [
+      'バッテリーの使い方を改良（コースに合わせて使い、余らせない）',
+      'PC版のレース画面を一新（順位表・カード・操作バー・天気）',
+      '順位の札をすっきり。寄ると名前も表示',
+      'どのカメラでもホイールで拡大縮小（PC）',
+      'ラスベガスGPに巨大な球体ビジョン',
+      'コース内側のヘリポートと救護室を削除',
+    ]],
+  ] },
   { v: '1.6.0', items: [
     ['レース', [
       'レーシングラインをアウト・イン・アウトに作り直し（ラップタイムが速くなります）',
