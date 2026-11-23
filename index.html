@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.7.0 -->
+<!-- レーシングチームマネージャー ver 1.8.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.7.0">
-<meta name="build" content="20261122-1">
+<meta name="version" content="1.8.0">
+<meta name="build" content="20261123-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -3371,7 +3371,7 @@ body.phoneRace .wxPg{grid-template-columns:repeat(8,1fr)}
 .hqToast b{display:block;font-size:15px}.hqToast.ok b{color:#5ee08f}.hqToast.ng b{color:#ff7d8c}
 .hqToast p{margin:3px 0 0;font-size:12.5px;line-height:1.5;color:#dfe3e8}
 .hqToast .htX{margin-left:auto;flex:none;border:0;background:transparent;color:#aab0b8;font-size:18px;line-height:1;cursor:pointer}
-@media (max-width:640px){.hqToast{bottom:calc(122px + env(safe-area-inset-bottom))}}   /* スマホは下の帯が2段なので、その上に出す */
+@media (max-width:640px){.hqToast{bottom:calc(118px + var(--tabPadB))}}   /* スマホは下の帯が2段なので、その上に出す */
 
 .sisSt{flex:1 0 100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:2px 0}
 .sisS{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 2px;border-radius:6px;background:var(--bg);font-size:10.5px;color:var(--muted)}
@@ -3544,6 +3544,7 @@ button.hht:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .ownMore[open] summary{margin-bottom:6px}
 /* スポンサー：契約を項目ごとのタイルに */
 .spSec h2{display:flex;align-items:center;gap:10px}
+.ttlSec{border:1px solid color-mix(in srgb,var(--signal) 55%,var(--line))}.ttlSec .ttlTag{background:color-mix(in srgb,var(--signal) 45%,var(--panel))}   /* タイトルスポンサー */
 .spSec .spTier{margin-left:auto;font-size:11.5px;font-weight:700;letter-spacing:0;color:var(--text);background:color-mix(in srgb,var(--signal) 22%,var(--panel));border-radius:999px;padding:2px 10px}
 .spTiles{display:grid;gap:6px}
 .spTiles>div{background:var(--btn);border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;min-width:0}
@@ -3551,11 +3552,16 @@ button.hht:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .spTiles b{font-size:14px;font-weight:700;white-space:nowrap}
 /* スマホ：タブは画面の一番下に固定。その上にレースバーを1行（GP名・スキップ・予選へ）。上には何も固定しない */
 .hqTabs .ts{display:none}
+/* 下のタブの下の余白（2026-11-23）：ブラウザ（スマホのChromeなど）で開くと env(safe-area-inset-bottom) が0になり、
+   タブが画面の最下端（ホームバーやジェスチャーの帯の上）に貼り付いて押しづらかった。ブラウザで開いたときは最低18pxあける。
+   ホーム画面から開いたとき（standalone）は今までと同じ */
+:root{--tabPadB:calc(4px + env(safe-area-inset-bottom))}
+@media (display-mode:browser){:root{--tabPadB:max(18px, calc(4px + env(safe-area-inset-bottom)))}}
 @media (max-width:560px){
-  .hq{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .hq{padding-bottom:calc(80px + var(--tabPadB))}
   .hqStick{position:static;margin:0;padding:0;background:none}
   .hqStick::after,.hqMB{display:none}
-  .hq .hqTabs,.hqStick.away .hqTabs{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:none;transition:none;margin:0;border-radius:0;border:0;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.06);background:var(--panel);gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  .hq .hqTabs,.hqStick.away .hqTabs{position:fixed;left:0;right:0;bottom:0;z-index:20;transform:none;transition:none;margin:0;border-radius:0;border:0;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.06);background:var(--panel);gap:0;padding:4px 4px var(--tabPadB)}
   .hq .hqTabs button{min-height:52px;gap:2px;background:transparent;color:var(--muted);font-weight:500;border-radius:0;padding:2px 0}
   .hq .hqTabs button:hover{background:transparent}
   .hq .hqTabs button svg{width:44px;height:28px;padding:4px 12px;box-sizing:border-box;border-radius:14px;stroke:currentColor;transition:background .15s}
@@ -3564,7 +3570,7 @@ button.hht:focus-visible{outline:2px solid #fff;outline-offset:2px}
   .hqTabs .tl{display:inline}.hqTabs button:has(.ts) .tl{display:none}.hqTabs .ts{display:inline}
   .hqTabs .tBadge{top:0;right:calc(50% - 26px)}
   .hqTabs .tDot{top:2px;right:calc(50% - 22px)}
-  .raceBar{bottom:calc(61px + env(safe-area-inset-bottom));margin:0 -16px;padding:14px 10px 8px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
+  .raceBar{bottom:calc(57px + var(--tabPadB));margin:0 -16px;padding:14px 10px 8px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
   .raceBar .rbIn{flex-wrap:nowrap;gap:8px;padding:6px 6px 6px 12px;border-radius:16px}
   .raceBar .rbIn:has(.rbMoney.pend){flex-wrap:wrap}
   .raceBar .rbInfo{flex:1 1 auto;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:8px;align-items:center;padding:0;font-size:14px}
@@ -3776,11 +3782,29 @@ body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:sp
 .pcMenu .pmTg i{width:30px;height:16px;border-radius:8px;background:rgba(255,255,255,.2);position:relative;flex:none}
 .pcMenu .pmTg i::after{content:"";position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .15s}
 .pcMenu .pmTg.on i{background:#ffc400}.pcMenu .pmTg.on i::after{left:16px}
+/* 本部のマシン（2026-11） */
+.hhCar{flex:none;margin-left:auto;width:150px;height:62px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+@media (max-width:560px){.hhCar{width:96px;height:50px;margin-right:-6px}.hhTop:has(.hhCar) .hhName b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:17.5px;line-height:1.2;word-break:keep-all;overflow-wrap:anywhere}}
+@media (min-width:900px){.hhCar{width:200px;height:78px;margin:0 10px 0 auto}}
+.mcCv{display:block;width:100%;height:150px;margin:2px 0 6px;border-radius:10px;background:#34383e}
+.mcCard h2 .mcGo{margin-left:auto}
+.mcParts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mcPart{display:flex;flex-direction:column;gap:5px;align-items:stretch;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer;min-width:0}
+.mcPart:hover{border-color:var(--tc,#17b8c4)}
+.mcPH{display:flex;align-items:center;gap:6px;font-size:13px}.mcPH .pico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;display:block}
+.mcRow{display:grid;grid-template-columns:minmax(0,1fr) 30px auto;grid-template-areas:"l v r" "b b b";column-gap:5px;row-gap:2px;align-items:baseline;font-size:11.5px}
+.mcRow .mcL{grid-area:l;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcRow b{grid-area:v;text-align:right;font-size:13px}
+.mcRow .mcRk{grid-area:r;font-size:10.5px;font-weight:700;color:var(--muted);min-width:2.4em;text-align:right}
+.mcRow .mcRk.top{color:#11823b}.mcRow .mcRk.low{color:#c0392b}
+.mcRow .mcBar{grid-area:b;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.mcRow .mcBar i{display:block;height:100%;background:var(--tc,#17b8c4);border-radius:3px}
+@media (max-width:560px){.mcParts{grid-template-columns:1fr}.mcRow{grid-template-columns:7.6em minmax(0,1fr) 30px 2.6em;grid-template-areas:"l b v r"}.mcRow .mcBar{align-self:center}}
 </style>
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.7.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.8.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -4984,7 +5008,8 @@ function camLiftY(z){
 }
 function camClamp(x, y, z){
   // レース中に車を追っているときは画面の端で止めない（車を常に中央に。外側は芝生を描き足す）
-  if(mode === 'race' && cam.mode !== 'all' && z > 1.01) return [clamp(x, -W*0.3, W*1.3), clamp(y, -H*0.3, H*1.3)];
+  // 2026-11：引いた画面（1.0×）でも止めないようにした（以前は寄ったときだけで、引くと担当マシンが中央からずれた）
+  if(mode === 'race' && cam.mode !== 'all') return [clamp(x, -W*0.5, W*1.5), clamp(y, -H*0.5, H*1.5)];
   return clampView(x, y, z);
 }
 /* 「全体」のカメラ：コース（観客席やピットの建物まで）がちょうど収まる範囲を映す。
@@ -6921,7 +6946,7 @@ function drawReplay(target){
     }
     ctx.restore();
     const drawOne = s => {
-      ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.h); ctx.scale(0.5, 0.37); drawF1Car(ctx, s.c.m.color, col2Of(s.c.m), s.c.m.tcam, s.out ? carLook(s.c) : null); ctx.restore();
+      ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.h); ctx.scale(0.5, 0.37); drawF1Car(ctx, s.c.m.color, col2Of(s.c.m), s.c.m.tcam, s.out ? carLook(s.c) : null); try{ drawCarBrand(ctx, carBrandOf(s.c.m.team)); }catch(e){} ctx.restore();
       if(!s.out) rpTags.push({ x: s.x, y: s.y - 14, pos: s.pos, color: s.c.m.color, m: null, nm: s.c.m.name });
     };
     const rpTags = [];
@@ -7030,6 +7055,7 @@ function drawViewInner(cm){
       /* カメラが追っている車の足元の黄色い輪は廃止（担当マシンは頭上の水色の三角で分かる） */
       ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(bodyH(c)); ctx.scale(0.5, 0.37);   // bodyOff：スライド中は車体の向きが進む向きとずれる   // 横幅だけ細めに（実車の細長い形に近づける）
       drawF1Car(ctx, c.m.color, col2Of(c.m), c.m.tcam, carLook(c));   // リタイアしても元のマシンカラーのまま（壊れ方は carLook）
+      try{ drawCarBrand(ctx, carBrandOf(c.m.team)); }catch(e){}     // ロゴ
       ctx.restore();
       if(c.out) return;                                          // 煙は粒子（drawSmokePuffs）で描く
       if(race.state === 'quali'){ const qp = qrTagPos(c); if(qp) tags.push({ x: c.x, y: c.y - 14, pos: qp, color: c.m.color, m: c.m }); return; }
@@ -7084,6 +7110,70 @@ function f1Mirror(pts){ return pts.concat(pts.slice().reverse().map(([x,y])=>[x,
    ・rw：リアウイングが折れて傾く
    ・crack：サイドポッドが割れて中が見える側（-1 左 / 1 右 / 0 なし）
    ・soot：煤の濃さ 0〜1、dust：砂ぼこりの濃さ 0〜1 */
+/* ---------- マシンにロゴを載せる（2026-11-23） ----------
+   上から見たマシンの、エンジンカバー・左右のサイドポッド・リアウイングの上面に描く（drawF1Car と同じ座標。前が +x）。
+   ・自チーム：エンジンカバーにタイトルスポンサーのマーク（いなければチームのロゴ）、サイドポッドに通常のスポンサー契約の会社のマーク、
+     リアウイングにタイトルスポンサーの英字名（いなければチームの略称）
+   ・AIチーム：エンジンカバーにチームのロゴ、リアウイングにチームの略称
+   ※ 2026-11-23：ロゴ（エンジンカバー・サイドポッド）は出さないことにした。今はリアウイングの文字だけ
+   ・画面で小さく見えるときは描かない（レース画面で引いたカメラのとき）。リアウイングの文字は大きく見えるときだけ
+   ・ロゴはSVGをデータURLの画像にして使い回す（読み込みが終わるまでは描かない） */
+const CAR_IMG = {}, CARB_R = 0.74;                     // CARB_R：マシンの横幅の縮み（scale 0.5 : 0.37）。ロゴが正方形に見えるように戻す
+function carSvgImg(key, svg){ let im = CAR_IMG[key]; if(!im){ im = new Image(); im.onload = () => { try{ drawHeroCar(); drawMyCarCard(); }catch(e){} }; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); CAR_IMG[key] = im; } return im; }
+function teamLogoImg(t){
+  const p = palOf(t), key = 'tl:' + t.id + ':' + p[0] + ':' + p[2] + ':' + JSON.stringify(t.logo || '');
+  return CAR_IMG[key] || carSvgImg(key, teamLogo(t, 96).replace('<svg class="logo"', '<svg xmlns="http://www.w3.org/2000/svg"'));
+}
+// リアウイングの文字の書体（2026-11-23）：スポンサーはロゴのワードマークの雰囲気（SP_TYPE と同じ分け方）、チームの略称はレースらしい太字の斜体
+// [書体, 文字の間隔（字の大きさに対する割合）]
+const WING_FONT = {
+  heavy:   ['800 1.4px "Chakra Petch",sans-serif', 0.12],
+  round:   ['800 1.35px "M PLUS 1p",sans-serif', 0.1],
+  wide:    ['700 1.3px "Chakra Petch",sans-serif', 0.32],
+  italic:  ['italic 800 1.4px "Chakra Petch",sans-serif', 0.1],
+  mono:    ['800 1.5px ui-monospace,Menlo,Consolas,monospace', 0.04],
+  light:   ['500 1.3px "Chakra Petch",sans-serif', 0.28],
+  serif:   ['400 1.4px Georgia,"Times New Roman",serif', 0.26],
+  classic: ['700 1.4px Georgia,"Times New Roman",serif', 0.16],
+  team:    ['italic 700 1.55px "Chakra Petch",sans-serif', 0.14]
+};
+function carBrandOf(teamId){
+  if(typeof career === 'undefined' || !career || teamId == null) return null;
+  const t = teamOf(teamId); if(!t) return null;
+  const P = palOf(t), short = P[1] || t.short || '';
+  if(t.id === career.team){
+    const T = career.title && career.title.on ? career.title : null, sp = career.sponsor;
+    return { cover: T && SP_IMG[T.co] ? SP_IMG[T.co] : teamLogoImg(t), side: sp && SP_IMG[sp.name] ? SP_IMG[sp.name] : null,
+      wing: T && SP_LOGO[T.co] ? SP_LOGO[T.co].en.split(' ')[0] : short, wingCol: P[2] || P[0], wf: T && SP_LOGO[T.co] ? (SP_LOGO[T.co].ty || 'heavy') : 'team' };
+  }
+  return { cover: teamLogoImg(t), side: null, wing: short, wingCol: P[2] || P[0], wf: 'team' };
+}
+function drawCarBrand(ctx, B){
+  if(!B) return;
+  const m = ctx.getTransform(), px = 36*Math.hypot(m.a, m.b);   // 画面でのマシンの長さ（px）
+  if(px < 26) return;
+  const ok = im => im && im.complete && im.naturalWidth > 0;
+  const mark = (im, x, y, a) => {
+    if(!ok(im)) return;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.PI/2);   // ロゴの上をマシンの前に向ける
+    const w = a/CARB_R, h = a, r = a*0.16;
+    ctx.beginPath(); ctx.roundRect(-w/2, -h/2, w, h, [r/CARB_R, r]);
+    ctx.save(); ctx.clip(); ctx.drawImage(im, -w/2, -h/2, w, h); ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 0.28; ctx.stroke();   // 白い縁（車体と同じ色のロゴでも見えるように）
+    ctx.restore();
+  };
+  // 2026-11-23：エンジンカバー・サイドポッドのロゴはやめて、リアウイングの文字だけにした（mark は残しておく）
+  if(B.wing && px >= 70){
+    ctx.save(); ctx.translate(-15.95, 0); ctx.rotate(-Math.PI/2); ctx.scale(1/CARB_R, 1);   // 文字の上をマシンの後ろに向ける（マシンの正面に立って見たときに読める向き）
+    ctx.fillStyle = lumOf(B.wingCol) > 0.45 ? 'rgba(20,22,26,.85)' : 'rgba(255,255,255,.92)';
+    const [font, ls] = WING_FONT[B.wf] || WING_FONT.team, fs = parseFloat(/([\d.]+)px/.exec(font)[1]);
+    ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if('letterSpacing' in ctx) ctx.letterSpacing = (fs*ls).toFixed(3) + 'px';   // 文字の間隔（使えないブラウザでは詰めたまま）
+    const maxW = 13.4*CARB_R, tw = ctx.measureText(B.wing).width;   // 翼に収まらない長い名前は、横だけ縮める（文字の間隔ごと）
+    if(tw > maxW) ctx.scale(maxW/tw, 1);
+    ctx.fillText(B.wing, 0, 0.1); ctx.restore();
+  }
+}
 function drawF1Car(ctx,col,col2,tcam,D){
   col2 = col2 || col; D = D || null;
   const dark=f1Shade(col,-0.35), CARBON='#17191c', TYRE='#101112', EDGE='rgba(0,0,0,.55)';
@@ -8675,7 +8765,7 @@ function pwGate(c){
       c.aiSkip = null;
     }
     if(!c.autoNoted) c.aiWant = c.nextComp;
-    if(!c.autoNoted){ c.autoNoted = true; pwSay('eng', c.dmg && c.dmg.wing ? `BOX, BOX。ノーズ交換、${tyreName(c.nextComp)}も履き替える` : `BOX, BOX。${tyreName(c.nextComp)}に交換`); }
+    if(!c.autoNoted){ c.autoNoted = true; pwSay('eng', c.punct ? `BOX, BOX。パンクだ、${tyreName(c.nextComp)}に交換する` : c.dmg && c.dmg.wing ? `BOX, BOX。ノーズ交換、${tyreName(c.nextComp)}も履き替える` : `BOX, BOX。${tyreName(c.nextComp)}に交換`); }
     return;
   }
   const want = c.nextComp;
@@ -8686,7 +8776,8 @@ function pwGate(c){
   if(pw.mode === 'auto') return;                               // ステイアウト中は黙って走り続ける
   const scNow = race.sc && race.sc.until > race.t;
   let msg;
-  if(c.dmg && c.dmg.wing) msg = `ウイングが壊れてフロントが入らない。ノーズを替えたい（${tyreName(want)}で）`;
+  if(c.punct) msg = `パンクしてる！すぐにBOXしたい（${tyreName(want)}で）`;
+  else if(c.dmg && c.dmg.wing) msg = `ウイングが壊れてフロントが入らない。ノーズを替えたい（${tyreName(want)}で）`;
   else if(!isSlick(c.comp) && isSlick(want)) msg = `路面が乾いてきた。${tyreName(want)}に替えたい`;
   else if(isSlick(c.comp) && !isSlick(want)) msg = `雨がひどい！${tyreName(want)}に替えたい`;
   else if(c.comp === 'I' && want === 'W') msg = '水が溜まってきた。ウェットが欲しい';
@@ -10562,7 +10653,7 @@ function startComp(comp){
 function prepareGridBase(keepWx){                         // keepWx：天気と路面温度を決め直さない（スタート前に見せた条件のまま決勝を始める）
   pwReset(); tcPickFor = null;
   if(race.state === 'idle') race.laps = +lapsSel.value || race.laps;   // スタート前は選んでいる周回数を使う
-  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
+  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.chainQ = []; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
   race.bestLap = null; race.bestSplits = null; race.flCar = null; race.flT = -99; race.lapDone = []; race.sparks = []; race.dust = []; race.spray = []; race.smoke = []; race.debris = []; race.recov = []; race.wind = null; race.skids = []; race.greenUntil = 0; race.greenSec = -1; race.greens = []; race.red = null; race.form = null; race.redSkip = false; hideRecord(); clearFlags(); race.leader = null; race.leadCand = null;
   DIR.events = []; DIR.shot = null; DIR.next = 0; DIR.fade = null; DIR.fadeA = 0; DIR.pan = null;
   RP.buf = []; RP.pbuf = []; RP.lastRec = -1; RP.pending = null; stopReplay();
@@ -11064,7 +11155,7 @@ function redRestart(running){
     if(c.formCross !== undefined) c.cross = c.formCross;                   // フォーメーションラップは周回に数えない
     const { idx, lat } = slots[i];
     Object.assign(c, { x: slots[i].x, y: slots[i].y, h: slots[i].a, v: 0, idx, lastIdx: idx, lat, lane: lat, laneT: lat,
-      inPit: false, pitReq: false, served: true, redParked: false, redSpot: false, stopUntil: 0, drs: false, gear: undefined, spin: null, bodyOff: 0, overUntil: 0, underUntil: 0 });
+      inPit: false, pitReq: false, served: true, redParked: false, redSpot: false, stopUntil: 0, drs: false, gear: undefined, spin: null, push: null, punct: null, bodyOff: 0, overUntil: 0, underUntil: 0 });
     if(c.garageIdx !== undefined) c.boxIdx = c.garageIdx;
     // 周回数の数え方をそろえる：再開後に最初にラインを越えたとき、周回数が tgt になるようにする
     const tgt = LT !== null && c.redP !== undefined ? LT - Math.max(0, Math.floor((leadP - c.redP)/N)) : null;
@@ -11832,6 +11923,10 @@ function stepCar(c, dt){
     }
   }
 
+  if(c.punct && !c.punct.ask && !c.inPit && c.finish === null){     // パンク：ゴールまで1周を切っていなければ、すぐピットへ（全車。担当マシンは「自分で」ならドライバーが相談してくる）
+    c.punct.ask = true; const remain = race.laps - c.laps.length;
+    if(remain >= 2){ c.pitReq = true; c.nextComp = planCompound(c, remain, c.lapWearLast || TYRES[c.comp].wear*1.35*c.wearMul*tyreLenK()); }
+  }
   if(c.dmg && c.dmg.wing && !c.dmg.ask && !c.pitReq && !c.inPit && c.finish === null){   // ウイングが壊れたら次の周でピットへ（全車。担当マシンは「おまかせ」ならそのまま入り、「自分で」ならドライバーが相談してくる。残りが少なければそのまま走る）
     c.dmg.ask = true; const remain = race.laps - c.laps.length;
     if(remain >= 3){ c.pitReq = true; c.nextComp = planCompound(c, remain, c.lapWearLast || TYRES[c.comp].wear*1.35*c.wearMul*tyreLenK()); }
@@ -11869,6 +11964,7 @@ function stepCar(c, dt){
     if(c.inPit && !c.served && c.redSpot && race.red && passedIdx(c.lastIdx, best, c.boxIdx, N)){
       // レッドフラッグの停車位置に着いた：再開まで止まったまま。タイヤは無料で新品に
       c.redParked = true; c.v = 0; c.stopUntil = Infinity; c.drs = false; c.userBox = false;
+      c.punct = null;                                         // パンク：タイヤ交換で直る
       c.comp = c.nextComp; c.wear = c.wearLapStart = fitWear(c.m, c.comp); noteTyre(c, c.comp); c.boxComp = null; c.redStop = true; c.tt = TT_BLANKET[c.comp] ?? 80; c.ttSave = false;
       if(c.myLog) c.myLog.push({ lap: c.laps.length + 1, comp: c.comp, red: true });   // 作戦の振り返り：赤旗中の交換も1つのスティントとして記録する（記録しないと、結果のカードでタイヤが抜けていた）
       if(c.m === MY){ pw.pick = null; pw.suggest = null; syncPwButtons(); }   // 赤旗中の交換でも、指示したタイヤの選択を戻す
@@ -11879,6 +11975,8 @@ function stepCar(c, dt){
       c.forceServe = false;
       c.served = true; c.pits++; SFX.pit(c);
       (c.pitL = c.pitL || []).push({ l: c.laps.length, comp: c.nextComp });   // ラップチャートの印：ピットに入った周（その周回を終えた点に）
+      if(c.punct && c.m === MY) pwEvt('punctfix', [[['eng', '新しいタイヤだ。これでペースは戻る']]], { cd: 5, pri: true });
+      c.punct = null;                                         // パンク：タイヤ交換で直る
       c.comp = c.nextComp; c.wear = c.wearLapStart = fitWear(c.m, c.comp); noteTyre(c, c.comp); c.tt = TT_BLANKET[c.comp] ?? 80; c.ttSave = false; c.ttOut = race.t;   // タイヤウォーマーから出した温度
       // ダブルスタック：チームメイトの作業中なら、それが終わって少し間を置くまで待つ
       const busy = (race.pitBusy && race.pitBusy[c.pitTeam]) || 0;
@@ -12200,9 +12298,11 @@ function stepCar(c, dt){
     }
   }
   if(c.spinAvoid) tgt = c.avoidTgt;                        // 残骸をよけている間は、隊列やブロックより回避を優先
+  const pushL = c.push && !man ? pushOffLane(c, T, best, half) : null;   // 接触でコース外へ押し出されている
+  if(pushL) tgt = pushL.tgt;
   // 直線ほどよく効く
   c.slip = slip * clamp((p.r - 250)/400, 0, 1);
-  const edge = c.spinAvoid ? fenceLat(T, best) - 3 : (c.weaving ? half - 1.5 : ((onCurb(T, best) || onCurb(T, liA)) ? (street ? Math.min(half + 1, fenceLat(T, best) - 3) : half + CURB_USE + Math.max(0, CA)*3) : half - 3));   // コーナーでは縁石の上まで使う   // スピン車をよけるときはグラベルまで使う    // ウィービング中は白線ぎりぎりまで使う
+  const edge = pushL ? pushL.edge : c.spinAvoid ? fenceLat(T, best) - 3 : (c.weaving ? half - 1.5 : ((onCurb(T, best) || onCurb(T, liA)) ? (street ? Math.min(half + 1, fenceLat(T, best) - 3) : half + CURB_USE + Math.max(0, CA)*3) : half - 3));   // コーナーでは縁石の上まで使う   // スピン車をよけるときはグラベルまで使う    // ウィービング中は白線ぎりぎりまで使う
   tgt = clamp(tgt, -edge, edge);
   if(race.state === 'quali' && !c.spinAvoid && street !== true){ const tl = half + CURB_USE; tgt = clamp(tgt, -tl, tl); }   // 予選：縁石はレーシングラインの分（CURB_USE）まで。攻めてさらに外へはみ出す分（決勝のプッシュ）は使わない（トラックリミットがあるので）
   if(!c.pitReq && !c.inPit){ const ph = pitLineHi(T, best), PS = pitSide(T); if(tgt*PS > ph) tgt = ph*PS; }   // ピットに入らない車は、ピットの分岐・合流の白線を踏まない
@@ -12272,7 +12372,7 @@ function stepCar(c, dt){
     // 抜きに行く・並んだ位置を保つなどで内側へ寄るときも、急なコーナーの内側の折り返しより内は狙わない（ぐるっと回ってしまうため）
     if(!pitApproach && !(tr && tr.mode === 'stop')) tgt = foldClamp(T, liA, foldClamp(T, best, tgt));
     const freeLine = !scOn && !pitApproach && !c.weaving && Math.abs(tgt - tgt0) < 0.01;   // 前や横の車に邪魔されずラインをなぞっているときは、遅れずについていく（縁石まで使い切る）
-    c.lane += (tgt - c.lane) * Math.min(1, dt*(freeLine ? 10 : (c.celebrate ? 12 : c.weaving ? 8 : (c.spinAvoid ? 7 : (pitApproach ? 4 : (scOn ? 5 : 3.5))))));   // よけるときはハンドルを大きく切る
+    c.lane += (tgt - c.lane) * Math.min(1, dt*(freeLine ? 10 : (c.celebrate ? 12 : c.weaving ? 8 : (c.spinAvoid || pushL ? 7 : (pitApproach ? 4 : (scOn ? 5 : 3.5))))));   // よけるときはハンドルを大きく切る
   }
 
   // ステアリング（グリップで旋回量が制限される＝速すぎると膨らむ）
@@ -12469,6 +12569,15 @@ function stepCar(c, dt){
   if(c.off && !c.inPit && c.v > 40 && T.type !== 'street'){
     const rate = 38 * Math.min(1, c.v/250) * (1 - 0.8*race.wet);
     if(Math.random() < rate*dt) emitDust(c, 1 + Math.floor(Math.random()*2));
+  }
+  if(c.floor) stepFloorNote(c);
+  // パンクしたまま走り続ける：2周目に入るとタイヤが崩れてバーストする危険が出てくる（AIはその前にピットに入る）
+  if(c.punct && !c.out && c.finish === null && !c.inPit){
+    const n = c.laps.length - c.punct.lap0;
+    if(n >= 1 && !c.punct.warn && c.m === MY){ c.punct.warn = true; pwEvt('punctstay', [[['drv', 'タイヤがもうボロボロだ……'], ['eng', 'このまま走るとバーストする危険がある。BOXを考えて']]], { cd: 6, pri: true }); }
+    if(c.m !== MY){ if(n >= 1 && !c.pitReq && race.laps - c.laps.length >= 1) c.pitReq = true; }   // AI：入りそびれても次の周には必ず入る（バーストしない）
+    else if(n >= 2 && Math.random() < PUNCT_RISK*dt) retireCar(c, 'burst');   // 担当マシンで粘ったときだけ
+    else if(Math.random() < dt*0.6) emitDust(c, 1);              // しぼんだタイヤから出る煙
   }
   // タイヤバースト：摩耗しきった（100%）タイヤのまま走り続けると、ごく低い確率で破裂する
   if(uiEl('#pitOn').checked && uiEl('#crashOn').checked && !c.out && c.finish === null && !c.inPit && c.wear >= 1 && race.t > 2 && !race.form){
@@ -12861,13 +12970,39 @@ function syncTO(){
    ・結果：ウイング破損（ピットで交換するまで遅い）／スピン（当てられた側）／まれに両者リタイア（軽い接触は2026-10-28に削除）
    ・後ろから来た側（仕掛けた側）を「責任あり」として記録する（ペナルティの判定に使える） */
 const CT_BASE = 0.010, WING_V = 0.988, WING_G = 0.955, WING_FIX = 3.5;
+/* 接触によるパンク（2026-11-22）：タイヤがしぼんで大きく遅くなる。ピットでタイヤを替えれば元に戻る（リタイアにはならない）。
+   AIはすぐにピットへ向かう。担当マシンは「自分で」ならドライバーが相談してくるので、入るか粘るかを選べる。
+   担当マシンがパンクしたまま2周目に入ると、タイヤが崩れてバースト（リタイア）する危険が出てくる（AIは必ずピットに戻るのでバーストしない） */
+const PUNCT_G = 0.62, PUNCT_V = 0.7, PUNCT_RISK = 0.12;   // グリップ・最高速の倍率、粘ったときのバーストの起きやすさ（1秒あたり）
+const punctK = c => c.punct ? PUNCT_G : 1;
+/* 接触によるフロア・サイドポッドの損傷（2026-11-22）：見た目ではほぼわからず、ピットでも直せない。ゴールまでダウンフォースが少し落ちたまま。
+   チームにはデータで少し遅れて伝わる（担当マシン・自チームのマシンは無線で知らせる）。グラベルに押し出されたときにも傷めることがある。
+   light：小さな損傷、heavy：大きな損傷（2回傷めると heavy になる） */
+const FLOOR_G = { light: 0.975, heavy: 0.95 }, FLOOR_PCT = { light: 0.009, heavy: 0.015 };   // コーナーのグリップの倍率と、ラップタイムが遅くなる割合（1台だけで走らせた実測の目安：小さい損傷で約1%、大きい損傷で約1.5%）
+const floorK = c => c.floor ? FLOOR_G[c.floor.lvl] : 1;
+function floorHit(c, lvl){
+  if(c.out) return;
+  if(c.floor){ if(c.floor.lvl === 'heavy') return; lvl = 'heavy'; }
+  c.floor = { lvl, t: race.t, tellAt: race.t + 4 + Math.random()*5 };
+  spawnDebris(c, lvl === 'heavy' ? 3 : 2, { v: c.v*0.6, spread: 0.8 });   // 小さなかけらが落ちる
+}
+function stepFloorNote(c){                                          // 損傷がデータでわかったら無線で知らせる
+  const f = c.floor; if(!f || f.told || race.t < f.tellAt || c.out || c.finish !== null) return;
+  f.told = true;
+  const lt = c.laps.length ? c.laps[c.laps.length - 1] : 0, loss = lt > 0 ? Math.max(0.1, lt*FLOOR_PCT[f.lvl]).toFixed(1) : null;   // 直前の周のタイムから目安を出す
+  const per = loss ? `1周あたり${loss}秒ほど` : '少し';
+  const txt = f.lvl === 'heavy' ? `データを見ると、フロアの損傷が大きい。ダウンフォースが落ちてて、${per}遅い。ピットでは直せない` : `データでフロアに少し損傷が見える。${per}のロスだ。ピットでは直せないから、このまま走ろう`;
+  if(MY && c.m === MY) pwEvt('floor' + f.lvl, [[['eng', txt], ['drv', f.lvl === 'heavy' ? 'だからリアが落ち着かないのか……' : '了解。少しリアが軽い感じがする']]], { cd: 6, pri: true });
+  else if(careerRace && career && c.m.team === career.team) radioLine(c.m, 'eng', txt);
+}
 const CT_LON = 20, CT_LAT = 13, CT_K = 0.1;   // バトル中の接触を判定する範囲（前後・横）。車が重ならなくなったので、真後ろ・真横にぴったり付いている状態で判定。
 // 範囲が広がって判定の回数が大きく増えた（9レースの実測で約10倍）ので、1回あたりの確率を CT_K 倍にして、接触の頻度を以前と同じくらいに保つ
 const drvSt = c => { const d = career && career.drivers && c.m && career.drivers[c.m.name]; return d && d.st ? d.st : null; };
 function stepBattleContact(){
+  if(race.state === 'racing') stepChain();
   if(race.state !== 'racing' || race.form || race.red || race.vsc || (race.sc && race.sc.until > race.t) || race.t < 2.5 || !track) return;
   const T = track, N = T.N, cs = race.cars;
-  const ok = c => !c.out && !c.gone && !c.inPit && !c.spin && c.finish === null && !c.gridding && c.v > 70;
+  const ok = c => !c.out && !c.gone && !c.inPit && !c.spin && !c.punct && c.finish === null && !c.gridding && c.v > 70;   // パンクして遅く走る車は、ほかの車がよけて抜いていく（接触の判定に入れない）
   for(let i = 0; i < cs.length; i++){
     const a = cs[i]; if(!ok(a)) continue;
     for(let j = i + 1; j < cs.length; j++){
@@ -12891,46 +13026,179 @@ function stepBattleContact(){
       if(Math.abs(a.v - b.v) > 30) p *= 1.3;
       if(careerRace && career && a.m.team === career.team && b.m.team === career.team && evActive(career.feud)) p *= 3;   // 揉めている2人
       if(Math.random() >= p) continue;
-      battleContact(back, front);
+      battleContact(back, front, ctShape(back, front, dlong, Math.abs((b.lat || 0) - (a.lat || 0))));
     }
   }
 }
-function battleContact(att, vic){
-  const r = Math.random();
-  if(r < 0.55) return;                                       // 軽い接触（以前は少し減速するだけの接触）は起きないようにした（2026-10-28）。ほかの結果の頻度は以前と同じ
-  let kind = r < 0.8 ? 'wing' : r < 0.97 ? 'spin' : 'out';
+/* ---------- 接触でコース外へ押し出される（2026-11-22） ----------
+   横に並んだ状態の接触で、当てられた側がランオフ・グラベルへはみ出し、減速して何台かに抜かれてからコースに戻る（リタイアにはならない）。
+   ・out：PUSH_MAX_LAT までコースの外へ膨らむ（グラベルではグリップと速さが落ち、砂煙も出る）
+   ・back：コースの白線の内側まで戻ったら終わり。フェンスに当たってもクラッシュにはしない（オーバーランとは別の扱い）
+   ・コースの外に余地がない所（市街地の壁ぎわなど）では起きない */
+const PUSH_ROOM = 8, PUSH_MAX_LAT = 9, PUSH_MAX_T = 5;
+function pushRoom(att, vic){
+  const T = track; if(!T || vic.manWas || att.manWas || vic.inPit) return false;   // 自分で運転している車は押し出さない
+  return fenceLat(T, vic.idx) - T.width/2 >= PUSH_ROOM;
+}
+function pushOffLane(c, T, best, half){
+  const s = c.push;
+  if(c.spin || c.out || c.inPit || c.finish !== null || race.t - s.since > PUSH_MAX_T || race.state !== 'racing'){ c.push = null; return null; }
+  const room = fenceLat(T, best) - 4;
+  if(s.phase === 'out' && race.t - s.since > s.outT) s.phase = 'back';
+  if(s.phase === 'out') return { tgt: s.side*Math.max(half + 2, Math.min(half + PUSH_MAX_LAT, room)), edge: Math.max(half, room) };
+  if(Math.abs(c.lat) < half - 2){ c.push = null; return null; }         // コースに戻った
+  return { tgt: s.side*(half - 4), edge: Math.max(half, room) };
+}
+/* ---------- 接触の形（2026-11-22） ----------
+   接触したときの2台の位置関係で、起きやすい結果を変える。
+   ・dive（飛び込み）：後ろから速い勢いで突っ込んで追突。当てた側のウイング破損と、当てられた側のスピンが多い
+   ・side（横並び）：並んだままのホイール・トゥ・ホイール。コース外への押し出しが多く、スピンは少ない
+   ・tail（リアに接触）：すぐ後ろで速さの差が小さいまま、前の車のリアに当てる。当てられた側のスピンが多い
+   形の割合（10台・12周の実測で side 約53%・dive 約26%・tail 約21%）で平均すると、ウイング破損・スピン・両者リタイアの合計は
+   以前（ウイング25%・スピン17%・リタイア3%）とほぼ同じになるようにしてある（クラッシュを増やさないため）。押し出しも以前と同じ約13% */
+const CT_DIVE_DV = 20;                      // 後ろの車がこれより速く近づいていれば「飛び込み」
+const CT_TABLE = {
+  // self：当てた側が自分でスピンする（自滅・2026-11-23）。スピンの合計が変わらないように、当てられた側のスピン（spin）から回している
+  dive: { out: 0.05, spin: 0.16, self: 0.09, wing: 0.45, punct: 0.05, floor: 0.05 },
+  side: { out: 0.02, spin: 0.025, self: 0.015, wing: 0.21, push: 0.25, punct: 0.06, floor: 0.08 },
+  tail: { out: 0.03, spin: 0.35, self: 0.05, wing: 0.10, punct: 0.06, floor: 0.05 },     // パンク・フロア損傷は「何も起きない」だった分から回す（クラッシュは増えない）
+};
+function ctShape(back, front, dlong, dlat){
+  if(dlong < CAR_LEN + 2 && dlat > 6) return 'side';
+  return back.v - front.v > CT_DIVE_DV ? 'dive' : 'tail';
+}
+/* ---------- 1周目の多重接触（2026-11-23） ----------
+   1周目に接触でウイング破損・パンク・フロア損傷・押し出しが起きると、すぐ後ろの車がよけきれずに巻き込まれることがある（玉突き）。
+   ・巻き込まれた接触（shape 'chain'）は CHAIN_TABLE で結果を決める。両者リタイアは起こさず、スピンも少なくしてある（クラッシュを増やさないため）
+   ・スピン（自滅を含む）や両者リタイアの接触からは連鎖させない（スピンした車への追突は、もともとの当たり判定で扱う）
+   ・最大で4台（最初の2台＋巻き込まれる2台）。巻き込まれた接触は、多くが審議にならない（1周目のレーシングインシデント） */
+const CHAIN_P = 0.55, CHAIN_P2 = 0.3, CHAIN_DT = 0.3, CHAIN_LON = 34, CHAIN_LAT = 15;
+const CHAIN_TABLE = { spin: 0.08, wing: 0.42, push: 0.12, punct: 0.1, floor: 0.15 };
+function chainQueue(target, from, depth, grp){
+  (race.chainQ = race.chainQ || []).push({ at: race.t + CHAIN_DT*(0.7 + Math.random()*0.6), target, from, depth, grp });
+}
+function stepChain(){
+  if(!race.chainQ || !race.chainQ.length) return;
+  const T = track, N = T.N;
+  race.chainQ = race.chainQ.filter(q => {
+    if(race.t < q.at) return true;
+    const tg = q.target;
+    if(tg.out || tg.inPit || tg.finish !== null || tg.spin) return false;
+    let best = null, bd = Infinity;                               // すぐ後ろを走っている車（巻き込まれる車）
+    for(const c of race.cars){
+      if(c === tg || q.grp.cars.includes(c) || c.out || c.gone || c.inPit || c.spin || c.punct || c.finish !== null || c.v < 60 || c.manWas) continue;
+      const dd = ((tg.idx - c.idx + N) % N)*T.sp;
+      if(dd <= 0 || dd > CHAIN_LON || Math.abs((c.lat || 0) - (tg.lat || 0)) > CHAIN_LAT) continue;
+      if(dd < bd){ bd = dd; best = c; }
+    }
+    if(!best) return false;
+    q.grp.cars.push(best);
+    battleContact(best, tg, 'chain', { depth: q.depth, grp: q.grp });
+    return false;
+  });
+}
+function chainBanner(grp){
+  if(grp.shown || grp.cars.length < 3) return;
+  grp.shown = true;
+  showFlag('mech', 'MULTI-CAR INCIDENT', `1周目 · ${grp.cars.length}台が絡む接触（${grp.cars.map(c => c.m.name).join(' / ')}）`);
+  dirEvent('contact', grp.cars[grp.cars.length - 1], 5, 92, 'MULTI-CAR');
+}
+function ctPick(shape){
+  const t = shape === 'chain' ? CHAIN_TABLE : (CT_TABLE[shape] || CT_TABLE.tail); let r = Math.random();
+  for(const k of ['out', 'spin', 'self', 'wing', 'push', 'punct', 'floor']){ const q = t[k] || 0; if(r < q) return k; r -= q; }
+  return null;                                                  // 何も起きない（少し触れただけ）
+}
+function battleContact(att, vic, shape, ch){
+  let kind = ctPick(shape);
+  if(!kind) return;
+  if(shape === 'chain' && kind === 'push' && !pushRoom(att, vic)) kind = 'wing';   // 巻き込まれた接触：押し出す余地がなければウイング破損
+  if(kind === 'push' && !pushRoom(att, vic)) return;              // 外に余地がなければ何も起きない（以前と同じ）
+  let pv = null;
+  if(kind === 'punct'){                                          // 追突ではふつう前の車のリアタイヤが切れる。横並びではどちらの車のタイヤも切れうる
+    pv = shape === 'side' && Math.random() < 0.4 ? att : vic;
+    if(pv.punct || !uiEl('#pitOn').checked || race.laps - pv.laps.length < 1) return;   // ピットなしの設定では起きない
+  }
   if(kind === 'out' && (!uiEl('#crashOn').checked)) kind = 'spin';
   if(sndCan('bump', 150)) noise(0.14, { filter: 'lowpass', freq: 1500, vol: 0.24 });
   emitDust(att, 5, true); emitDust(vic, 4, true);
-  const rec = { t: race.t, lap: Math.max(1, att.laps.length + 1), a: att.m.name, b: vic.m.name, kind, at: att.m.team, bt: vic.m.team };
+  const rec = { t: race.t, lap: Math.max(1, att.laps.length + 1), a: att.m.name, b: vic.m.name, kind, shape, at: att.m.team, bt: vic.m.team };
   race.contacts.push(rec);
   att.ctN = (att.ctN || 0) + 1; att.ctBlame = (att.ctBlame || 0) + 1; vic.ctN = (vic.ctN || 0) + 1;
   const nm = `${att.m.name} / ${vic.m.name}`;
   if(kind === 'touch'){
     att.v *= 0.82; vic.v *= 0.88;
     // 軽い接触は速報バナーを出さない（ウイング破損・スピンは出す）
+  } else if(kind === 'push'){
+    const side = ((vic.lat || 0) - (att.lat || 0)) >= 0 ? 1 : -1;      // 当てた車と反対側へ押し出される
+    att.v *= 0.95; vic.v *= 0.85;
+    vic.push = { side, since: race.t, outT: 0.6 + Math.random()*0.5, phase: 'out' };
+    if(Math.random() < 0.25) floorHit(vic, 'light');               // グラベルや縁石でフロアを傷めることがある
+    crowdCheer(vic.x, vic.y, 0.5);
+    showFlag('mech', 'CONTACT', `${att.m.name} が ${vic.m.name} をコース外へ押し出した`);
+  } else if(kind === 'self'){
+    // 自滅：仕掛けた側がバランスを崩して自分で回る。当てられた側は少し減速するだけ（ブレーキングで飛び込んだときに多い）
+    vic.v *= 0.9;
+    if(shape === 'dive' && Math.random() < 0.35){ att.dmg = { wing: true, t: race.t }; spawnDebris(att, 4, { wing: true, v: att.v*0.7, spread: 1.0 }); }
+    const side = ((att.lat || 0) - (vic.lat || 0)) >= 0 ? 1 : -1;
+    startSpin(att, side);
+    crowdCheer(att.x, att.y, 0.6);
+    showFlag('mech', 'CONTACT', `${att.m.name} が ${vic.m.name} に当たって自らスピン`);
+  } else if(kind === 'floor'){
+    // 追突では当てられた側のリア（ディフューザー）、横並びではどちらかのサイドポッド・フロアを傷める
+    const fv = shape === 'side' ? (Math.random() < 0.5 ? att : vic) : (Math.random() < 0.7 ? vic : att);
+    att.v *= 0.95; vic.v *= 0.95;
+    floorHit(fv, Math.random() < 0.3 ? 'heavy' : 'light');
+    rec.fl = fv.m.name;                                         // 速報バナーは出さない（中継ではわからない損傷）
+  } else if(kind === 'punct'){
+    const wh = pv === vic && shape !== 'side' ? 2 + (Math.random() < 0.5 ? 0 : 1) : Math.floor(Math.random()*4);   // [左前, 右前, 左後, 右後]
+    att.v *= 0.9; vic.v *= 0.9;
+    pv.punct = { t: race.t, wh, lap0: pv.laps.length };
+    spawnDebris(pv, 3, { rubber: true, v: pv.v*0.6, spread: 1.0 });
+    showFlag('mech', 'PUNCTURE', `${pv.m.name} · ${['左フロント', '右フロント', '左リア', '右リア'][wh]}がパンク`);
   } else if(kind === 'wing'){
-    att.v *= 0.78; vic.v *= 0.88;
-    att.dmg = { wing: true, t: race.t }; spawnDebris(att, 4, { wing: true, v: att.v*0.7, spread: 1.0 });
-    showFlag('mech', 'CONTACT', `${att.m.name} · フロントウイング破損`);
+    // 壊れるのはふつう当てた側のフロントウイング。横並びの接触では、当てられた側が壊すこともある
+    const w = shape === 'side' && Math.random() < 0.3 ? vic : att;
+    att.v *= shape === 'dive' ? 0.74 : 0.8; vic.v *= shape === 'side' ? 0.9 : 0.86;
+    w.dmg = { wing: true, t: race.t }; spawnDebris(w, 4, { wing: true, v: w.v*0.7, spread: 1.0 });
+    showFlag('mech', 'CONTACT', shape === 'dive' ? `${att.m.name} が ${vic.m.name} に追突 · フロントウイング破損`
+      : shape === 'side' ? `${att.m.name} / ${vic.m.name} が並んで接触 · ${w.m.name} フロントウイング破損` : shape === 'chain' ? `${att.m.name} がよけきれず ${vic.m.name} に接触 · フロントウイング破損` : `${w.m.name} · フロントウイング破損`);
   } else if(kind === 'spin'){
     att.v *= 0.8;
-    if(Math.random() < 0.3){ att.dmg = { wing: true, t: race.t }; spawnDebris(att, 4, { wing: true, v: att.v*0.7, spread: 1.0 }); }
+    if(Math.random() < (shape === 'dive' ? 0.5 : shape === 'tail' ? 0.15 : 0.3)){ att.dmg = { wing: true, t: race.t }; spawnDebris(att, 4, { wing: true, v: att.v*0.7, spread: 1.0 }); }   // 追突はノーズも壊れやすい
     const side = ((vic.lat || 0) - (att.lat || 0)) >= 0 ? 1 : -1;
     startSpin(vic, side);
-    showFlag('mech', 'CONTACT', `${att.m.name} が ${vic.m.name} をスピンさせた`);
+    showFlag('mech', 'CONTACT', shape === 'dive' ? `${att.m.name} が飛び込み、${vic.m.name} をスピンさせた`
+      : shape === 'tail' ? `${att.m.name} が ${vic.m.name} のリアに当ててスピンさせた` : shape === 'chain' ? `${att.m.name} がよけきれず ${vic.m.name} に接触 · ${vic.m.name} スピン` : `${att.m.name} / ${vic.m.name} が並んで接触 · ${vic.m.name} スピン`);
   } else {
     crashIncident(att, vic, WRECK_REL + 40);
   }
   dirEvent('contact', vic, 4, 86, 'CONTACT');
   try{ queueReplay(vic); }catch(e){}
-  stewardNote(att, vic, kind);
+  stewardNote(att, vic, kind, shape);
+  // 1周目：後ろの車が巻き込まれる（玉突き）
+  if(kind !== 'spin' && kind !== 'self' && kind !== 'out' && Math.max(att.laps.length, vic.laps.length) === 0){
+    const depth = ch ? ch.depth + 1 : 0, grp = ch ? ch.grp : { cars: [att, vic] };
+    if(ch) chainBanner(grp);
+    if(depth < 2 && Math.random() < (depth ? CHAIN_P2 : CHAIN_P)){
+      const slow = kind === 'push' ? att : (att.v < vic.v ? att : vic);   // 遅くなった車（押し出しでは、コースに残った当てた側）に後ろが追いつく
+      chainQueue(slow, att === slow ? vic : att, depth, grp);
+    }
+  }
   // 担当マシンの無線
   const mine = MY && (att.m === MY || vic.m === MY);
   if(mine && kind !== 'out'){
     const me = att.m === MY ? att : vic, other = me === att ? vic : att;
-    if(me.dmg && me.dmg.wing) pwEvt('ctwing', [[['drv', 'ウイングが壊れた！フロントが入らない！'], ['eng', '了解。BOXしてノーズを替えるか、このまま行くか考える']], [['drv', `${other.m.name}と当たった、ノーズがやられた`], ['eng', 'ダメージを確認中。ペースは落ちる']]], { cd: 8, pri: true });
-    else if(me.spin) pwEvt('ctspin', [[['drv', `＊＊＊＊＊！${other.m.name}に押し出された！`], ['eng', '大丈夫か？ そのまま戻って']]], { cd: 8, pri: true });
+    if(kind === 'floor' && rec.fl === me.m.name) pwEvt('ctfloor', [[['drv', `${other.m.name}と当たった！ どこか壊れたかも`], ['eng', '了解。データを確認する']], [['drv', '今の接触、マシンの下に何か当たった感じがする'], ['eng', '確認する。そのまま走って']]], { cd: 8, pri: true });
+    else if(me.punct && kind === 'punct') pwEvt('ctpunct', [[['drv', `パンクだ！${other.m.name}に当たってタイヤが切れた！`], ['eng', '了解、見えてる。BOXするなら準備はできてる']], [['drv', 'タイヤがしぼんでる！全然曲がらない！'], ['eng', '了解。ピットまで慎重に戻ってきて']]], { cd: 6, pri: true });
+    else if(me.dmg && me.dmg.wing) pwEvt('ctwing', [[['drv', 'ウイングが壊れた！フロントが入らない！'], ['eng', '了解。BOXしてノーズを替えるか、このまま行くか考える']], [['drv', `${other.m.name}と当たった、ノーズがやられた`], ['eng', 'ダメージを確認中。ペースは落ちる']]], { cd: 8, pri: true });
+    else if(kind === 'push' && me === vic) pwEvt('ctpush', [[['drv', `＊＊＊＊＊！${other.m.name}にコースの外へ押し出された！`], ['eng', '了解、スチュワードに伝える。落ち着いて戻って']], [['drv', 'スペースを残してくれなかった！'], ['eng', '見てた。審議になるはずだ']]], { cd: 8, pri: true });
+    else if(kind === 'push') pwEvt('ctpushA', [[['drv', `${other.m.name}と当たった。向こうが外に出た`], ['eng', '了解。審議になるかもしれない']], [['drv', '今のはレーシングインシデントだよね？'], ['eng', 'スチュワードの判断を待とう']]], { cd: 10, pri: true });
+    else if(kind === 'self' && me === att) pwEvt('ctself', [[['drv', '＊＊＊＊＊！ やってしまった、回った……'], ['eng', '大丈夫か？ 落ち着いてコースに戻って']], [['drv', 'ブレーキングで突っ込みすぎた、ごめん'], ['eng', '了解。まずはマシンを戻そう']]], { cd: 8, pri: true });
+    else if(kind === 'self') pwEvt('ctselfV', [[['drv', `今の見た？ ${other.m.name}が当ててきて自分で回ってた`], ['eng', '見えた。マシンは大丈夫か？']], [['drv', `${other.m.name}に当てられた！ 向こうがスピンした`], ['eng', '了解。こっちは大丈夫そうだ、プッシュして']]], { cd: 10, pri: true });
+    else if(me.spin) pwEvt('ctspin', shape === 'dive' ? [[['drv', `＊＊＊＊＊！${other.m.name}に後ろから突っ込まれた！`], ['eng', '見えた。マシンは大丈夫か？ ゆっくり戻って']], [['drv', 'ありえない、ブレーキングで突っ込んできた！'], ['eng', 'スチュワードが見てる。まずはコースに戻ろう']]]
+      : shape === 'tail' ? [[['drv', `${other.m.name}にリアを当てられた！回された！`], ['eng', '了解。後ろに気をつけて戻って']]]
+      : [[['drv', `＊＊＊＊＊！${other.m.name}に押し出された！`], ['eng', '大丈夫か？ そのまま戻って']]], { cd: 8, pri: true });
+    else if(me === att && shape === 'dive') pwEvt('ctdive', [[['drv', 'ブレーキが間に合わなかった……'], ['eng', '了解。審議になるかもしれない。集中して']], [['drv', `${other.m.name}が思ったより早くブレーキを踏んだ`], ['eng', 'わかった。マシンの具合を教えて']]], { cd: 10, pri: true });
     else pwEvt('ctouch', [[['drv', `${other.m.name}と当たった！`], ['eng', 'マシンは大丈夫そうだ。続けて']], [['drv', '今の接触、見た？'], ['eng', '確認してる。走り続けて']]], { cd: 10, pri: true });
   }
 }
@@ -12941,14 +13209,20 @@ function battleContact(att, vic){
    ・ドライブスルー：フィニッシュラインを2回越えるまでに、ピットレーンを止まらずに通り抜ける（SC・VSC中は消化できない）
      残り3周以内に出たときは、通り抜ける代わりにゴール後に PEN_DT_LATE 秒を加算する */
 const PEN_S = 0.5, PEN_M = 1.0, PEN_DT_LATE = 2.5;
-function stewardNote(att, vic, kind){
+function stewardNote(att, vic, kind, shape){
   if(!race || race.state !== 'racing') return;
   const r = Math.random();
   // 接触の結果ごとの裁定：none＝お咎めなし（レーシングインシデント）、s＝+0.5秒、m＝+1秒、dt＝ドライブスルー
   let verdict;
-  if(kind === 'touch'){ if(r > 0.15) return; verdict = Math.random() < 0.65 ? 'none' : 's'; }   // 軽い接触はほとんど審議にならない
-  else if(kind === 'wing') verdict = r < 0.4 ? 'none' : 's';
-  else if(kind === 'spin') verdict = r < 0.1 ? 'none' : r < 0.4 ? 's' : 'm';
+  if(kind === 'self'){ if(r > 0.35) return; verdict = Math.random() < 0.6 ? 'none' : 's'; }   // 自滅：自分が損をしているので、審議になることは少ない
+  else if(shape === 'chain'){ if(r > 0.2) return; verdict = Math.random() < 0.5 ? 'none' : 's'; }   // 巻き込まれた接触：ほとんど審議にならない
+  else if(kind === 'touch'){ if(r > 0.15) return; verdict = Math.random() < 0.65 ? 'none' : 's'; }   // 軽い接触はほとんど審議にならない
+  // 接触の形でも重さを変える：飛び込みの追突は重く、横並びはレーシングインシデントになりやすい（2026-11-22）
+  else if(kind === 'wing') verdict = shape === 'dive' ? (r < 0.3 ? 'none' : 's') : shape === 'side' ? (r < 0.6 ? 'none' : 's') : (r < 0.4 ? 'none' : 's');
+  else if(kind === 'floor') verdict = shape === 'dive' ? (r < 0.5 ? 'none' : 's') : (r < 0.75 ? 'none' : 's');   // 目に見える被害が小さいので、お咎めなしが多い
+  else if(kind === 'punct') verdict = shape === 'side' ? (r < 0.65 ? 'none' : 's') : (r < 0.35 ? 'none' : r < 0.85 ? 's' : 'm');   // 相手のタイヤを切った
+  else if(kind === 'push') verdict = r < 0.45 ? 'none' : r < 0.9 ? 's' : 'm';   // コース外へ押し出した（実際のF1では5〜10秒が多い）
+  else if(kind === 'spin') verdict = shape === 'dive' ? (r < 0.05 ? 'none' : r < 0.35 ? 's' : 'm') : shape === 'side' ? (r < 0.25 ? 'none' : r < 0.7 ? 's' : 'm') : (r < 0.1 ? 'none' : r < 0.45 ? 's' : 'm');
   else verdict = r < 0.6 ? 'm' : 'dt';
   race.inv = race.inv || [];
   race.inv.push({ car: att, vic, kind, verdict, at: race.t + lapEst()*(0.8 + Math.random()*0.6) });
@@ -13369,6 +13643,12 @@ function drawDust(){
 function carLook(c){
   if(!c) return null;
   if((c.out === 'crash' || c.out === 'burst') && !c.garaged){ if(!c.look) c.look = makeLook(c); return c.look; }
+  if(!c.out && c.punct){                                       // パンク：しぼんだタイヤ（ウイングも壊れていれば両方）
+    const fw = c.dmg && c.dmg.wing ? (c.dmg.look || (c.dmg.look = { fw: Math.random() < 0.5 ? { L: true } : { R: true } })).fw : null;
+    const key = c.punct.wh + (fw ? 'w' : '');
+    if(!c.punct.look || c.punct.lk !== key){ const wh = ['ok', 'ok', 'ok', 'ok']; wh[c.punct.wh] = 'flat'; c.punct.look = fw ? { wh, fw } : { wh }; c.punct.lk = key; }
+    return c.punct.look;
+  }
   if(!c.out && c.dmg && c.dmg.wing){ if(!c.dmg.look) c.dmg.look = { fw: Math.random() < 0.5 ? { L: true } : { R: true } }; return c.dmg.look; }
   return null;
 }
@@ -13565,7 +13845,7 @@ function recCarPose(R){
 function recDrawCar(c, x, y, h, lift){
   ctx.save(); ctx.translate(x, y); ctx.rotate(h);
   if(lift){ ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(-lift*0.6, lift, 10, 4.4, 0, 0, Math.PI*2); ctx.fill(); ctx.scale(1 + lift*0.012, 1 + lift*0.012); }
-  ctx.scale(0.5, 0.37); drawF1Car(ctx, c.m.color, col2Of(c.m), c.m.tcam, carLook(c));
+  ctx.scale(0.5, 0.37); drawF1Car(ctx, c.m.color, col2Of(c.m), c.m.tcam, carLook(c)); try{ drawCarBrand(ctx, carBrandOf(c.m.team)); }catch(e){}
   ctx.restore();
 }
 function recDrawTruck(x, y, h){
@@ -14625,7 +14905,8 @@ for(const name of Object.keys(SP_LOGO)){
 
 function makeSponsorOffers(){
   const me = myTeam(), k = (0.85 + clamp((me.spons - 2.8)/3.2, 0, 1)*0.35)*(1 + facLv(me, 'hosp')*0.05)*SPONS_OFFER_K, v = x => r1(x*k*(0.9 + Math.random()*0.2));
-  const names = shuffled(SPONSOR_NAMES);
+  const tco = [career.title && career.title.on && career.title.co, career.titleOffer && career.titleOffer.co].filter(Boolean);
+  const names = shuffled(SPONSOR_NAMES).filter(x => !tco.includes(x));   // タイトルスポンサーの会社は通常の契約には出さない
   const all = {
     stable: () => ({ type:'stable', base:v(2.6) }),
     points: () => ({ type:'points', base:v(0.8), perPt:r1(0.2*k*100)/100, podium:v(3), win:v(6) }),
@@ -14639,9 +14920,10 @@ function makeSponsorOffers(){
   const pPay = 0.55 - clamp((me.spons - 2.8)/3.2, 0, 1)*0.3;
   if(Math.random() < pPay){
     const d = makePayDriver(); career.drivers[d.code] = d; d.spHold = true;   // スポンサーの推し（契約しなければ移籍市場へ）
+    // 2026-11-23 強化：推しが弱めな分、お金を厚くした（正ドライバー版 持参金4.0→6.0・毎戦3.6→4.4・1pt 0.15→0.20／リザーブ版 持参金1.2→2.0・毎戦2.9→3.5・代役0.6→0.8）
     offers.push(Math.random() < 0.6
-      ? { type:'pay', base:v(3.6), dowry:v(4.0), perPt:r1(0.15*k*100)/100, fine:v(6), drv:d.code, name: names[3] }
-      : { type:'payres', base:v(2.9), dowry:v(1.2), perStart:v(0.6), fine:v(3), drv:d.code, name: names[3] });
+      ? { type:'pay', base:v(4.4), dowry:v(6.0), perPt:r1(0.2*k*100)/100, fine:v(6), drv:d.code, name: names[3] }
+      : { type:'payres', base:v(3.5), dowry:v(2.0), perStart:v(0.8), fine:v(3), drv:d.code, name: names[3] });
   } else offers.push({ ...all[types[3]](), name: names[3] });
   const kk = seasonK(); offers.forEach(o => spScale(o, kk));
   return offers;
@@ -14777,6 +15059,7 @@ function guideHtml(){
     ${tbl(['収入', '内容'], [
       ['基本スポンサー収入', 'チームごとに決まった額（ホスピタリティ施設で増える）'],
       ['スポンサー契約', '契約したスポンサーの条件による（安定型：毎戦定額／成績型：ポイント・表彰台・優勝／完走型：完走台数・上げた順位／予選型：予選の順位／露出型：オーバーテイクの数／若手育成型：23歳以下の起用／ペイドライバー型：持参金と、推しのドライバーの起用・活躍）'],
+      ['タイトルスポンサー', `ときどき提案が来る別枠の契約。契約金と毎戦の報酬（基準 ${M(pr(TITLE_BASE))}）。チーム名の前にスポンサー名が付き、チームカラーも変わる。契約期間中にコンストラクターズの目標順位以上になると成功ボーナス。達成できなければ期間の終わりに契約終了`],
       ['賞金', `1ポイントごと ${M(pr(PT_PRIZE))}、完走1台ごと ${M(pr(FIN_PRIZE))}`],
       ['参戦分配金', `全チームに毎戦 ${M(pr(DIST_PAY))}`],
       ['セカンドチームの分配', `姉妹チームの賞金（ポイント・完走）の${Math.round(SIS_SHARE*100)}%・基本スポンサー収入の${Math.round(SIS_SPONS*100)}%（毎戦）、シーズン賞金の${Math.round(SIS_SEASON*100)}%（シーズンの終わり）`],
@@ -17916,6 +18199,8 @@ function recordRace(){
   const ln = career.loan; led.loan = ln && ln.bal > 0 ? -Math.min(ln.bal, LOAN.pay) : 0;   // 借入の返済
   if(ln && ln.bal > 0){ const p0 = loanPrin(ln), b0 = ln.bal; ln.bal = r1(ln.bal + led.loan); ln.prin = ln.bal > 0 ? r1(p0*ln.bal/b0) : 0; }   // 元本も同じ割合で減らす
   led.home = rd.home && career.home ? HOME_BONUS[career.home.seat || 0] : 0;   // ホームGP：地元スポンサーのボーナス
+  if(career.titleOffer){ if(career.titleOffer.renew) titleEnd('expire'); career.titleOffer = null; }   // 答えずに最初のレースを迎えた提案は流れる（継続の提案なら契約終了）
+  led.title = titleActive() ? career.title.base : 0;                // タイトルスポンサー
   let sisInv = null;
   { const S = sisTeam(), tl = career.sister ? (career.sister.techRun || 0) : 0;   // 技術提携：このレースのレベルで費用を払い、レベル3なら調査の判定
     if(S && tl){ led.sisTech = -SIS_TECH[tl].cost;
@@ -17931,7 +18216,7 @@ function recordRace(){
   // 戦数が多いシーズンは、毎戦の収入・支出を小さく（1シーズンの合計を6戦のときと同じに）。スポンサー契約は提案の時点で調整済み。
   // 借入の返済・ホームGPのボーナス・罰金は1回ごとの額なのでそのまま
   ['spons','fac','prize','sal','sub','ops','resApp','train','dist','pu','goal','dsal','sisPrize','sisSpons','sisOps','sisTrain','sisTech'].forEach(k => { if(led[k]) led[k] = pr(led[k]); });
-  led.net = r1((led.dsal || 0) + led.spons + (led.sreq || 0) + (led.resApp || 0) + led.deal + led.prize + led.sal + led.ops + led.train + (led.fac || 0) + led.dist + led.goal + led.loan + (led.sub || 0) + (led.pu || 0) + led.home + (led.sisPrize || 0) + (led.sisSpons || 0) + (led.sisOps || 0) + (led.sisTrain || 0) + (led.sisTech || 0) + (led.sisFine || 0));
+  led.net = r1((led.dsal || 0) + led.spons + (led.sreq || 0) + (led.resApp || 0) + led.deal + led.prize + led.sal + led.ops + led.train + (led.fac || 0) + led.dist + led.goal + led.loan + (led.sub || 0) + (led.pu || 0) + led.home + (led.title || 0) + (led.sisPrize || 0) + (led.sisSpons || 0) + (led.sisOps || 0) + (led.sisTrain || 0) + (led.sisTech || 0) + (led.sisFine || 0));
   career.money = r1(career.money + led.net);
   ensureStats();
   const preSt = {}; order.forEach(c => { const s = statD(c.m.name); preSt[c.m.name] = { wins: s.wins, pod: s.podiums, best: s.bestPos, starts: s.starts }; });   // 覚醒の判定用（このレースより前の成績）
@@ -18954,7 +19239,7 @@ function openIncome(){
   const sgK = v => sg(v*K);
   const row = (a, b, cls = '', note = '') => `<tr class="${cls}"><td>${a}${note ? `<small>${note}</small>` : ''}</td><td>${b}</td></tr>`;
   const sp = career.sponsor, L = career.last && career.last.led, pd = career.last && career.last.pop ? career.last.pop.d : 0;
-  const inc = L ? [['基本スポンサー収入', L.spons], ['スポンサーの依頼による上乗せ・減額', L.sreq], ['スポンサー契約', L.deal], ['スポンサー目標ボーナス', L.goal], ['賞金（ポイント・完走）', L.prize], ['参戦分配金', L.dist], ['ホームGP：地元スポンサーのボーナス', L.home], ['セカンドチーム：賞金の分配', L.sisPrize], ['セカンドチーム：スポンサー収入の分配', L.sisSpons], ['PUの供給料（受け取り）', L.pu > 0 ? L.pu : 0]].filter(x => x[1]) : [];
+  const inc = L ? [['基本スポンサー収入', L.spons], ['スポンサーの依頼による上乗せ・減額', L.sreq], ['タイトルスポンサー', L.title || 0], ['スポンサー契約', L.deal], ['スポンサー目標ボーナス', L.goal], ['賞金（ポイント・完走）', L.prize], ['参戦分配金', L.dist], ['ホームGP：地元スポンサーのボーナス', L.home], ['セカンドチーム：賞金の分配', L.sisPrize], ['セカンドチーム：スポンサー収入の分配', L.sisSpons], ['PUの供給料（受け取り）', L.pu > 0 ? L.pu : 0]].filter(x => x[1]) : [];
   $('#incBody').innerHTML = `
     <h4>基本スポンサー収入（毎戦）</h4>
     <table class="ledger">
@@ -19082,6 +19367,7 @@ function takeOffseason(){
   const r = Math.random();
   let type = mine ? (canMaker && r < 0.3 ? 'maker' : 'buy') : (r < 0.5 ? 'buy' : r < 0.85 ? 'title' : 'maker');
   if(type === 'maker' && !canMaker) type = 'buy';
+  if(mine && career.title && career.title.on){ titleEnd('sale'); career.titleOffer = null; }   // 身売り：タイトルスポンサー契約は終わる
   const mk = takeMake(t, type), from = brandOf(t), fx = takeEffect(t, type);
   const rec = { season: S, team: t.id, type, co: mk.co, kind: mk.kind || null, from, to: mk.brand, base: mk.base, fx, mine };
   cd[t.id] = S + TAKE_CD;
@@ -19108,6 +19394,125 @@ function takeChoose(adopt){
   career.takeAsk = null; saveCareer();
   $('#takeModal').classList.remove('show');
   renderHQ(adopt ? `チーム名を「${A.brand.name}」に変えました。来季から新しいカラーで走ります。` : `チーム名とカラーは「${me.name}」のままにしました。`);
+}
+/* ---------- タイトルスポンサー（自チームだけ・2026-11-23） ----------
+   通常のスポンサー契約（4社から1社）とは別の枠。シーズンの終わりに、ときどき大企業から提案が来る（受けるか断るかだけ選ぶ）。
+   ・契約すると、チーム名の前にスポンサーのブランド名が付き（例：ミナト・〇〇）、チームカラーがスポンサーのロゴの色になる。3文字の略称とロゴの形はそのまま
+   ・条件：契約金（契約したときに1回）＋毎戦の報酬（通常の契約の平均 約$3.1Mより高い）。期間は2〜3シーズン
+   ・目標：契約期間中のどれか1シーズンで「コンストラクターズ◯位以上」（契約前のシーズンの順位から2つ上。1位なら1位を守る）（2026-11-23 変更）
+     達成したシーズンの終わりに成功ボーナス。途中での打ち切りはない
+   ・期間が終わると、目標を達成していれば継続の提案が来ることがある（70%）。達成できなければ継続なしで、元の名前・カラーに戻る
+   ・提案が来やすいのは、コンストラクターズの順位が低い（下位3チーム・下半分）・人気度が高いチーム。契約が終わったシーズンの次は来ない
+   ・チームが身売りされたら契約は終わる
+   会社は通常のスポンサーと同じ36社（架空）。ほかのチームと色が近すぎる会社は提案しない */
+const TITLE_P = 0.12, TITLE_MAX_P = 0.45, TITLE_BASE = 4.0, TITLE_BONUS = 6.0, TITLE_SUCC = 0.6, TITLE_UP = 2, TITLE_RENEW = 0.7;   // 成功ボーナス＝契約金×0.6、目標＝前の順位から2つ上、継続の提案の確率
+const TITLE_SUFFIX = ['重工','飲料','航空','証券','化粧品','運輸','時計','ゲームス','銀行','電機','通信','石油','食品','保険','スポーツ','精機','珈琲','半導体','製薬','リゾート','風力','物産','乳業','花火','建設','冷凍','鉄道','玩具','酒造','電池','宇宙','繊維','海運','不動産'];
+const titleBrand = co => { const x = TITLE_SUFFIX.find(sf => co.endsWith(sf) && co.length > sf.length + 1); return x ? co.slice(0, -x.length) : co; };
+function titleColors(co){
+  const L = SP_LOGO[co]; if(!L) return null;
+  const d = (a, b) => { const A = hexToRgb(a), B = hexToRgb(b); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+  const fg = /^#?f{3,6}$/i.test(L.fg) ? '#ffffff' : L.fg;
+  if(lumOf(L.bg) > 0.8) return { col: fg, col2: d(fg, L.ac) > 90 ? L.ac : L.bg };   // 地がほぼ白の会社（カエデ製薬など）は、シンボルの色をチームカラーに
+  return { col: L.bg, col2: d(L.bg, L.ac) > 90 ? L.ac : fg };
+}
+const titleActive = () => !!(career && career.title && career.title.on);
+const posAtSeason = (id, sn) => { const st = career.stats && career.stats.teams && career.stats.teams[id]; const x = st && st.seasons && st.seasons[sn]; return x ? x.pos : 0; };
+// 提案を作る（会社・色・条件）。renew：継続の提案
+function titleMakeOffer(renew){
+  const me = myTeam(), n = career.teams.length, S = career.season, last = posAtSeason(me.id, S - 1) || Math.ceil(n/2);
+  let co, C;
+  if(renew){ co = career.title.co; C = { col: career.title.col, col2: career.title.col2 }; }
+  else {
+    const used = new Set([career.sponsor && career.sponsor.name].filter(Boolean)), taken = career.teams.filter(t => t !== me).map(t => t.name), others = career.teams.filter(t => t !== me).map(t => palOf(t)[0]);
+    const d = (a, b) => { const A = hexToRgb(a), B = hexToRgb(b); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+    const cand = Object.keys(SP_LOGO).filter(c => !used.has(c) && !taken.some(nm => nm.startsWith(titleBrand(c) + '・'))).map(c => ({ c, C: titleColors(c) })).filter(x => x.C)
+      .map(x => ({ ...x, dd: Math.min(...others.map(o => d(o, x.C.col))) })).filter(x => x.dd >= 70);
+    if(!cand.length) return null;
+    const pk = cand[Math.floor(Math.random()*cand.length)]; co = pk.c; C = pk.C;
+  }
+  const k = (0.85 + clamp((me.spons - 2.8)/3.2, 0, 1)*0.35)*(1 + facLv(me, 'hosp')*0.05)*SPONS_OFFER_K, v = x => r1(x*k*(0.9 + Math.random()*0.2));
+  const years = 2 + (Math.random() < 0.4 ? 1 : 0);
+  const b0 = v(TITLE_BONUS);
+  const o = { co, brand: titleBrand(co), ...C, base: v(TITLE_BASE), bonus: renew ? r1(b0*0.5) : b0, succ: r1(b0*TITLE_SUCC), years, goal: Math.max(1, last - TITLE_UP), renew: !!renew, season: S };
+  o.kk = 1; spScale(o, seasonK());                       // 毎戦の額を戦数に合わせる
+  return o;
+}
+// 名前・カラーを変える／戻す
+function titleApplyBrand(t, o){
+  const base = t.tbase || t.name, short = palOf(t)[1] || t.short || null;
+  takeApplyBrand(t, { name: `${o.brand}・${base}`, short, logo: t.logo || null, col: o.col, col2: o.col2 }, base);
+}
+function titleEnd(why){
+  const T = career.title; if(!T || !T.on) return null;
+  const me = myTeam();
+  if(T.prev) takeApplyBrand(me, T.prev, null);                     // 元の名前・カラーに戻す（身売りのときも、いったん元に戻してから新しい名前を決める）
+  T.on = false; T.endWhy = why; T.endSeason = career.season;
+  career.titleCd = career.season + 1;
+  (career.titleHist = career.titleHist || []).push({ co: T.co, from: T.from, to: career.season - 1, why });
+  return { co: T.co, why, name: T.prev ? T.prev.name : me.name };
+}
+// シーズンの終わり（career.season を進めたあと）に呼ぶ
+function titleOffseason(){
+  if(!career || career.fired) return null;
+  const me = myTeam(), S = career.season, n = career.teams.length, res = {};
+  career.titleOffer = null;
+  const T = career.title;
+  if(T && T.on){
+    const pos = posAtSeason(me.id, S - 1);
+    res.eval = { pos, goal: T.goal };
+    if(!T.hit && pos && pos <= T.goal){                     // 目標達成：成功ボーナス
+      T.hit = S - 1; const b = T.succ || 0; career.money = r1(career.money + b); res.hit = { pos, goal: T.goal, pay: b, co: T.co };
+    }
+    if(S > T.until){
+      if(T.hit && Math.random() < TITLE_RENEW){ const o = titleMakeOffer(true); if(o){ career.titleOffer = o; res.offer = o; return res; } }
+      res.end = titleEnd(T.hit ? 'expire' : 'fail'); return res;
+    }
+    return res;
+  }
+  if(career.takeAsk || (career.titleCd && career.titleCd >= S) || S < 2) return null;
+  const pos = posAtSeason(me.id, S - 1) || n, pop = popOf(me);
+  const p = Math.min(TITLE_MAX_P, TITLE_P + (pos > n - 3 ? 0.2 : pos > n/2 ? 0.1 : 0) + clamp((pop - 1)*0.5, 0, 0.15));   // 下位チームほど来やすい（上位はお金に困りにくいので。2026-11-23）
+  if(Math.random() >= p) return null;
+  const o = titleMakeOffer(false); if(!o) return null;
+  career.titleOffer = o; res.offer = o; return res;
+}
+// 提案に答える（オフシーズンの間だけ）
+function titleChoose(accept){
+  const o = career.titleOffer; if(!o || career.round > 0) return;
+  const me = myTeam();
+  if(accept){
+    if(o.renew && titleActive()){
+      Object.assign(career.title, { base: o.base, kk: o.kk, goal: o.goal, hit: 0, succ: o.succ, until: career.season + o.years - 1, bonus: o.bonus });
+    } else {
+      const prev = brandOf(me);
+      titleApplyBrand(me, o);
+      career.title = { on: true, co: o.co, brand: o.brand, col: o.col, col2: o.col2, base: o.base, kk: o.kk, bonus: o.bonus, succ: o.succ, goal: o.goal, hit: 0, from: career.season, until: career.season + o.years - 1, prev };
+    }
+    career.money = r1(career.money + o.bonus);
+  } else if(o.renew && titleActive()) titleEnd('expire');
+  career.titleOffer = null; saveCareer();
+  renderHQ(accept ? (o.renew ? `${o.co}とのタイトルスポンサー契約を${o.years}シーズン延長しました。契約金 ${money(o.bonus)}を受け取りました。` : `${o.co}とタイトルスポンサー契約を結びました。チーム名は「${me.name}」になり、チームカラーも変わりました。契約金 ${money(o.bonus)}を受け取りました。`)
+    : (o.renew ? `${o.co}との契約を終えました。チーム名とカラーは「${me.name}」に戻りました。` : `${o.co}からの提案を断りました。`));
+}
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-title]'); if(b && career && career.titleOffer) titleChoose(b.dataset.title === 'yes'); });
+// 本部の概要に出すカード（契約中の状態／提案）
+function titleCardHtml(){
+  if(!career) return '';
+  const me = myTeam(), o = career.round === 0 ? career.titleOffer : null, T = titleActive() ? career.title : null;
+  if(!o && !T) return '';
+  const sw = (a, b) => `<span class="tkSw" style="background:linear-gradient(135deg,${a} 58%,${b} 58%)"></span>`;
+  if(o){
+    const base = me.tbase || (T && T.prev ? T.prev.name : me.name), newT = { ...me, name: `${o.brand}・${base}`, col: o.col, col2: o.col2, short: palOf(me)[1] || me.short };
+    return `<div class="sec spSec ttlSec"><h2><span class="spHd">${sponsorLogo(o.co, 26)}</span><span class="kick spTier ttlTag">${o.renew ? 'タイトルスポンサー：継続の提案' : 'タイトルスポンサーの提案'}</span></h2>
+      ${o.renew ? '' : `<div class="tkBr"><span class="tkT">${teamLogo(me, 26)}<span><b>${esc(me.name)}</b>${sw(palOf(me)[0], palOf(me)[2])}</span></span><span class="tkArr">→</span><span class="tkT">${teamLogo(newT, 26)}<span><b>${esc(newT.name)}</b>${sw(o.col, o.col2)}</span></span></div>`}
+      <div class="spTiles" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:8px"><div><small>契約金</small><b class="num">${money(o.bonus)}</b></div><div><small>毎戦</small><b class="num">${money(o.base)}</b></div><div><small>期間</small><b>${o.years}シーズン</b></div><div><small>目標（期間中に）</small><b>${o.goal}位以上</b></div></div>
+      <p class="note" style="margin:8px 0 0">${o.renew ? '受けると今の名前・カラーのまま延長。断ると元の名前・カラーに戻ります。' : `受けると、チーム名の前に「${esc(o.brand)}」が付き、チームカラーが${esc(o.co)}の色に変わります（3文字の略称・ロゴの形はそのまま）。`}通常のスポンサー契約とは別にもらえます。期間中のどれか1シーズンでコンストラクターズ${o.goal}位以上になると、成功ボーナス ${money(o.succ)}。達成できなければ、期間の終わりに契約終了です（途中で打ち切られることはありません）。シーズン最初のレースまでに決めてください。</p>
+      <div class="row tkBtns" style="margin-top:8px"><button type="button" class="b go" data-title="yes">${o.renew ? '延長する' : '契約する'}</button><button type="button" class="b ghost" data-title="no">${o.renew ? '延長しない' : '断る'}</button></div></div>`;
+  }
+  const left = T.until - career.season + 1;
+  return `<div class="sec spSec ttlSec"><h2><span class="spHd">${sponsorLogo(T.co, 26)}</span><span class="kick spTier ttlTag">タイトルスポンサー</span></h2>
+    <div class="spTiles" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><small>毎戦</small><b class="num">${money(T.base)}</b></div><div><small>残り</small><b>${left}シーズン</b></div><div><small>目標（期間中に）</small><b>${T.goal}位以上</b></div></div>
+    <p class="note" style="margin:8px 0 0">${T.hit ? `目標達成（${SY(T.hit)}年）。成功ボーナスを受け取りました。期間の終わりに継続の提案が来ることがあります。` : `契約期間（${SY(T.from)}〜${SY(T.until)}年）のどれか1シーズンでコンストラクターズ${T.goal}位以上になると、成功ボーナス ${money(T.succ || 0)}。達成できなければ、期間の終わりに契約終了です。`}</p></div>`;
 }
 function takeBrandPrev(t, b){ return { ...t, name: b.name, short: b.short || undefined, logo: b.logo || undefined, col: b.col, col2: b.col2 }; }
 function takeLine(x){
@@ -19276,6 +19681,7 @@ function nextSeason(){
   let payRe = null; try{ payRe = payRenewInfo(); }catch(e){ console.error(e); }   // ペイドライバー型の継続の提案（今季の成績で確率が決まる）
   career.season++; career.round = 0; try{ rep.grayBan = grayOffseason(); }catch(e){ console.error(e); } career.calendar = makeCalendar(); career.dpts = {}; career.cpts = {}; career.last = null;
   try{ rep.take = takeOffseason(); }catch(e){ console.error(e); }       // チームの身売り（2年続けて下位3チーム）
+  try{ rep.title = titleOffseason(); }catch(e){ console.error(e); }     // タイトルスポンサー（契約の評価・継続・新しい提案）
   if(career.home && career.home.stage === 'open'){ const i = homeInsert(career.calendar); career.money = r1(career.money - HOME_FEE); rep.home = { opened: homeOpened, reno: homeReno, round: i + 1, fee: HOME_FEE }; }
   career.owner.target = ownerTarget(); career.sponsor = null; career.sponsorOffers = makeSponsorOffers(); try{ payRenewApply(payRe); }catch(e){ console.error(e); }
   const shift = rep.take && rep.take.mine ? null : ownerPersShift(subRes.length > 0 && subRes.every(x => !x.ok));   // 身売りで新しいオーナーになったときは方針転換なし   // オーナーの方針転換（性格が変わることがある）
@@ -20902,6 +21308,87 @@ function openSettings(){
   m.querySelector('.ciX').focus({ preventScroll: true });
 }
 document.addEventListener('click', e => { if(e.target.closest && e.target.closest('#setBtn')) openSettings(); });
+/* ---------- 本部にマシンを表示（2026-11） ----------
+   A．ヘッダー：チーム名の右に、斜めに走る自チームのマシン（概要タブだけ。ほかのタブの小さいヘッダーでは出さない）
+   B．概要タブの「マイマシン」カード：横向きのマシンに、空力・PU・ブレーキの位置を示す札。下に項目ごとの値と、全チーム中の順位。押すとマシン開発タブへ
+   絵はレースと同じ drawF1Car（図形で描いているので、大きくしても粗くならない） */
+const myLivery = me => { const P = palOf(me); return { color: P[0], color2: P[2] || defaultColor2(P[0]) }; };
+function carCanvas(cv){
+  const r = cv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+  if(cv.width !== w*dpr || cv.height !== h*dpr){ cv.width = w*dpr; cv.height = h*dpr; }
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  return { g, w, h };
+}
+function drawHeroCar(){
+  const cv = $('#hhCar'), me = myTeam(); if(!cv || !me) return;
+  const { g, w, h } = carCanvas(cv), L = myLivery(me), k = Math.min(w*0.8/34, h*0.95/22), a = -0.3;
+  g.save(); g.translate(w*0.55, h*0.52); g.rotate(a);
+  g.strokeStyle = 'rgba(255,255,255,.38)'; g.lineCap = 'round';          // 走っている感じの流れる線
+  [[-3, 0.9, 1.6], [3, 0.7, 1.2], [-7, 0.45, 1], [7, 0.4, 0.9]].forEach(([y, len, lw]) => { g.lineWidth = lw; g.beginPath(); g.moveTo(-17*k, y*k*0.6); g.lineTo(-17*k - w*0.55*len, y*k*0.6); g.stroke(); });
+  g.scale(k, k*0.74); drawF1Car(g, L.color, L.color2, null, null); try{ drawCarBrand(g, carBrandOf(me.id)); }catch(e){}
+  g.restore();
+}
+/* マイマシンの背景：上から見たガレージの床（2026-11-23）
+   グレーのエポキシ塗装の床に、大きなタイルの継ぎ目・細かい粒・停車位置の白線（角の印）・チームカラーの線・天井の照明のたまり・車の影。
+   粒は決まった並び（毎回同じ模様）。床はライト・ダークどちらのテーマでも暗めなので、札は明るい文字で描く */
+function drawGarageFloor(g, w, h, cx, cy, k, tc){
+  const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, '#3b4047'); bg.addColorStop(1, '#2b2f34');
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  let sd = 1234567; const rnd = () => (sd = (sd*16807) % 2147483647) / 2147483647;
+  for(let i = 0, n = Math.round(w*h/90); i < n; i++){                   // エポキシの細かい粒
+    g.fillStyle = rnd() < 0.5 ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.12)';
+    g.fillRect(rnd()*w, rnd()*h, 1, 1);
+  }
+  const tile = Math.max(56, h*0.62);                                     // タイルの継ぎ目（車の中心から左右対称に）
+  g.strokeStyle = 'rgba(0,0,0,.28)'; g.lineWidth = 1;
+  for(let x = cx % tile; x < w; x += tile){ g.beginPath(); g.moveTo(Math.round(x) + 0.5, 0); g.lineTo(Math.round(x) + 0.5, h); g.stroke(); }
+  for(let y = cy % tile; y < h; y += tile){ g.beginPath(); g.moveTo(0, Math.round(y) + 0.5); g.lineTo(w, Math.round(y) + 0.5); g.stroke(); }
+  g.strokeStyle = 'rgba(255,255,255,.05)';
+  for(let x = cx % tile; x < w; x += tile){ g.beginPath(); g.moveTo(Math.round(x) + 1.5, 0); g.lineTo(Math.round(x) + 1.5, h); g.stroke(); }
+  const lp = g.createRadialGradient(cx, cy, 4, cx, cy, Math.max(w, h)*0.55);   // 天井の照明が当たっているところ
+  lp.addColorStop(0, 'rgba(255,255,255,.16)'); lp.addColorStop(0.5, 'rgba(255,255,255,.05)'); lp.addColorStop(1, 'rgba(0,0,0,.22)');
+  g.fillStyle = lp; g.fillRect(0, 0, w, h);
+  const bw = Math.min(w - 16, 46*k), bh = Math.min(h - 14, 19*k*0.74 + 24), bx = cx - bw/2, by = cy - bh/2, cl = Math.min(16, bw*0.12);   // 停車位置の白線（角の印）
+  g.strokeStyle = 'rgba(240,242,238,.6)'; g.lineWidth = 2.5; g.lineCap = 'square';
+  [[bx, by, 1, 1], [bx + bw, by, -1, 1], [bx, by + bh, 1, -1], [bx + bw, by + bh, -1, -1]].forEach(([x, y, sx, sy]) => { g.beginPath(); g.moveTo(x + sx*cl, y); g.lineTo(x, y); g.lineTo(x, y + sy*cl); g.stroke(); });
+  g.fillStyle = 'rgba(240,242,238,.45)'; g.fillRect(bx + bw - 7, cy - 9, 3, 18);   // 前で止める位置の印（枠の前の端）
+  g.fillStyle = tc; g.globalAlpha = 0.85; g.fillRect(0, h - 5, w, 3); g.globalAlpha = 1;   // チームカラーの線（床の端）
+  g.fillStyle = 'rgba(255,196,0,.7)';                                     // 壁ぎわの黄色と黒の注意線
+  for(let x = -h; x < w; x += 12){ g.beginPath(); g.moveTo(x, 4); g.lineTo(x + 6, 4); g.lineTo(x + 10, 0); g.lineTo(x + 4, 0); g.closePath(); g.fill(); }
+  g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(0, 4, w, 1);
+  g.save(); g.translate(cx + 2, cy + 4); g.scale(1, 0.42);                // 車の影
+  const sh = g.createRadialGradient(0, 0, 2, 0, 0, 19*k); sh.addColorStop(0, 'rgba(0,0,0,.45)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = sh; g.beginPath(); g.arc(0, 0, 19*k, 0, 7); g.fill(); g.restore();
+}
+function drawMyCarCard(){
+  const cv = $('#mcCv'), me = myTeam(); if(!cv || !me) return;
+  const { g, w, h } = carCanvas(cv), L = myLivery(me), k = Math.min((w - 20)/36, (h - 50)/18), cx = w/2, cy = h/2 + 4;
+  drawGarageFloor(g, w, h, cx, cy, k, L.color);
+  g.save(); g.translate(cx, cy); g.scale(k, k*0.74); drawF1Car(g, L.color, L.color2, null, null); try{ drawCarBrand(g, carBrandOf(me.id)); }catch(e){} g.restore();
+  // 部品の位置を示す札（車の座標 → 画面の座標）。床が暗いので、テーマにかかわらず明るい文字
+  const at = (x, y) => [cx + x*k, cy + y*k*0.74];
+  const dark = true;
+  const ink = '#f1f3f5', lineC = 'rgba(241,243,245,.6)';
+  g.font = '700 11px "M PLUS 1p",sans-serif'; g.textBaseline = 'middle';
+  [['空力', 17, -7, 0, -1], ['PU', -3, 0, 0, -1], ['ブレーキ', 11, 8.4, 0, 1]].forEach(([lab, x, y, dx, dir]) => {
+    const [px, py] = at(x, y), ty = dir < 0 ? 12 : h - 12, tw = g.measureText(lab).width + 14, tx = clamp(px - tw/2, 2, w - tw - 2);
+    g.strokeStyle = lineC; g.lineWidth = 1; g.beginPath(); g.moveTo(px, py); g.lineTo(px, ty + (dir < 0 ? 9 : -9)); g.stroke();
+    g.fillStyle = ink; g.beginPath(); g.arc(px, py, 2.6, 0, 7); g.fill();
+    g.fillStyle = dark ? 'rgba(20,22,26,.78)' : '#ffffff'; g.strokeStyle = lineC; g.beginPath(); g.roundRect(tx, ty - 9, tw, 18, 9); g.fill(); g.stroke();
+    g.fillStyle = ink; g.textAlign = 'center'; g.fillText(lab, tx + tw/2, ty + 0.5);
+  });
+}
+let carRsT = 0; window.addEventListener('resize', () => { clearTimeout(carRsT); carRsT = setTimeout(() => { try{ drawHeroCar(); drawMyCarCard(); }catch(e){} }, 150); });   // 画面の大きさが変わったら描き直す
+function myCarCardHtml(me){
+  const teams = career.teams, rk = k => 1 + teams.filter(t => t !== me && t.car[k] > me.car[k]).length;
+  const avgRk = Math.round(teams.map(t => [t, PARTS.flatMap(p => p[2]).reduce((a, [k]) => a + t.car[k], 0)]).sort((a, b) => b[1] - a[1]).findIndex(x => x[0] === me) + 1);
+  const part = ([id, name, keys]) => `<button type="button" class="mcPart" data-hqt="dev" aria-label="${esc(name)}：マシン開発タブへ"><span class="mcPH"><span class="pico" aria-hidden="true">${PART_ICO[id] || ''}</span><b>${esc(name)}</b></span>${keys.map(([k, lab]) => { const r = rk(k);
+    return `<span class="mcRow"><span class="mcL">${esc(lab)}</span><span class="mcBar" aria-hidden="true"><i style="width:${clamp(me.car[k]*10, 4, 100)}%"></i></span><b class="num">${me.car[k].toFixed(1)}</b><small class="mcRk${r <= 3 ? ' top' : r >= teams.length - 2 ? ' low' : ''}">${r}位</small></span>`; }).join('')}</button>`;
+  return `<div class="sec mcCard"><h2>マイマシン<span class="kick">全${teams.length}チーム中 総合${avgRk}位</span><button type="button" class="b sm ghost mcGo" data-hqt="dev">マシン開発 ›</button></h2>
+    <canvas id="mcCv" class="mcCv" role="img" aria-label="${esc(me.name)}のマシン"></canvas>
+    <div class="mcParts">${PARTS.map(part).join('')}</div></div>`;
+}
 /* 本部のチームカラーと、固定タブの位置（上のヘッダーの高さ）・ヘッダーが見えなくなったら細い帯を出す */
 let hqObs = null;
 function hqTheme(el, me){
@@ -21029,6 +21516,7 @@ function renderHQView(msg){
 
         <tr><td>基本スポンサー収入${career.last.pop ? `<small class="muted">（人気度込み）</small>` : ''}</td><td class="gainT">+${money(career.last.led.spons)}</td></tr>
         ${career.last.led.sreq ? `<tr><td>スポンサーの依頼による${career.last.led.sreq > 0 ? '上乗せ' : '減額'}</td><td class="${career.last.led.sreq > 0 ? 'gainT' : 'lossT'}">${career.last.led.sreq > 0 ? '+' : ''}${money(career.last.led.sreq)}</td></tr>` : ''}
+        ${career.last.led.title ? `<tr><td>タイトルスポンサー（${esc(career.title ? career.title.co : '')}）</td><td class="gainT">+${money(career.last.led.title)}</td></tr>` : ''}
         ${career.last.led.deal ? `<tr><td>スポンサー契約${career.sponsor ? `（${esc(career.sponsor.name)}）` : ''}</td><td class="gainT">+${money(career.last.led.deal)}</td></tr>` : ''}
         <tr><td>賞金（ポイント・完走）</td><td class="gainT">+${money(career.last.led.prize)}</td></tr>
         <tr><td>ドライバー年俸（1戦分）</td><td class="lossT">${money(career.last.led.sal)}</td></tr>
@@ -21063,6 +21551,7 @@ function renderHQView(msg){
     if(!career.sponsor) todoI.unshift(['bad', 'スポンサーを選ぶ', 'ov']);
     Object.keys(career.facRen || {}).forEach(k => todoI.push(['warn', `${FAC_K[k].n}の改修を決める`, 'fac']));
     if(career.takeAsk) todoI.unshift(['bad', '新しいチーム名にするか決める（下の「チームの身売り」）', 'ov']);
+    if(career.titleOffer) todoI.unshift(['bad', career.titleOffer.renew ? 'タイトルスポンサーの延長を決める' : 'タイトルスポンサーの提案に答える', 'ov']);
     const todoB = `<div class="osBlk osTodo ${todoI.length ? '' : 'ok'}"><span class="osLab">要対応${todoI.length ? `<b>${todoI.length}件</b>` : ''}</span>${todoI.length ? `<div class="osTodoL">${todoI.map(([lv, t, tab]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"><i aria-hidden="true">!</i><span>${esc(t)}</span></button>`).join('')}</div>` : '<p class="osNone">対応が必要なことはありません。</p>'}</div>`;
     // ドライバー：総合の前後と、能力ごとの伸び
     const drvCard = code => { const d = career.drivers[code]; if(!d || !d.st) return '';
@@ -21110,6 +21599,7 @@ function renderHQView(msg){
       ${todoB}
       ${campCardHtml()}
       ${off.take ? `<div class="osBlk"><span class="osLab">チームの身売り</span>${takeCardHtml(off.take, false)}</div>` : ''}
+      ${off.title && (off.title.hit || off.title.end) ? `<div class="osBlk"><span class="osLab">タイトルスポンサー</span>${off.title.hit ? `<div>${esc(off.title.hit.co)}との目標（コンストラクターズ${off.title.hit.goal}位以上）を達成。成功ボーナス <b class="gainT">+${money(off.title.hit.pay)}</b></div>` : ''}${off.title.end ? `<div>${esc(off.title.end.co)}との契約が${off.title.end.why === 'fail' ? '終わりました（目標は達成できませんでした）' : '終わりました'}。チーム名とカラーは「${esc(off.title.end.name)}」に戻りました。</div>` : ''}</div>` : ''}
       <div class="osBlk osPrev"><span class="osLab">前シーズンの精算</span>
         ${off.sisSeason ? `<div style="margin-bottom:6px">セカンドチーム（${esc(off.sisSeason.name)}）はコンストラクターズ${off.sisSeason.pos}位。シーズン賞金の分配 <b class="gainT">+${money(off.sisSeason.v)}</b></div>` : ''}
         ${off.owner ? `<div style="margin-bottom:6px">前シーズン：コンストラクターズ${off.owner.pos}位（${off.owner.goal && off.owner.goal.kind !== 'rank' ? `主目標「${esc(off.owner.gt)}」${esc(off.owner.gp)}${off.owner.ease ? '。先行研究の分、少し届かなくても達成として扱う' : ''}` : `目標${off.owner.target}位以内${off.owner.ease ? `。先行研究の評価で${Math.min(10, off.owner.target + off.owner.ease)}位までを達成として扱う` : ''}`}）→ <b class="${off.owner.cls}">${off.owner.grade}</b>。ボーナス ${off.owner.bonus >= 0 ? '+' : ''}${money(off.owner.bonus)}、シーズン賞金 +${money(off.owner.prize)}、信頼度 ${off.owner.trustD >= 0 ? '+' : ''}${off.owner.trustD}${off.owner.subs && off.owner.subs.length ? `。副目標 ${off.owner.subs.map(x => `「${esc(x.t)}」<b class="${x.ok ? 'gainT' : 'lossT'}">${x.ok ? '達成' : '未達'}</b>`).join('・')}（ボーナス +${money(off.owner.subB)}・信頼度 ${off.owner.subT >= 0 ? '+' : ''}${off.owner.subT}）` : ''}（信頼度 ${off.owner.trust}）</div>${off.owner.pers ? `<div class="persShift">オーナーが方針を転換：<b>${esc(OWNER_PERS[off.owner.pers.from].n)}</b> → <b>${esc(OWNER_PERS[off.owner.pers.to].n)}</b>。今シーズンの副目標は新しい方針で選ばれています。</div>` : ''}` : ''}
@@ -21499,7 +21989,7 @@ function renderHQView(msg){
   el.innerHTML = `
     ${(() => { const P = popOf(me), pd = career.last && career.last.pop ? career.last.pop.d : 0, ln = career.loan && career.loan.bal > 0 ? career.loan.bal : 0;
       return `<div class="hqHero${hqTab === 'ov' ? '' : ' sm'}" id="hqHero">
-      <div class="hhTop">${teamLogo(me, 56)}<div class="hhName"><span class="kick">TEAM PRINCIPAL${me.short ? ` · ${esc(me.short)}` : ''}</span><b>${esc(me.name)}</b><small>${SY(career.season)}年シーズン ・ ${seasonOver ? '全戦終了' : `第${career.round + 1}戦 / ${career.calendar.length}戦`}</small></div></div>
+      <div class="hhTop">${teamLogo(me, 56)}<div class="hhName"><span class="kick">TEAM PRINCIPAL${me.short ? ` · ${esc(me.short)}` : ''}</span><b>${esc(me.name)}</b><small>${SY(career.season)}年シーズン ・ ${seasonOver ? '全戦終了' : `第${career.round + 1}戦 / ${career.calendar.length}戦`}</small></div>${hqTab === 'ov' ? '<canvas class="hhCar" id="hhCar" aria-hidden="true"></canvas>' : ''}</div>
       <div class="hhTiles">
         <div class="hht"><span>選手権</span><b class="num">P${myPos}</b><small>${career.cpts[me.id] || 0} pt</small></div>
         <div class="hht"><span>資金</span><b class="num ${career.money < 0 ? 'neg' : ''}">${money(career.money)}</b><small>${ln ? `融資 ${money(ln)}` : '融資なし'}</small></div>
@@ -21518,8 +22008,8 @@ function renderHQView(msg){
       return `<div class="hqStick" id="hqStick"><div class="hqMB" aria-hidden="true">${teamLogo(me, 26)}<b>${esc(me.name)}</b><span class="num">P${myPos}</span><span class="num ${career.money < 0 ? 'neg' : ''}">${money(career.money)}</span></div>
       <nav class="hqTabs" role="tablist" aria-label="チーム本部の表示">${HQ_TABS.map(([k, l]) => `<button type="button" role="tab" data-hqt="${k}" class="${hqTab === k ? 'on' : ''}" aria-selected="${hqTab === k}" aria-label="${l}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${HQ_TAB_ICO[k]}"/></svg><span class="tl">${l}</span>${HQ_TAB_SHORT[k] ? `<span class="ts" aria-hidden="true">${HQ_TAB_SHORT[k]}</span>` : ''}${badge(k)}</button>`).join('')}</nav></div>`; })()}
     ${hqTab === 'ov' ? `<div class="hqGrid">
-      <div class="hqCol">${conCard}${evCard}${sreqCard}${nextCard}${offCard}${todo}</div>
-      <div class="hqCol">${ownerCard}${spCard}${last}${miniStand}</div>
+      <div class="hqCol">${conCard}${evCard}${sreqCard}${nextCard}${myCarCardHtml(me)}${offCard}${todo}</div>
+      <div class="hqCol">${ownerCard}${titleCardHtml()}${spCard}${last}${miniStand}</div>
     </div>${cal}` : ''}
     ${hqTab === 'drv' ? `${conCard}${drivers}${reserveCard}${acadCard}${sisDrvCard}${loanCard}` : ''}
     ${hqTab === 'dev' ? dev + loanCard : ''}
@@ -21528,6 +22018,7 @@ function renderHQView(msg){
     ${hqTab === 'rec' ? renderRecords() : ''}
     ${rd ? `<div class="raceBar ${hqTab === 'ov' ? 'onOv' : ''}"><div class="rbIn"><span class="rbInfo">${gpFlag(rd.name, 12)}<b>${esc(rd.name)}</b><small>ROUND ${career.round + 1}/${career.calendar.length}${rd.month ? `・${rd.month}月` : ''}</small></span>${rbMoneyHtml()}${!inProgress ? '<button class="b skipBtn" type="button" id="skipRaceBar" title="予選と決勝を計算だけで進め、結果とハイライトを出します">スキップ</button>' : ''}<button class="b go" type="button" id="goRaceBar">${inProgress ? 'レースに戻る' : Q ? '予選に戻る' : '予選へ'}</button></div></div>` : ''}`;
   hqTheme(el, me);
+  try{ drawHeroCar(); drawMyCarCard(); }catch(err){}                // 本部のマシンの絵
   if(!seasonOver && ((career.ev && !career.ev.pop) || (sreqPending() && !sreqPending().pop))) evPopTimer = setTimeout(() => maybeEvPopup(), 450);   // 出来事・スポンサーの依頼のポップアップ
   const mt = $('#miniTrack'); if(mt && rd) requestAnimationFrame(() => drawMini(mt, rd));
   el.querySelectorAll('[data-up]').forEach(b => b.onclick = () => upgrade(b.dataset.up));
@@ -21658,16 +22149,15 @@ const lastLaps = c => race.laps >= 4 && c.laps.length >= race.laps - 3 && c.fini
 // 逆境○：レース終盤（残り4分の1）に11位以下（ポイント圏外）
 const grittyOn = c => race.laps >= 4 && c.laps.length >= Math.ceil(race.laps*0.75) && c.finish === null && curPos(c) > 10;
 function trGrip(c){
-  if(c.dmg && c.dmg.wing && (!c.m || !c.m.ab)) return WING_G;
-  if(!c.m || !c.m.ab) return 1;
+  if(!c.m || !c.m.ab) return (c.dmg && c.dmg.wing ? WING_G : 1) * punctK(c) * floorK(c);
   let k = 1 + race.wet*(c.m.wetK || 0);
   if(hasAb(c, 'charge') && curPos(c) > c.grid && c.laps.length >= 1) k *= 1.012;
   if(hasAb(c, 'last') && lastLaps(c)) k *= 1.012;
   if(hasAb(c, 'gritty') && grittyOn(c)) k *= 1.012;
   if(hasAb(c, 'slow') && c.laps.length === 0) k *= 0.985;
-  return k * (c.dmg && c.dmg.wing ? WING_G : 1);
+  return k * (c.dmg && c.dmg.wing ? WING_G : 1) * punctK(c) * floorK(c);
 }
-function trV(c){ return (hasAb(c, 'last') && lastLaps(c) ? 1.005 : 1) * (hasAb(c, 'gritty') && grittyOn(c) ? 1.005 : 1) * (c.dmg && c.dmg.wing ? WING_V : 1); }   // ウイング破損：最高速も少し落ちる
+function trV(c){ return (c.punct ? PUNCT_V : 1) * (hasAb(c, 'last') && lastLaps(c) ? 1.005 : 1) * (hasAb(c, 'gritty') && grittyOn(c) ? 1.005 : 1) * (c.dmg && c.dmg.wing ? WING_V : 1); }   // ウイング破損：最高速も少し落ちる
 function trA(c){
   if(race.t < 6){ const g = (c.dirtyGrid && race.t < 4 ? 0.95 : 1) * (c.laps.length === 0 && c.cross <= 1 ? (LAUNCH_A[c.comp] || 1) : 1);   // タイヤの蹴り出し（ソフトは良く、ハードは悪い）
     if(hasAb(c, 'start')) return 1.25*g; if(hasAb(c, 'slow')) return 0.8*g; if(g !== 1) return g; }
@@ -26853,7 +27343,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.7.0';
+const APP_VER = '1.8.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -26893,6 +27383,22 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.8.0', items: [
+    ['レース', [
+      'マシン同士の接触に新しい結果：コース外への押し出し・パンク・フロアの損傷・1周目の玉突き・仕掛けた側の自滅スピン（クラッシュは増えないように調整）',
+      '接触の形（飛び込み・横並び・リアに接触）で、起きやすい結果と審議の重さが変わる',
+      'パンクしたら、すぐピットに入るか粘るかを選べる（粘りすぎるとバースト）',
+      'リアウイングにタイトルスポンサーの名前・チームの略称（寄ったときに表示）',
+    ]],
+    ['スポンサー', [
+      'タイトルスポンサー契約を追加（チーム名にスポンサー名が付き、チームカラーも変わる。下位チームほど提案が来やすい）',
+      'ペイドライバー型の持参金・報酬をアップ',
+    ]],
+    ['本部', [
+      'マイマシンの背景をガレージの床風に',
+      'スマホのブラウザで開いたとき、下のタブを押しやすい位置に',
+    ]],
+  ] },
   { v: '1.7.0', items: [
     ['本部', [
       'チームカラーを生かした見た目に。スマホはタブを画面の下に',
@@ -27191,7 +27697,7 @@ function makeNews(){
     const ai = TL.filter(x => x.team !== me && x.kind === 'swap');
     if(ai.length){ const x = ai[0]; add('チームオーダー', '', 48, `${nm(x.team)}、チームオーダーで順位を入れ替え`, `終盤、${x.y}がポイントで上回る${x.b}に順位を譲った。`); } }
   { const CT = (race.contacts || []).filter(x => x.kind !== 'out'); const meC = CT.filter(x => x.at === me || x.bt === me);
-    if(meC.length){ const x = meC[0]; add('接触', 'bad', 62, `${x.a}と${x.b}が${x.lap}周目に接触`, `${x.kind === 'wing' ? `${x.a}はフロントウイングを壊した。` : x.kind === 'spin' ? `${x.b}がスピンを喫した。` : '大事には至らなかった。'}${CT.length > 1 ? `このレースでは計${CT.length}件の接触があった。` : ''}`); }
+    if(meC.length){ const x = meC[0]; add('接触', 'bad', 62, `${x.a}と${x.b}が${x.lap}周目に${x.shape === 'dive' ? '接触（飛び込んで追突）' : x.shape === 'side' ? '接触（並んで）' : x.shape === 'tail' ? '接触（リアに）' : x.shape === 'chain' ? '接触（1周目の玉突き）' : '接触'}`, `${x.kind === 'wing' ? `${x.a}はフロントウイングを壊した。` : x.kind === 'spin' ? `${x.b}がスピンを喫した。` : x.kind === 'self' ? `${x.a}が自らスピンした。` : x.kind === 'floor' ? `${x.fl || x.b}がフロアを傷めた。` : x.kind === 'punct' ? 'タイヤが切れてパンクした。' : x.kind === 'push' ? `${x.b}はコースの外へ押し出された。` : '大事には至らなかった。'}${CT.length > 1 ? `このレースでは計${CT.length}件の接触があった。` : ''}`); }
     else if(CT.length >= 2) add('接触', '', 38, `接触が${CT.length}件、荒れたレースに`, `${CT.map(x => `${x.lap}周目 ${x.a}と${x.b}`).slice(0, 3).join('、')}。`); }
   if(L.aduo){ const A = L.aduo, nm = id => (teamOf(id) || {}).name || '';
     if(A.granted.length) add('ADUO', 'good', A.granted.some(x => x.id === me) ? 92 : 70, `FIA、${A.granted.map(x => nm(x.id)).join('と')}にADUOを認定`, `第${A.round}戦のあとのPU性能の判定で、トップから${A.granted.map(x => `${nm(x.id)}は${x.gap}%`).join('、')}の遅れ。今季の残りはPUの開発の機会が増え、開発費も軽くなる。`);
