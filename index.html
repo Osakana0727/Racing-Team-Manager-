@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.8.0 -->
+<!-- レーシングチームマネージャー ver 1.8.1 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.8.0">
-<meta name="build" content="20261123-1">
+<meta name="version" content="1.8.1">
+<meta name="build" content="20261123-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -3668,7 +3668,8 @@ button.hht:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .setBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:760px){.setBtn{width:34px;justify-content:center;padding:0}}
 .setBtn+.guideBtn{margin-left:6px}
-@media (max-width:420px){header .appVer{display:none}}
+@media (max-width:420px){header{padding-left:12px;padding-right:12px;gap:8px}header .appVer{margin-left:4px;font-size:8.5px;letter-spacing:0;white-space:nowrap}header .appVer .vw{display:none}}   /* スマホ：小さくしてタイトルの横に出す（2026-11-23。以前は隠していた） */
+@media (max-width:374px){header h1{font-size:14.5px}header .appVer{margin-left:3px;font-size:8px}}   /* とても狭い画面：1行に収める */
 body.raceView #setBtn{display:none}   /* レース中は設定（リセットなど）を出さない */   /* スマホは1行に収めるため、バージョンは設定メニューに表示 */
 
 /* チームの出来事のポップアップ */
@@ -3804,7 +3805,7 @@ body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:sp
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer">ver 1.8.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer"><span class="vw">ver </span>1.8.1</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -4077,6 +4078,7 @@ body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:sp
     <div class="row" style="margin-top:14px;justify-content:flex-end">
       <button class="b" id="devModalGo" type="button">このまま予選へ</button>
       <button class="b" id="devModalSkip" type="button" hidden>開発せずにスキップ</button>
+      <button class="b go" id="devModalAuto" type="button" hidden>AIにおまかせで開発してスキップ</button>
       <button class="b go" id="devModalDev" type="button">マシン開発へ</button>
     </div>
   </div>
@@ -17900,6 +17902,9 @@ function devLeftAsk(){
   if(!costs.length || career.money < Math.min(...costs)) return false;   // 開発できるものがない・お金が足りないなら聞かない
   $('#devModalMsg').innerHTML = `今戦の開発枠が <b class="num">${n}/${devSlots()}</b> 回残っています。使わなかった枠は次戦に持ち越せません。<br>${skipPending ? '開発せずにレースをスキップしますか？' : '開発せずに予選へ進みますか？'}`;
   $('#devModalGo').hidden = skipPending; $('#devModalSkip').hidden = !skipPending;   // スキップから来たときは「予選へ」ではなく「スキップ」のボタン
+  $('#devModalAuto').hidden = !(skipPending || qSkipPending);    // スキップのときだけ「AIにおまかせ」（2026-11-23）
+  $('#devModalDev').classList.toggle('go', !(skipPending || qSkipPending));   // スキップのときは「おまかせ」を目立たせる
+  $('#devModalGo').textContent = qSkipPending ? '開発せずに予選をスキップ' : 'このまま予選へ';
   $('#devModal').classList.add('show');
   setTimeout(() => { const b = $('#devModalDev'); if(b) b.focus(); }, 0);
   return true;
@@ -17908,6 +17913,12 @@ function devLeftAsk(){
   const hide = () => { $('#devModal').classList.remove('show'); };
   const cancel = () => { hide(); skipPending = false; qSkipPending = false; };   // 閉じたら、スキップの予約も取り消す
   $('#devModalSkip').onclick = () => { hide(); skipPending = true; goRace(true); skipPending = false; };
+  $('#devModalAuto').onclick = () => {                         // AIにおまかせ：残りの開発枠を自動で使ってから、選んだスキップを続ける
+    hide(); const sk = skipPending, qs = qSkipPending;
+    let L = []; try{ L = autoDev(); }catch(e){ console.error(e); }
+    hqToast('ok', 'AIにおまかせで開発しました', autoDevText(L));
+    skipPending = sk; qSkipPending = qs; goRace(true); skipPending = false;
+  };
   $('#devModalDev').onclick = () => { hide(); skipPending = false; qSkipPending = false; hqTab = 'dev'; lsSet(HQ_TAB_KEY, hqTab); showHQ(); window.scrollTo(0, 0); };   // チーム本部のマシン開発タブを開く
   $('#devModalGo').onclick = () => { hide(); skipPending = false; goRace(true); };
   $('#devModal').addEventListener('click', e => { if(e.target.id === 'devModal') cancel(); });   // 外側を押すと閉じる（予選には進まない）
@@ -17934,6 +17945,37 @@ function goRace(force){
   startQuali(list, rd);                                     // 予選（終わると enterRace にグリッド順で渡す）
   if(skipPending){ skipPending = false; try{ skipAfterQuali(); }catch(e){ skipAbort(e); } }   // スキップ：予選から決勝の結果まで計算だけで進める
   else if(qSkipPending){ qSkipPending = false; qSkipAll(); qrRender(); }   // 予選だけスキップ：結果を出して、決勝へ進むボタンを待つ
+}
+/* ---------- マシン開発をAIにおまかせ（スキップのとき・2026-11-23） ----------
+   残っている開発枠を使い切るまで、いちばん値の低い項目から順に開発する（同じ値なら安い方）。
+   PUはワークスのときだけ、PU専用の枠で開発する。規則変更に向けた研究には枠を使わない。
+   お金は、次のレースの出費（年俸・運営費・施設の維持費）＋$2M を手元に残せる範囲でだけ使う。
+   開発の結果（成功・大成功・失敗）は、自分で押したときと同じ確率で決まる */
+function autoDevReserve(){
+  const me = myTeam();
+  const sal = me.drivers.reduce((a, c) => a + payOf(c), 0) + resList(me).reduce((a, c) => a + payOf(c), 0);
+  return r1(sal + OPS_COST + facUpkeepSum(me) + 2);
+}
+function autoDev(){
+  const t = myTeam(), out = [], keep = autoDevReserve();
+  for(let guard = 0; guard < 16; guard++){
+    const canPU = puWorks(t) && puSlotsLeft() > 0, canCh = slotsLeft() > 0;
+    const cand = CAR_KEYS.filter(k => t.car[k] < 10 && (PU_KEYS.includes(k) ? canPU : canCh))
+      .map(k => ({ k, v: t.car[k], c: devCostFor(k, t.car[k]) })).filter(x => career.money - x.c >= keep)
+      .sort((a, b) => a.v - b.v || a.c - b.c);
+    if(!cand.length) break;
+    const { k, v } = cand[0], before = slotsLeft() + puSlotsLeft(), m0 = career.money;
+    upgrade(k);
+    if(slotsLeft() + puSlotsLeft() >= before) break;           // 開発できなかった（念のため）
+    out.push({ k, from: v, to: t.car[k], tier: career.devLast ? career.devLast.tier : 0, cost: r1(m0 - career.money) });
+  }
+  return out;
+}
+function autoDevText(L){
+  const nm = k => { for(const p of PARTS) for(const [kk, lab] of p[2]) if(kk === k) return lab; return k; };
+  if(!L.length) return '開発できる項目がないか、手元に残すお金が足りないため、開発しませんでした。';
+  const cost = r1(L.reduce((a, x) => a + x.cost, 0));
+  return L.map(x => `${nm(x.k)} ${x.from.toFixed(1)}→${x.to.toFixed(1)}${x.tier === 2 ? '（大成功）' : x.tier === 0 ? '（失敗）' : ''}`).join('、') + `。費用 ${money(cost)}`;
 }
 /* ---------- レースのスキップ（予選も決勝も、画面を見ずに結果まで） ----------
    ・本部の「スキップ」：予選は全セッションを一気に計算し、決勝はいつものレースの計算を、画面に描かずに最後まで回す（結果は普段と同じ計算）
@@ -27343,7 +27385,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.8.0';
+const APP_VER = '1.8.1';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -27383,6 +27425,12 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.8.1', items: [
+    ['本部', [
+      'スキップのとき、残った開発枠をAIにおまかせで使えるボタン',
+      'スマホでもタイトルの横にバージョンを表示',
+    ]],
+  ] },
   { v: '1.8.0', items: [
     ['レース', [
       'マシン同士の接触に新しい結果：コース外への押し出し・パンク・フロアの損傷・1周目の玉突き・仕掛けた側の自滅スピン（クラッシュは増えないように調整）',
