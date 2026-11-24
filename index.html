@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.8.1 -->
+<!-- レーシングチームマネージャー ver 1.9.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.8.1">
-<meta name="build" content="20261123-2">
+<meta name="version" content="1.9.0">
+<meta name="build" content="20261125-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1890,6 +1890,10 @@ td.rg{padding:0 3px}
 .rg i.pl{left:3px;background:currentColor}
 .rg i.fl{right:3px;background:#a24bff}
 .rgLeg{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:8px;font-size:11px;color:var(--muted)}
+/* 戦ごとの結果は横にスクロール（2026-11-23）。左のドライバー／チームの列は固定 */
+#hq .wrapx.rgW,.wrapx.rgW{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;padding-bottom:4px}
+.rgTbl tr > :first-child{position:sticky;left:0;z-index:1;background:var(--panel)}
+.rgTbl tr > th:first-child{z-index:2}
 .rgLeg span{display:inline-flex;align-items:center;gap:5px}
 .rgLeg i.rg{display:inline-block;min-width:0;width:14px;height:12px;border-radius:3px}
 .rgLeg i.rg:not([class*=" p"]):not(.dnf){box-shadow:inset 0 0 0 1px var(--line)}
@@ -2651,6 +2655,15 @@ body.career.pcRace .radio .rw{font-size:9.5px;padding:1px 4px}
 .dcName small{color:var(--muted);font-size:12px}
 .dcChips{display:flex;flex-wrap:wrap;gap:6px}
 .gtV.guess{color:var(--muted)}
+/* アカデミーの逸材（2026-11-25） */
+.proTag{display:inline-block;margin-left:4px;padding:0 6px;border-radius:999px;font-size:10.5px;font-weight:900;line-height:1.6;color:#1f2328;background:linear-gradient(90deg,#ffd24d,#ffb000);vertical-align:1px}
+.acCand.pro{box-shadow:inset 0 0 0 2px #ffc400;border-radius:10px}
+/* 成長の時期のタグ（2026-11-23）：成長期＝緑・全盛期＝黄・衰退期＝赤（年齢グラフの背景と同じ色分け） */
+.gtPh{display:inline-block;margin:0 4px 2px 0;padding:0 6px;border-radius:999px;font-size:11px;font-weight:900;line-height:1.6;white-space:nowrap}
+.gtPh.p0{background:rgba(60,224,140,.18);color:#118a52}.gtPh.p1{background:rgba(255,196,0,.22);color:#8a6400}.gtPh.p2{background:rgba(255,90,110,.16);color:#c22a45}
+:root[data-theme="dark"] .gtPh.p0{color:#5be3a0}:root[data-theme="dark"] .gtPh.p1{color:#ffd24d}:root[data-theme="dark"] .gtPh.p2{color:#ff8a9c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .gtPh.p0{color:#5be3a0}:root:not([data-theme="light"]) .gtPh.p1{color:#ffd24d}:root:not([data-theme="light"]) .gtPh.p2{color:#ff8a9c}}
+.dcChip.gt .gtPh{display:table;margin-bottom:3px}
 .gtCurve{display:block;margin-top:2px;overflow:visible}
 /* 「成長」の枠は2行を許す（「やや晩成？」が枠からはみ出さないように。「やや」のあとで折り返す） */
 .dcChip.gt{min-width:0}
@@ -3805,7 +3818,7 @@ body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:sp
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer"><span class="vw">ver </span>1.8.1</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer"><span class="vw">ver </span>1.9.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -7116,7 +7129,7 @@ function f1Mirror(pts){ return pts.concat(pts.slice().reverse().map(([x,y])=>[x,
    上から見たマシンの、エンジンカバー・左右のサイドポッド・リアウイングの上面に描く（drawF1Car と同じ座標。前が +x）。
    ・自チーム：エンジンカバーにタイトルスポンサーのマーク（いなければチームのロゴ）、サイドポッドに通常のスポンサー契約の会社のマーク、
      リアウイングにタイトルスポンサーの英字名（いなければチームの略称）
-   ・AIチーム：エンジンカバーにチームのロゴ、リアウイングにチームの略称
+   ・AIチーム：エンジンカバーにチームのロゴ、リアウイングに今のチーム名（2026-11-23：色の略称から変更）
    ※ 2026-11-23：ロゴ（エンジンカバー・サイドポッド）は出さないことにした。今はリアウイングの文字だけ
    ・画面で小さく見えるときは描かない（レース画面で引いたカメラのとき）。リアウイングの文字は大きく見えるときだけ
    ・ロゴはSVGをデータURLの画像にして使い回す（読み込みが終わるまでは描かない） */
@@ -7128,16 +7141,66 @@ function teamLogoImg(t){
 }
 // リアウイングの文字の書体（2026-11-23）：スポンサーはロゴのワードマークの雰囲気（SP_TYPE と同じ分け方）、チームの略称はレースらしい太字の斜体
 // [書体, 文字の間隔（字の大きさに対する割合）]
+// 2026-11-23：すべて太字に（読み込んでいる太さの上限：Chakra Petch 700・M PLUS 1p 900）。チーム名は日本語なので M PLUS 1p の最も太い字
 const WING_FONT = {
-  heavy:   ['800 1.4px "Chakra Petch",sans-serif', 0.12],
-  round:   ['800 1.35px "M PLUS 1p",sans-serif', 0.1],
-  wide:    ['700 1.3px "Chakra Petch",sans-serif', 0.32],
-  italic:  ['italic 800 1.4px "Chakra Petch",sans-serif', 0.1],
+  heavy:   ['700 1.45px "Chakra Petch",sans-serif', 0.1],
+  round:   ['900 1.4px "M PLUS 1p",sans-serif', 0.08],
+  wide:    ['700 1.35px "Chakra Petch",sans-serif', 0.3],
+  italic:  ['italic 700 1.45px "Chakra Petch",sans-serif', 0.08],
   mono:    ['800 1.5px ui-monospace,Menlo,Consolas,monospace', 0.04],
-  light:   ['500 1.3px "Chakra Petch",sans-serif', 0.28],
-  serif:   ['400 1.4px Georgia,"Times New Roman",serif', 0.26],
-  classic: ['700 1.4px Georgia,"Times New Roman",serif', 0.16],
-  team:    ['italic 700 1.55px "Chakra Petch",sans-serif', 0.14]
+  light:   ['700 1.35px "Chakra Petch",sans-serif', 0.26],
+  serif:   ['700 1.45px Georgia,"Times New Roman",serif', 0.22],
+  classic: ['700 1.45px Georgia,"Times New Roman",serif', 0.14],
+  team:    ['italic 700 1.6px "Chakra Petch",sans-serif', 0.1]
+};
+// リアウイングに出すチーム名：今のチーム名の最初の言葉を英語で（例：アズール・レーシング → AZURE）。2026-11-23
+// 辞書にある言葉は英語の綴り、ない言葉（オリジナルチームの名前など）はカタカナをローマ字にする。英字の名前はそのまま大文字に
+const WING_EN = {
+  'アズール':'AZURE','スカーレット':'SCARLET','ノルド':'NORD','ソル':'SOL','タイダル':'TIDAL','エンバー':'EMBER','フォレスト':'FOREST','ヴァイオレット':'VIOLET','ブロッサム':'BLOSSOM','アイアン':'IRON',
+  'ヴェルテクス':'VERTEX','ハルシオン':'HALCYON','ケストレル':'KESTREL','オベリスク':'OBELISK','セレスティア':'CELESTIA','ラディアント':'RADIANT','グラナイト':'GRANITE','オルカ':'ORCA','ペルセウス':'PERSEUS','ノクターン':'NOCTURNE','アルティア':'ALTIA','カデンツァ':'CADENZA',
+  'ヴォルテン':'VOLTEN','アストリア':'ASTORIA','ドラコ':'DRACO','イグニス':'IGNIS','ハヤテ':'HAYATE','セリオン':'SERION',
+  'ノヴァテック':'NOVATECH','クォンタ':'QUANTA','ピクセラ':'PIXELA','アクアリス':'AQUARIS','ブルーフィン':'BLUEFIN','ゼフィラ':'ZEPHYRA','オムニカ':'OMNICA','リンクスネット':'LYNXNET','サンブリッジ':'SUNBRIDGE','フロストバイト':'FROSTBITE'
+};
+let wingEnSp = false;
+function wingEnInit(){ if(wingEnSp) return; wingEnSp = true; Object.entries(SP_LOGO).forEach(([co, L]) => { const b = titleBrand(co); if(!WING_EN[b]) WING_EN[b] = L.en.split(' ')[0]; }); }   // スポンサー36社のブランド名（読み込みの順番のため、最初に使うときに足す）
+// よく使われそうな英単語（オリジナルチームの名前など、辞書にない名前を単語ごとに英語にする。長い単語から先に当てはめる）
+const WING_WORD = {'ブルー':'BLUE','レッド':'RED','グリーン':'GREEN','イエロー':'YELLOW','ホワイト':'WHITE','ブラック':'BLACK','ゴールド':'GOLD','シルバー':'SILVER','ピンク':'PINK','オレンジ':'ORANGE','パープル':'PURPLE',
+  'シャーク':'SHARK','ドラゴン':'DRAGON','タイガー':'TIGER','ライオン':'LION','イーグル':'EAGLE','ホーク':'HAWK','ファルコン':'FALCON','ウルフ':'WOLF','フェニックス':'PHOENIX','パンサー':'PANTHER','コブラ':'COBRA','バイパー':'VIPER','スコーピオン':'SCORPION','ホース':'HORSE','ブル':'BULL','フォックス':'FOX','ベア':'BEAR',
+  'スター':'STAR','シューティング':'SHOOTING','サン':'SUN','ムーン':'MOON','スカイ':'SKY','オーシャン':'OCEAN','ストーム':'STORM','サンダー':'THUNDER','ライトニング':'LIGHTNING','フレイム':'FLAME','ファイア':'FIRE','ファイヤー':'FIRE','アイス':'ICE','スノー':'SNOW','ウィンド':'WIND','ナイト':'NIGHT','ドリーム':'DREAM',
+  'スピード':'SPEED','ウィング':'WING','ジェット':'JET','ロケット':'ROCKET','ターボ':'TURBO','ブースト':'BOOST','ストライク':'STRIKE','ブレイズ':'BLAZE','ゼロ':'ZERO','ワン':'ONE','ネオ':'NEO','ハイパー':'HYPER','ウルトラ':'ULTRA','スーパー':'SUPER','マックス':'MAX','エース':'ACE','キング':'KING','クイーン':'QUEEN','ナイツ':'KNIGHTS',
+  'レーシング':'RACING','チーム':'TEAM','モーター':'MOTOR','モータース':'MOTORS','スポーツ':'SPORTS','ワークス':'WORKS','グランプリ':'GRANDPRIX','マイ':'MY','ニュー':'NEW','ジャパン':'JAPAN','トウキョウ':'TOKYO','サクラ':'SAKURA','フジ':'FUJI'};
+const WING_WORD_KEYS = Object.keys(WING_WORD).sort((a, b) => b.length - a.length);
+function kanaEn(s){                                       // 辞書の単語は英語、それ以外の部分はローマ字に
+  let o = '', rest = '';
+  for(let i = 0; i < s.length;){
+    const w = WING_WORD_KEYS.find(k => s.startsWith(k, i));
+    if(w){ if(rest){ o += kanaRoma(rest); rest = ''; } o += WING_WORD[w]; i += w.length; }
+    else { rest += s[i]; i++; }
+  }
+  return o + (rest ? kanaRoma(rest) : '');
+}
+function kanaRoma(s){                                     // カタカナ → ローマ字（大文字）。辞書にない名前のため
+  const D = {'キャ':'KYA','キュ':'KYU','キョ':'KYO','シャ':'SHA','シュ':'SHU','ショ':'SHO','シェ':'SHE','チャ':'CHA','チュ':'CHU','チョ':'CHO','チェ':'CHE','ニャ':'NYA','ニュ':'NYU','ニョ':'NYO','ヒャ':'HYA','ヒュ':'HYU','ヒョ':'HYO','ミャ':'MYA','ミュ':'MYU','ミョ':'MYO','リャ':'RYA','リュ':'RYU','リョ':'RYO','ギャ':'GYA','ギュ':'GYU','ギョ':'GYO','ジャ':'JA','ジュ':'JU','ジョ':'JO','ジェ':'JE','ビャ':'BYA','ビュ':'BYU','ビョ':'BYO','ピャ':'PYA','ピュ':'PYU','ピョ':'PYO',
+    'ファ':'FA','フィ':'FI','フェ':'FE','フォ':'FO','ウィ':'WI','ウェ':'WE','ウォ':'WO','ヴァ':'VA','ヴィ':'VI','ヴェ':'VE','ヴォ':'VO','ティ':'TI','ディ':'DI','デュ':'DU','トゥ':'TU','ドゥ':'DU','ツァ':'TSA','クォ':'QUO','クァ':'QUA',
+    'ア':'A','イ':'I','ウ':'U','エ':'E','オ':'O','カ':'KA','キ':'KI','ク':'KU','ケ':'KE','コ':'KO','サ':'SA','シ':'SHI','ス':'SU','セ':'SE','ソ':'SO','タ':'TA','チ':'CHI','ツ':'TSU','テ':'TE','ト':'TO','ナ':'NA','ニ':'NI','ヌ':'NU','ネ':'NE','ノ':'NO','ハ':'HA','ヒ':'HI','フ':'FU','ヘ':'HE','ホ':'HO',
+    'マ':'MA','ミ':'MI','ム':'MU','メ':'ME','モ':'MO','ヤ':'YA','ユ':'YU','ヨ':'YO','ラ':'RA','リ':'RI','ル':'RU','レ':'RE','ロ':'RO','ワ':'WA','ヲ':'O','ン':'N','ガ':'GA','ギ':'GI','グ':'GU','ゲ':'GE','ゴ':'GO','ザ':'ZA','ジ':'JI','ズ':'ZU','ゼ':'ZE','ゾ':'ZO','ダ':'DA','ヂ':'JI','ヅ':'ZU','デ':'DE','ド':'DO',
+    'バ':'BA','ビ':'BI','ブ':'BU','ベ':'BE','ボ':'BO','パ':'PA','ピ':'PI','プ':'PU','ペ':'PE','ポ':'PO','ヴ':'VU','ァ':'A','ィ':'I','ゥ':'U','ェ':'E','ォ':'O','ャ':'YA','ュ':'YU','ョ':'YO'};
+  let o = '';
+  for(let i = 0; i < s.length; i++){
+    const two = s.slice(i, i + 2), c = s[i];
+    if(c === 'ッ'){ const nx = D[s.slice(i + 1, i + 3)] || D[s[i + 1]] || ''; o += nx ? nx[0] : ''; continue; }   // 小さいツ：次の音を重ねる
+    if(c === 'ー') continue;                                   // 伸ばす音は書かない
+    if(D[two]){ o += D[two]; i++; continue; }
+    o += D[c] != null ? D[c] : /[A-Za-z0-9]/.test(c) ? c.toUpperCase() : '';
+  }
+  return o;
+}
+const wingTeamName = t => {
+  wingEnInit();
+  const n = String(t.name || '').trim(), first = n.split(/[・\s]/)[0] || n;
+  if(/^[\x20-\x7e]+$/.test(first)) return first.toUpperCase();   // 英字の名前
+  const core = first.replace(/[A-Za-z.]+$/, '');                // 「ブロッサムGP」の GP などは外す
+  return WING_EN[core] || WING_EN[first] || kanaEn(core || first) || (palOf(t)[1] || '');
 };
 function carBrandOf(teamId){
   if(typeof career === 'undefined' || !career || teamId == null) return null;
@@ -7146,9 +7209,9 @@ function carBrandOf(teamId){
   if(t.id === career.team){
     const T = career.title && career.title.on ? career.title : null, sp = career.sponsor;
     return { cover: T && SP_IMG[T.co] ? SP_IMG[T.co] : teamLogoImg(t), side: sp && SP_IMG[sp.name] ? SP_IMG[sp.name] : null,
-      wing: T && SP_LOGO[T.co] ? SP_LOGO[T.co].en.split(' ')[0] : short, wingCol: P[2] || P[0], wf: T && SP_LOGO[T.co] ? (SP_LOGO[T.co].ty || 'heavy') : 'team' };
+      wing: T && SP_LOGO[T.co] ? SP_LOGO[T.co].en.split(' ')[0] : wingTeamName(T && T.prev ? { name: t.tbase || T.prev.name } : t), wingCol: P[2] || P[0], wf: T && SP_LOGO[T.co] ? (SP_LOGO[T.co].ty || 'heavy') : 'team' };
   }
-  return { cover: teamLogoImg(t), side: null, wing: short, wingCol: P[2] || P[0], wf: 'team' };
+  return { cover: teamLogoImg(t), side: null, wing: wingTeamName(t), wingCol: P[2] || P[0], wf: 'team' };
 }
 function drawCarBrand(ctx, B){
   if(!B) return;
@@ -15093,9 +15156,9 @@ function guideHtml(){
     <p>調子はレースのたびに変わります。レースの結果とは関係なく、選手ごとに<b>調子の波</b>があり、数戦ごとに良くなったり悪くなったりをくり返します。特殊能力の<b>調子安定</b>は波が小さくゆっくり、<b>ムラっ気</b>は波が大きく速くなります。他チームの選手の調子も見えます（ドライバーランキングなど）。</p>
     ${sub('awk', '覚醒')}
     <p>レースのあと、ごくまれにドライバーが<span class="awkTag">覚醒</span>します。初優勝・初表彰台・自己最高位・チームメイトに初めて先着、などがきっかけになりやすく、若いほど起きやすくなります。覚醒すると6項目すべてが上がり（今の能力が低いほど大きく上がる）、赤特を1つ克服するか、青特を1つ覚えます。覚醒はキャリアで1人1回までで、他チームの選手にも起こります。</p>
-    <p><span class="brkTag" style="margin-left:0">限界突破</span>は、伸び盛りを過ぎてピークを迎えた選手（普通タイプなら30歳ごろから。早熟なら20代半ばから）に起きます。レースで優勝・表彰台・自己最高位を取ったあとや、シーズンの終わりに活躍した選手に起きやすく、自チームの選手はチーム愛が高いほど起きやすくなります。限界突破すると6項目すべてが上がり（今の能力が低いほど大きく上がる）、成長タイプが1段階遅くなります（衰え始めが2年・引退が1年遅くなる）。もう「晩成」の選手は、タイプが変わらない代わりに大きく上がります。キャリアで1人1回までで、覚醒した選手にも起き、他チームの選手にも起こります。</p>
+    <p><span class="brkTag" style="margin-left:0">限界突破</span>は、成長期を過ぎて全盛期を迎えた選手（普通タイプなら30歳ごろから。早熟なら20代半ばから）に起きます。レースで優勝・表彰台・自己最高位を取ったあとや、シーズンの終わりに活躍した選手に起きやすく、自チームの選手はチーム愛が高いほど起きやすくなります。限界突破すると6項目すべてが上がり（今の能力が低いほど大きく上がる）、成長タイプが1段階遅くなります（衰退期に入るのが2年・引退が1年遅くなる）。もう「晩成」の選手は、タイプが変わらない代わりに大きく上がります。キャリアで1人1回までで、覚醒した選手にも起き、他チームの選手にも起こります。</p>
     ${sub('grow', '成長とトレーニング')}
-    <p>レースの経験（順位を上げる・ミスなく完走・長いスティント・ファステストラップ・表彰台など）で、関係する能力が伸びます。<b>重点トレーニング</b>で1項目を選ぶと、毎戦お金を払って伸ばせます（${TRAIN_LV.slice(1).map(t => `${t.n} ${M(pr(t.cost))}/戦`).join('・')}。シミュレーターで効果アップ）。項目には、持っている赤特の克服も選べます。毎戦、経験値が溜まり、100に達すると克服します（克服するとトレーニングは「なし」に戻ります。途中でやめても経験値は残ります）。溜まる速さは成長の時期で変わり、集中なら、伸び盛りの選手は約0.8シーズン、ふつうの時期は約1シーズン、衰えの時期は1.5シーズン前後が目安です。軽めはその約2倍かかります。セカンドチームのドライバーも、ドライバータブでトレーニングを設定できます（費用は自チームの資金から。チーム愛による増減はなし）。シーズンの終わりに1歳年を取り、若手は大きく伸び、30代は速さ・ブレーキングが衰えます。35歳を過ぎると引退することがあります。</p>
+    <p>レースの経験（順位を上げる・ミスなく完走・長いスティント・ファステストラップ・表彰台など）で、関係する能力が伸びます。<b>重点トレーニング</b>で1項目を選ぶと、毎戦お金を払って伸ばせます（${TRAIN_LV.slice(1).map(t => `${t.n} ${M(pr(t.cost))}/戦`).join('・')}。シミュレーターで効果アップ）。項目には、持っている赤特の克服も選べます。毎戦、経験値が溜まり、100に達すると克服します（克服するとトレーニングは「なし」に戻ります。途中でやめても経験値は残ります）。溜まる速さは成長の時期で変わり、集中なら、成長期の選手は約0.8シーズン、全盛期は約1シーズン、衰退期は1.5シーズン前後が目安です。軽めはその約2倍かかります。セカンドチームのドライバーも、ドライバータブでトレーニングを設定できます（費用は自チームの資金から。チーム愛による増減はなし）。シーズンの終わりに1歳年を取り、若手は大きく伸び、30代は速さ・ブレーキングが衰えます。35歳を過ぎると引退することがあります。</p>
     <p><b>成長タイプ</b>：ドライバーごとに${GROW_TYPES.map(t => t.n).join('・')}のタイプがあり、伸びる時期・衰え始め・引退の時期がずれます（普通は${GT_GROW}歳ごろまで大きく伸び、${GT_PEAK + 1}歳ごろから衰える。早熟は4年早く、晩成は4年遅い。引退はその半分だけ前後）。カードの「成長」に、タイプと年齢ごとの伸び方のグラフ（縦線が今の年齢）が出ます。タイプは隠れていて、ふだんはスカウトの見立て（「？」付き・外れることがある）です。スカウト部門をLv4にするか、自チームに1シーズン在籍すると確実に分かります。</p>
     <p><b>引退の申し出</b>：自チームの選手（リザーブを含む）が引退の時期を迎えると、シーズンの終わりに引退を申し出てきます。ただし、契約が来季も残っている間は申し出ません（契約が切れるシーズンの終わりから申し出るようになります。セカンドチームの選手も同じです）。「契約」の欄で、受け入れる（レギュラーは移籍市場かリザーブから後任を選ぶ。契約金なし）か、引き止めるかを決めます。引き止めの成功率は、チーム愛が高いほど上がり、年齢と引き止めた回数が多いほど下がります。能力が著しく高い選手（総合80以上）は、まだ戦えるので引退を申し出にくく（総合85で約6割、90で約4割の起きやすさ）、引き止めにも応じやすくなります（総合85で+25%、87以上で+30%）。失敗したら引退が決まります。決めるまでレースには進めません。ほかのチームの選手は自動で引退し、移籍市場の選手と入れ替わります。</p>
     ${sub('pu', 'パワーユニット（PU）')}
@@ -15921,11 +15984,21 @@ function acadState(){ if(!career.acad) career.acad = { list: [], cand: [], cs: n
 const acadList = () => { if(!career || !career.acad) return []; return career.acad.list.filter(c => career.drivers[c] && career.drivers[c].acad); };
 const acadCands = () => { if(!career || !career.acad) return []; return career.acad.cand.filter(c => career.drivers[c] && career.drivers[c].acadC); };
 const isAcad = c => !!(career && career.drivers[c] && career.drivers[c].acad);
+/* 逸材（2026-11-25）：ごく低い確率で、16〜18歳ですでに総合B（70〜79）やA（80〜84）の候補が来る。施設のLvが高いほど少しだけ来やすい
+   1人あたりの確率：B 1.2〜2.0%・A 0.18〜0.3%（Lv1〜5）。毎年3〜5人なので、Bは十数年に1回、Aは数十年に1回くらい */
+const ACAD_PRO_B = lv => 0.01 + lv*0.002, ACAD_PRO_A = lv => 0.0015 + lv*0.0003;
 function acadMakeCand(lv){
   const used = new Set(Object.keys(career.drivers)), names = new Set(Object.values(career.drivers).map(d => d.name));
   const active = new Set(Object.values(career.drivers).filter(d => !d.retired).map(d => d.name));
   const { nat, name, code } = genIdentity(used, names, active);
-  const d = makeDriver(code, name, 3.4 + lv*0.2 + Math.random());
+  const rr = Math.random(), pro = rr < ACAD_PRO_A(lv) ? 'A' : rr < ACAD_PRO_A(lv) + ACAD_PRO_B(lv) ? 'B' : null;
+  const want = pro === 'A' ? 8.05 + Math.random()*0.35 : pro === 'B' ? 7.1 + Math.random()*0.7 : null;   // 逸材の総合（A 80〜84・B 70〜79）
+  const d = makeDriver(code, name, want != null ? want : 3.4 + lv*0.2 + Math.random());
+  if(want != null){                                                // 特殊能力の分も含めて、総合がねらいのランクに入るようにそろえる
+    for(let i = 0; i < 4; i++){ const dv = want - ovr(d); if(Math.abs(dv) < 0.05) break; DSTATS.forEach(([k]) => d.st[k] = r1(clamp(d.st[k] + dv, 1, 10))); }
+    for(let i = 0; i < 6 && gradeOf(ovr(d)) !== pro; i++){ const up = pt100(ovr(d)) < (pro === 'A' ? 80 : 70); DSTATS.forEach(([k]) => d.st[k] = r1(clamp(d.st[k] + (up ? 0.1 : -0.1), 1, 10))); }   // 端数でランクがずれたら直す
+    d.prodigy = pro; d.sal = salaryFor(d);
+  }
   setAgePot(d, 16 + Math.floor(Math.random()*3));
   d.pot = r1(clamp(d.pot + lv*0.25 + Math.random()*0.5, d.pot, 10)); d.scout = scoutOf(d.pot);   // Lvが高いほど素質のある候補が来る
   d.rookie = true; d.nat = nat; d.face = makeFace(Math.random, nat); d.acadC = true; d.sal = salaryFor(d);
@@ -16633,10 +16706,10 @@ function upgradeFac(k){
    成長・衰えは gAge(d) = 年齢 − sh で計算する（早熟は実年齢より年上として、晩成は年下として扱う）。引退は sh の半分だけずれる。
    タイプは隠れていて、スカウト部門Lv4以上か、自チームに1シーズン在籍すると確実に分かる。それまではスカウトの見立て（外れることがある） */
 const GROW_TYPES = [
-  { k:'e2', n:'早熟',     sh:-4, w:15, d:'若いうちから強い。20代後半には衰え始める' },
-  { k:'e1', n:'やや早熟', sh:-2, w:20, d:'20代前半で伸びきり、ピークは少し早め' },
-  { k:'n',  n:'普通',     sh: 0, w:30, d:'20代半ばまで伸び、30代前半から衰える' },
-  { k:'l1', n:'やや晩成', sh: 2, w:20, d:'20代後半まで伸び続け、ピークは少し遅め' },
+  { k:'e2', n:'早熟',     sh:-4, w:15, d:'若いうちから強い。20代後半には衰退期に入る' },
+  { k:'e1', n:'やや早熟', sh:-2, w:20, d:'20代前半で伸びきり、全盛期は少し早め' },
+  { k:'n',  n:'普通',     sh: 0, w:30, d:'20代半ばまで伸び、30代前半から衰退期' },
+  { k:'l1', n:'やや晩成', sh: 2, w:20, d:'20代後半まで伸び続け、全盛期は少し遅め' },
   { k:'l2', n:'晩成',     sh: 4, w:15, d:'若いうちは目立たないが、20代後半から伸び、30代でも戦える' }
 ];
 const gtOf = d => GROW_TYPES.find(t => t.k === (d && d.gt)) || GROW_TYPES[2];
@@ -16660,15 +16733,18 @@ function gtShown(d){
 }
 // 年齢ごとの伸び方（グラフ用）：+1 よく伸びる、+0.35 少し伸びる、マイナスは衰え
 const gtRate = (t, age) => { const a = age - t.sh; return a <= GT_GROW ? 1 : a <= GT_PEAK ? 0.35 : -Math.min(1, (a - GT_PEAK)*0.2); };
+// 今の成長の時期（2026-11-23）：成長期（大きく伸びる）・全盛期・衰退期。見えている成長タイプで決める（スカウトの見立てなら「？」）
+const GT_PHASE = [{ n:'成長期', c:'p0' }, { n:'全盛期', c:'p1' }, { n:'衰退期', c:'p2' }];
+function gtPhase(d, t){ const a = d.age - t.sh; return GT_PHASE[a <= GT_GROW ? 0 : a <= GT_PEAK ? 1 : 2]; }
 function gtChip(d){
-  const S = gtShown(d), t = S.t, W = 46, H = 14, A0 = 18, A1 = 40, X = a => (a - A0)/(A1 - A0)*W, Y = r => H/2 - r*(H/2 - 1.5);
+  const S = gtShown(d), t = S.t, P = gtPhase(d, t), W = 46, H = 14, A0 = 18, A1 = 40, X = a => (a - A0)/(A1 - A0)*W, Y = r => H/2 - r*(H/2 - 1.5);
   const pts = []; for(let a = A0; a <= A1; a++) pts.push(`${X(a).toFixed(1)},${Y(gtRate(t, a)).toFixed(1)}`);
   const ax = X(clamp(d.age, A0, A1));
-  return `<span class="gtV${S.sure ? '' : ' guess'}">${t.n.replace(/^やや/, 'やや<wbr>')}${S.sure ? '' : '？'}</span><svg class="gtCurve" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><line x1="0" y1="${H/2}" x2="${W}" y2="${H/2}" class="gz"/><polyline points="${pts.join(' ')}" class="gc"/><line x1="${ax}" y1="0" x2="${ax}" y2="${H}" class="ga"/></svg>`;
+  return `<span class="gtPh ${P.c}${S.sure ? '' : ' guess'}">${P.n}${S.sure ? '' : '？'}</span><span class="gtV${S.sure ? '' : ' guess'}">${t.n.replace(/^やや/, 'やや<wbr>')}${S.sure ? '' : '？'}</span><svg class="gtCurve" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><line x1="0" y1="${H/2}" x2="${W}" y2="${H/2}" class="gz"/><polyline points="${pts.join(' ')}" class="gc"/><line x1="${ax}" y1="0" x2="${ax}" y2="${H}" class="ga"/></svg>`;
 }
 function gtTip(d){
   const S = gtShown(d), t = S.t;
-  return `成長タイプ：${t.n}${S.sure ? '' : '（スカウトの見立て）'}。${t.d}。大きく伸びるのは${GT_GROW + t.sh}歳ごろまで、衰え始めは${GT_PEAK + 1 + t.sh}歳ごろ（今${d.age}歳）。グラフは年齢ごとの伸び方（縦線が今）。${S.sure ? '' : 'スカウト部門Lv4以上か、自チームに1シーズン在籍すると確実に分かります'}`;
+  return `成長タイプ：${t.n}${S.sure ? '' : '（スカウトの見立て）'}。${t.d}。成長期は${GT_GROW + t.sh}歳ごろまで、衰退期は${GT_PEAK + 1 + t.sh}歳ごろから（今${d.age}歳・${gtPhase(d, t).n}）。グラフは年齢ごとの伸び方（縦線が今）。${S.sure ? '' : 'スカウト部門Lv4以上か、自チームに1シーズン在籍すると確実に分かります'}`;
 }
 const ageK = a => a <= 21 ? 1.5 : a <= 24 ? 1.25 : a <= 28 ? 1.0 : a <= 31 ? 0.7 : a <= 34 ? 0.45 : 0.25;
 function potFor(ovrV, age){
@@ -16854,7 +16930,7 @@ function awakenings(order, pre, growLog){
    A．レース後：優勝・表彰台・自己最高位（P8以内）がきっかけになりやすい。何もなくても、ごくまれに起きる
    B．シーズンの終わり（1歳年を取ったあと）：そのシーズンの活躍（ポイント・ランキング）と、自チームの選手はチーム愛の高さで起きやすい
    効果：6項目すべてが上がる（今の総合が低いほど大きく、項目の中では低い項目ほど大きく）＋ 成長タイプが1段階遅くなる
-        （衰え始めが2年・引退が1年遅くなる）。もう「晩成」の選手は、タイプが変わらない代わりに上がり幅が 1.8倍
+        （衰退期に入るのが2年・引退が1年遅くなる）。もう「晩成」の選手は、タイプが変わらない代わりに上がり幅が 1.8倍
    確率は、A と B を合わせて1シーズンにリーグ全体でおよそ1人になるように決めた（簡易な見積もり） */
 const BRK_P = { base: 0.006, win: 0.2, pod: 0.09, best: 0.05 };            // A：レース後
 const BRK_SP = { base: 0.02, pts: 0.04, top10: 0.05, love70: 0.05, love85: 0.05 };   // B：シーズンの終わり
@@ -16921,7 +16997,7 @@ function showBreakFx(){
   el.innerHTML = `<div class="awkBox"><div class="awkIn"><div class="awkKick">BREAKTHROUGH</div><div class="awkTitle">限界突破</div>${L.map(x => { const d = career.drivers[x.code] || {};
     return `<div class="awkOne"><div class="awkWho"><span class="code">${x.code}</span>${natFlag(x.code, 14)}${esc(d.name || x.code)}</div><div class="awkWhy">${x.why ? `${esc(x.why)}をきっかけに、自分の限界の壁を越えた` : 'シーズンを戦い抜き、自分の限界の壁を越えた'}</div>
       <div class="awkSt">${DSTATS.map(([k, lab]) => `<span>${lab}<b>+${Math.round((x.g[k] || 0)*10)}</b></span>`).join('')}</div>
-      <div class="brkGt">${x.late ? '成長タイプは「晩成」のまま。そのぶん能力が大きく上がった' : `成長タイプ <b>${esc(x.from)} → ${esc(x.to)}</b>（衰え始めが2年・引退が1年遅くなる）`}</div></div>`; }).join('')}
+      <div class="brkGt">${x.late ? '成長タイプは「晩成」のまま。そのぶん能力が大きく上がった' : `成長タイプ <b>${esc(x.from)} → ${esc(x.to)}</b>（衰退期に入るのが2年・引退が1年遅くなる）`}</div></div>`; }).join('')}
     <button type="button" class="b go awkClose">閉じる</button></div></div>`;
   document.body.append(el);
   const close = () => { el.remove(); document.removeEventListener('keydown', onKey); };
@@ -17083,6 +17159,32 @@ function campCardHtml(){
     <p class="cpLead">お金を払って、選手を合宿に送ります。ドライバー枠（自チーム・セカンドチーム）とリザーブ枠に1人ずつ、毎年のオフシーズンに使えます。</p>
     ${slot('drv')}${slot('res')}
     <small class="muted">${[1, 2, 3].map(i => `${CAMP_LV[i].n} ${money(CAMP_LV[i].cost)}`).join(' ・ ')}</small></div>`;
+}
+/* オフシーズンに本部を開いたら、合宿のポップアップを1シーズンに1回だけ出す（2026-11-23）
+   ほかのポップアップ（覚醒・出来事など）が出ているときは、閉じるのを待ってから出す。「選ぶ」でそのまま選手選びへ */
+function showCampAsk(tries){
+  if(!campOpen()) return;
+  const st = campState();
+  if(st.ask || ['drv', 'res'].every(k => st[k] || !campCands(k).length)) return;
+  if(document.querySelector('.modal.show, .awkFx, .evModal.show')){ if((tries || 0) < 40) setTimeout(() => showCampAsk((tries || 0) + 1), 700); return; }
+  st.ask = true; saveCareer();
+  const old = $('#campAsk'); if(old) old.remove();
+  const m = document.createElement('div');
+  m.className = 'modal show ciModal campModal'; m.id = 'campAsk'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'campAskT');
+  try{ m.style.setProperty('--tc', teamTheme(myTeam()).c); }catch(err){}
+  m.innerHTML = `<div class="ciSheet"><div class="ciGrab" aria-hidden="true"><span></span></div>
+    <div class="ciHead"><div class="ciTt"><small>オフシーズン</small><b id="campAskT">トレーニング合宿</b></div><button type="button" class="ciX" aria-label="閉じる">×</button></div>
+    <div class="ciBody">${campCardHtml().replace('<span class="osLab">トレーニング合宿<small>開幕前まで</small></span>', '')}
+      <p class="note" style="margin:10px 0 0">資金 <b class="num">${money(career.money)}</b> ・ 開幕前なら、あとからでも概要タブの「トレーニング合宿」から送れます。</p>
+      <div class="row" style="margin-top:12px;justify-content:flex-end"><button type="button" class="b ghost" data-cpask="later">あとで</button></div></div></div>`;
+  document.body.appendChild(m);
+  const close = () => { m.classList.add('closing'); setTimeout(() => m.remove(), 200); document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if(e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  m.querySelector('.ciX').onclick = close; m.querySelector('[data-cpask]').onclick = close;
+  m.addEventListener('click', e => { if(e.target === m) close(); });
+  m.querySelectorAll('[data-camp]').forEach(b => b.onclick = () => { close(); setTimeout(() => openCamp(b.dataset.camp), 210); });
+  const f = m.querySelector('[data-camp]:not([disabled])') || m.querySelector('[data-cpask]'); if(f) f.focus({ preventScroll: true });
 }
 /* 自チームの選手が覚醒したら、チーム本部に戻ったときに一度だけ演出を出す */
 function showAwakenFx(){
@@ -18480,10 +18582,27 @@ let retireUI = { code: null, pick: null };   // 後任を選んでいる引退�
 const retireAskK = d => clamp(1 - (ovr(d) - 7.5)*0.4, 0.3, 1);      // 引退を申し出る確率の倍率：総合80で×0.8、85で×0.6、90で×0.4、92以上で×0.3
 const retireHoldBonus = d => clamp((ovr(d) - 7.5)*0.25, 0, 0.3);   // 引き止めの成功率の上乗せ：総合80で+12.5%、85で+25%、87以上で+30%
 const retireHoldP = d => clamp(0.35 + (loveOf(d) - 50)/100*0.8 - (d.holdN || 0)*0.25 - Math.max(0, d.age - 38)*0.1 + retireHoldBonus(d), 0.05, 0.9);
+// 引退を決めた選手をチームと移籍市場から外す（引退の受け入れ・昇格で外れたとき・放出したときに共通）
+function retireOut(code){
+  const d = career.drivers[code]; if(!d) return;
+  d.retired = true; delete d.con; d.rival = false; d.leave = false;
+  career.fa = career.fa.filter(c => c !== code);
+  if(career.train) delete career.train[code];
+  if(career.sub && (career.sub.code === code || career.sub.res === code)) career.sub = null;
+  career.offers = (career.offers || []).filter(o => o.code !== code);
+}
+const retireAsked = code => (career.retireAsk || []).some(a => a.code === code);
 function retireAsks(){
   if(!career) return [];
   const me = myTeam();
-  career.retireAsk = (career.retireAsk || []).filter(a => { const d = career.drivers[a.code]; return d && !d.retired && (me.drivers.includes(a.code) || isRes(me, a.code)); });
+  // 2026-11-24 修正：引退を申し出ている選手が、昇格の入れ替えや放出などで自チームから外れ、どのチームにも入っていなければ
+  // そのまま引退にする（移籍市場に出て、もう一度契約できてしまっていた）。ほかのチームに移った場合は申し出だけ消す
+  career.retireAsk = (career.retireAsk || []).filter(a => {
+    const d = career.drivers[a.code]; if(!d || d.retired) return false;
+    if(me.drivers.includes(a.code) || isRes(me, a.code)) return true;
+    if(!career.teams.some(t => t.drivers.includes(a.code) || isRes(t, a.code))) retireOut(a.code);
+    return false;
+  });
   return career.retireAsk;
 }
 function retireCands(code){
@@ -18510,11 +18629,7 @@ function retireAccept(code, pick){
   const res = isRes(me, code), slot = me.drivers.indexOf(code);
   if(!res){ if(slot < 0 || !pick || !retireCands(code).includes(pick)) return; }
   if(!confirmTwice('racc' + code + (pick || ''))) return;
-  d.retired = true; delete d.con; d.rival = false;
-  career.fa = career.fa.filter(c => c !== code);
-  if(career.train) delete career.train[code];
-  if(career.sub && career.sub.code === code) career.sub = null;
-  career.offers = (career.offers || []).filter(o => o.code !== code);
+  retireOut(code);
   let msg;
   if(res){
     me.reserves = me.reserves.filter(r => r.code !== code);
@@ -19197,6 +19312,10 @@ function answerResDemand(ok){
 function releaseReserve(c){
   const t = myTeam(); if(!isRes(t, c)) return;
   if(!confirmTwice('relres' + c)) return;
+  if(retireAsked(c)){                                                  // 引退を申し出ていたリザーブは、放出ではなく引退（2026-11-24）
+    t.reserves = t.reserves.filter(r => r.code !== c); retireOut(c); career.retireAsk = career.retireAsk.filter(a => a.code !== c);
+    saveCareer(); renderHQ(`リザーブの${c}（${career.drivers[c].name}）が引退しました。おつかれさまでした。`); return;
+  }
   delete career.drivers[c].con; career.fa.push(c); t.reserves = t.reserves.filter(r => r.code !== c); if(career.sub && career.sub.res === c) career.sub = null;
   saveCareer(); renderHQ(`リザーブの${c}を放出しました。`);
 }
@@ -19210,6 +19329,11 @@ function promoteReserve(slot, r){
   d.con = { yrs: Math.max(1, d.con ? d.con.yrs : 1), sal: d.sal };      // 昇格：契約金はなし。年俸は市場価値に上がる（残りの年数はそのまま）
   d.loveD = 0; loveAdd(d, 10);                                         // 昇格を喜ぶ
   if(career.train) delete career.train[out];
+  if(retireAsked(out)){                                                // 引退を申し出ていた選手：入れ替わりで引退する（移籍市場には出ない・2026-11-24）
+    retireOut(out); career.retireAsk = career.retireAsk.filter(a => a.code !== out);
+    saveCareer(); renderHQ(`${r}をレギュラーに昇格しました（チーム愛 +10）。引退を申し出ていた${out}（${o.name}）は、これで引退しました。おつかれさまでした。`);
+    return;
+  }
   // 外れたレギュラーは、昇格したリザーブと入れ替わりでリザーブへ（同じ役割・契約はそのまま・降格にがっかり）。
   // 総合80以上はリザーブを断るので、これまでどおり移籍市場へ
   if(resKOf(o) != null){
@@ -19634,8 +19758,8 @@ function nextSeason(){
     const g = {}, ea = gAge(d);                                   // 成長タイプで見た年齢（早熟は年上、晩成は年下として扱う）
     if(myCodes.has(d.code)){                                       // 自チームの選手：1シーズン一緒に過ごしたので成長タイプが分かる。ピークと衰えの節目を知らせる
       if(!d.gtK){ d.gtK = true; rep.gnote.push({ code: d.code, t: `成長タイプが「${gtOf(d).n}」だと分かりました` }); }
-      if(ea === GT_GROW + 1) rep.gnote.push({ code: d.code, t: '伸び盛りを過ぎ、ピークの時期に入りました' });
-      if(ea === GT_PEAK + 1) rep.gnote.push({ code: d.code, t: '衰え始めています（速さ・ブレーキングが落ちていきます）' });
+      if(ea === GT_GROW + 1) rep.gnote.push({ code: d.code, t: '成長期を過ぎ、全盛期に入りました' });
+      if(ea === GT_PEAK + 1) rep.gnote.push({ code: d.code, t: '衰退期に入りました（速さ・ブレーキングが落ちていきます）' });
     }
     if(ea <= GT_PEAK){ DSTATS.forEach(([k]) => grow(d, k, (ea <= GT_GROW ? 0.12 : 0.04) + Math.random()*(ea <= GT_GROW ? 0.2 : 0.08), g)); }
     else {
@@ -21759,7 +21883,7 @@ function renderHQView(msg){
     const card = c => { const d = career.drivers[c], o0 = d.acad.o0 ?? ovr(d), dv = pt100(ovr(d)) - pt100(o0), left = ACAD_AGE_MAX - d.age, g = AG[c] || {};
       const onP = armed.key === 'acadpr' + c, onR = armed.key === 'acadrel' + c;
       return `<div class="dCard acCard">
-        <div class="dcHead">${driverFace(c, teamSuit(me))}<span class="dcCode">${c}</span><div class="dcName">${natFlag(c, 13)}<b>${esc(d.name)}</b>${formTag(d)}<small>${ageNow(d)}歳 ・ ${SY(d.acad.s)}年入団</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${c}">戦績</button></div>
+        <div class="dcHead">${driverFace(c, teamSuit(me))}<span class="dcCode">${c}</span><div class="dcName">${natFlag(c, 13)}<b>${esc(d.name)}${d.prodigy ? ` <span class="proTag" title="アカデミーに来たときから総合${d.prodigy}ランクだった逸材">逸材</span>` : ''}</b>${formTag(d)}<small>${ageNow(d)}歳 ・ ${SY(d.acad.s)}年入団</small></div><button type="button" class="b sm ghost dcRec" data-prof="d:${c}">戦績</button></div>
         <div class="dcChips">${chip('総合', `<span class="ovG">${gradeTag(ovr(d), true)}</span>`, 'big')}${chip('入団から', `<span class="${dv > 0 ? 'gainT' : dv < 0 ? 'lossT' : 'muted'}">${dv >= 0 ? '+' : '−'}${Math.abs(dv)}</span>`)}${chip('伸びしろ', `<span class="stars">${starTxt(scoutStars(d))}</span>`)}${chip('成長', gtChip(d), '', gtTip(d))}${chip('期限', left > 0 ? `あと${left}年` : '今季まで', left <= 0 ? 'warnC' : '')}</div>
         <div class="dst2">${DSTATS.map(([k, lab]) => `<span class="dl">${lab}</span><span class="skill${capCls(d, k, true)}"><i style="width:${d.st[k]*10}%"></i></span><span class="dv">${gradeTag(d.st[k], true)}${g[k] ? '<i class="gr">▲</i>' : ''}</span>`).join('')}</div>
         <div class="dcAbs">${(d.ab || []).length ? d.ab.map(id => abChip(id)).join('') : '<span class="muted" style="font-size:11.5px">特殊能力なし</span>'}</div>
@@ -21769,7 +21893,7 @@ function renderHQView(msg){
         </div>${resFull ? `<small class="muted">リザーブが${MAX_RES}人いるため昇格できません</small>` : ''}</div>
       </div>`; };
     const cand = c => { const d = career.drivers[c];
-      return `<div class="acCand">${driverFace(c, FACE_FA_SUIT, 32)}<div class="acCN"><b>${natFlag(c, 12)}${esc(d.name)}</b><small>${ageNow(d)}歳 ・ 総合 ${gradeTag(ovr(d), true)} ・ 伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span> ・ 成長 ${gtChip(d)}</small></div>
+      return `<div class="acCand${d.prodigy ? ' pro' : ''}">${driverFace(c, FACE_FA_SUIT, 32)}<div class="acCN"><b>${natFlag(c, 12)}${esc(d.name)}${d.prodigy ? ` <span class="proTag" title="16〜18歳ですでに総合${d.prodigy}ランクの、めったに現れない逸材">逸材</span>` : ''}</b><small>${ageNow(d)}歳 ・ 総合 ${gradeTag(ovr(d), true)} ・ 伸びしろ <span class="stars">${starTxt(scoutStars(d))}</span> ・ 成長 ${gtChip(d)}</small></div>
         <button type="button" class="b sm go" data-acadjoin="${c}" ${full || inProgress ? 'disabled' : ''}>入団</button></div>`; };
     return `<div class="sec drvSec acSec"><h2><span class="drvKey" style="background:#2fb36a" aria-hidden="true"></span>アカデミー<span class="kick">Lv${lv} ・ ${L.length}/${slots}人 ・ 育成費 ${money(pr(r1(L.length*ACAD_FEE)))}/戦</span></h2>
       <p class="note" style="margin:0 0 8px">毎戦2項目が少しずつ伸びます。${ACAD_AGE_MAX}歳のシーズンが終わるまでに昇格させないと、移籍市場に出ます。</p>
@@ -22177,7 +22301,7 @@ function renderHQView(msg){
   });
   el.querySelectorAll('details[data-fold]').forEach(d => d.addEventListener('toggle', () => { d.open ? hqOpen.add(d.dataset.fold) : hqOpen.delete(d.dataset.fold); }));
   const ns = $('#nextSeason'); if(ns) ns.onclick = nextSeason;
-  if(hqView !== 'new'){ showAwakenFx(); showBreakFx(); }
+  if(hqView !== 'new'){ showAwakenFx(); showBreakFx(); setTimeout(() => { try{ showCampAsk(); }catch(e){} }, 500); }   // オフシーズン：合宿のポップアップ
   if($('#saveIO')) $('#saveIO').onclick = openSaveIO;
 
 }
@@ -26335,7 +26459,7 @@ function recGrid(D){
         return `<td class="rg ${rgCls(best)}" title="${esc(r.name)}：${es.map(q => `${q[0]} ${q[2] == null ? 'リタイア' : q[2] + '位'}`).join('・')}（${pts}pts）">${pts}</td>`; }).join('')}<td class="n rcPts">${x.pts}</td></tr>`; }).join('');
   }
   const L = [['p1', '優勝'], ['p2', '2位'], ['p3', '3位'], ['pt', '入賞（10位以内）'], ['', '入賞圏外'], ['dnf', 'リタイア（R）']];
-  return `<div class="wrapx"><table class="rgTbl"><tr><th>${recSide === 'd' ? 'ドライバー' : 'チーム'}</th>${head}<th class="n">PTS</th></tr>${rows}</table></div>
+  return `<div class="wrapx rgW"><table class="rgTbl"><tr><th>${recSide === 'd' ? 'ドライバー' : 'チーム'}</th>${head}<th class="n">PTS</th></tr>${rows}</table></div>
     <div class="rgLeg">${L.map(([c, l]) => `<span><i class="rg ${c}"></i>${l}</span>`).join('')}${recSide === 'd' ? '<span><i class="lgDot pl"></i>ポール</span><span><i class="lgDot fl"></i>ファステストラップ</span>' : '<span class="muted">数字はその戦のポイント。色は2台のうち上の順位</span>'}</div>
     ${D.rounds.some(r => r.log && !r.log.res) ? '<p class="note">「·」の回は、戦ごとの順位を記録するようになる前のレースです。</p>' : ''}`;
 }
@@ -26721,10 +26845,10 @@ function ovrChartHtml(d, known){
   const vs = pts.map(p => p.v); let y0 = Math.max(0, Math.floor((Math.min(...vs) - 4)/10)*10), y1 = Math.min(100, Math.ceil((Math.max(...vs) + 4)/10)*10); if(y1 - y0 < 20){ y1 = Math.min(100, y0 + 20); y0 = Math.max(0, y1 - 20); }
   const W = 600, Hh = 230, L = 34, R = 14, T = 18, B = 26;
   const X = a => L + (a - x0)/(x1 - x0)*(W - L - R), Y = v => T + (1 - (v - y0)/(y1 - y0))*(Hh - T - B);
-  // 背景：成長の時期（伸び盛り・ピーク・衰え）。成長タイプが確かでなければ「推定」
+  // 背景：成長の時期（成長期・全盛期・衰退期）。成長タイプが確かでなければ「推定」
   const g = gtShown(d), ge = GT_GROW + g.t.sh + 1, pe = GT_PEAK + g.t.sh + 1;
   const band = (a, b, col, lab) => { const s = Math.max(a, x0), e = Math.min(b, x1); if(e <= s) return ''; return `<rect x="${X(s)}" y="${T}" width="${X(e) - X(s)}" height="${Hh - T - B}" fill="${col}"/><text x="${(X(s) + X(e))/2}" y="${T + 11}" class="ohBand">${lab}</text>`; };
-  const bands = band(-99, ge, 'rgba(60,224,140,.10)', '伸び盛り') + band(ge, pe, 'rgba(255,196,0,.12)', 'ピーク') + band(pe, 99, 'rgba(255,90,110,.10)', '衰え');
+  const bands = band(-99, ge, 'rgba(60,224,140,.10)', '成長期') + band(ge, pe, 'rgba(255,196,0,.12)', '全盛期') + band(pe, 99, 'rgba(255,90,110,.10)', '衰退期');
   let grid = '';
   for(let v = y0; v <= y1; v += 10) grid += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" class="ohGrid"/><text x="${L - 5}" y="${Y(v) + 3.5}" class="ohYl">${v}</text>`;
   const stepA = x1 - x0 > 12 ? 2 : 1;
@@ -27385,7 +27509,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.8.1';
+const APP_VER = '1.9.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -27425,6 +27549,20 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.9.0', items: [
+    ['ドライバー', [
+      '成長の時期の呼び名を「成長期・全盛期・衰退期」に変更。ドライバーカードの「成長」の欄に今の時期を表示',
+      'アカデミーの候補に、ごくまれに総合B・Aランクの「逸材」が現れる',
+      '引退を申し出た選手が、リザーブの昇格の入れ替えなどで移籍市場に出て、もう一度契約できてしまう不具合を修正',
+    ]],
+    ['本部', [
+      'オフシーズンにトレーニング合宿のポップアップを表示',
+      '記録タブの「戦ごとの結果」を横にスクロールできるように（名前の列は固定）',
+    ]],
+    ['レース', [
+      'リアウイングの文字を、今のチーム名の英語表記（太字）に',
+    ]],
+  ] },
   { v: '1.8.1', items: [
     ['本部', [
       'スキップのとき、残った開発枠をAIにおまかせで使えるボタン',
@@ -27726,7 +27864,7 @@ function makeNews(){
   (L.recs || []).forEach(x => { const mineR = x.who === me || isMineCode(x.who), who = career.drivers[x.who] ? cn(x.who) : ((teamOf(x.who) || {}).name || x.who);
     add('記録', 'rec', mineR ? 94 : 72, `${who}が${x.label}の記録を更新`, `${recNewTxt(x)}。歴代記録が塗り替えられた。`); });
   (L.brk || []).forEach(x => { const t = teamOf(x.team), mineB = x.team === me;
-    add('限界突破', 'brk', mineB ? 95 : 68, `${cn(x.code)}が限界突破`, `${t ? t.name + 'の' : ''}${x.code}が${x.why ? x.why + 'をきっかけに' : ''}自分の限界の壁を越えた。ピークを過ぎても伸び続け、まだまだ第一線で戦えそうだ。`); });
+    add('限界突破', 'brk', mineB ? 95 : 68, `${cn(x.code)}が限界突破`, `${t ? t.name + 'の' : ''}${x.code}が${x.why ? x.why + 'をきっかけに' : ''}自分の限界の壁を越えた。全盛期を過ぎても伸び続け、まだまだ第一線で戦えそうだ。`); });
   if(regAnnounced()){
     const th = REG_THEMES[career.reg.theme];
     if(L.round === 1) add('規則', 'good', 85, `来季、${th.n}の大規則変更が決定`, `${SY(career.reg.at)}年シーズンから${th.n}の規則が大きく変わる。各チームは今季の戦いと来季の先行研究の両立を迫られる。`);
