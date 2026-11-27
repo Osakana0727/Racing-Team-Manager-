@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- レーシングチームマネージャー ver 1.10.0 -->
+<!-- レーシングチームマネージャー ver 1.11.0 -->
 <!--
   コースの形について
   各国GPのコースの形は、次のデータをもとに、ゲーム用に加工（縮尺・向き・曲がりの調整）して使っています。
@@ -29,8 +29,8 @@ SOFTWARE.
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="version" content="1.10.0">
-<meta name="build" content="20261126-1">
+<meta name="version" content="1.11.0">
+<meta name="build" content="20261127-1">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>レーシングチームマネージャー</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -987,6 +987,10 @@ body.guideOpen{overflow:hidden}
 .gainT{color:var(--hqGood)}.lossT{color:var(--hqBad)}
 /* 順位表 */
 .seg2{display:inline-flex;gap:4px}
+.drvSubs{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;padding:4px;margin:0 0 12px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.drvSubs button{position:relative;min-height:40px;padding:4px 2px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.drvSubs button.on{background:var(--tower);color:var(--towerText)}
+.drvSubs .tBadge{position:absolute;top:3px;right:4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#d7263d;color:#fff;font:700 10.5px/17px "Chakra Petch",system-ui,sans-serif;font-style:normal;text-align:center}
 .seg2 button{min-height:30px;padding:3px 10px;border-radius:7px;border:1px solid var(--line);background:var(--btn);color:var(--text);font:inherit;font-size:12.5px;cursor:pointer}
 .seg2 button.on{background:var(--tower);color:var(--towerText);border-color:var(--tower)}
 .stand{width:100%;border-collapse:collapse;font-size:13px}
@@ -3818,7 +3822,7 @@ body.career.pcRace .dock .pcMenu .pmTg{display:flex!important;justify-content:sp
 </head>
 <body>
 <header>
-  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer"><span class="vw">ver </span>1.10.0</small></h1>
+  <h1 id="appTitle" style="user-select:none">レーシングチームマネージャー<small class="appVer"><span class="vw">ver </span>1.11.0</small></h1>
   <div class="hdrTools">
   <label class="volWrap" id="volWrap" hidden title="音量"><span class="volLab">音量</span><input type="range" id="volume" min="0" max="150" step="5" aria-label="音量"><span class="num volV" id="volV"></span></label>
   <button class="b sm dataBtn" id="tmBtn" type="button" hidden aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11"/></svg><span>タイミング</span></button>
@@ -6729,23 +6733,74 @@ function drawYasMarina(main, T, rnd, pad, waterPath, free){
   g.globalAlpha = 0.18; g.strokeStyle = '#ffffff'; g.lineWidth = 1;
   for(let n = 0; n < 40; n++){ const x = box.x0 + rnd()*(box.x1 - box.x0), y = box.y0 + rnd()*(box.y1 - box.y0); g.beginPath(); g.moveTo(x, y); g.lineTo(x + tx*8, y + ty*8); g.stroke(); }
   g.restore();
-  // ホテル（白い2棟と、格子の屋根）
-  // ホテルの場所：マリーナの、ホテル側の区間（ピットと反対の方向）に面した岸の、すぐ外の陸地。置ける所を順に探す
-  let H0 = null;
-  { const cand = [...G.P].sort((a, b) => (b[0]*G.nx + b[1]*G.ny) - (a[0]*G.nx + a[1]*G.ny));
-    for(let i = 0; i < cand.length && !H0; i += 4){ const q = cand[i]; for(const d of [62, 80, 100]){ const x = q[0] + G.nx*d, y = q[1] + G.ny*d;
-      if(free(x, y) && free(x + tx*70, y + ty*70) && free(x - tx*70, y - ty*70) && !(T.seaPath && pcw.isPointInPath(T.seaPath, x, y)) && !pcw.isPointInPath(water, x, y)){ H0 = { x, y, a: Math.atan2(ty, tx) }; break; } } } }
+  // ホテル：実際と同じく、コースをまたいで建つ（2026-11-27）
+  // マリーナの奥（ピットと反対の方向）にあるコースの区間を探し、その両側に白い2棟、上を渡り廊下と格子の大屋根が覆う。
+  // 2棟は背景に、渡り廊下と大屋根は車の上に描く（drawYasHotelOver）
+  let H0 = yasHotelSpan(T, G, pcw, water, free);
   G.hotel = H0;                                                       // 夜のLEDの位置にも使う
-  if(H0){
-    g.save(); g.translate(H0.x, H0.y); g.rotate(H0.a);
-    g.fillStyle = 'rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(6, 8, 92, 34, 0, 0, 7); g.fill();     // 影
-    g.fillStyle = '#f3f2ee'; g.strokeStyle = 'rgba(90,90,90,.35)'; g.lineWidth = 1;
-    for(const [x, y, w, h] of [[-78, -22, 70, 44], [8, -22, 70, 44]]){ g.fillRect(x, y, w, h); g.strokeRect(x, y, w, h); }
-    g.fillStyle = '#dfe3e6'; g.fillRect(-8, -6, 16, 12);                 // 2棟をつなぐ渡り廊下
-    yasShell(g, 'rgba(215,226,236,.55)', 'rgba(245,248,250,.85)', 1);
-    g.restore();
-  }
+  // 2棟・渡り廊下・大屋根は、ほかの景色より上に出るよう、車と同じく毎フレーム描く（drawYasHotelOver）
   g.restore();
+}
+// ホテルの位置：マリーナの奥側の岸から、マリーナと反対の向き（G.nx）へ進んで最初に当たるコースの区間。
+// スタートラインの近くと急なカーブは避ける。2棟がほかのコースや海・マリーナに掛からないことを確かめる
+function yasHotelSpan(T, G, pcw, water, free){
+  const K = T.pts, N = T.N, hw = T.width/2, e = escW(T), bh = 28, d = hw + e + 2 + bh/2;
+  // 実際のヤス・マリーナでは、ホテルは周回の終盤（メインストレートの手前）、マリーナのすぐ脇でコースをまたぐ。
+  // そこで「スタートラインの手前 40% の区間」のうち、マリーナの水面にいちばん近い所を選ぶ（ストレートそのものは避ける）
+  let best = null; const s0 = T.startIdx || 0;
+  for(let i = 0; i < N; i += 2){
+    const q = K[i]; if(q.r < 70) continue;
+    const back = ((s0 - i) % N + N) % N; if(back*T.sp < gridRoom(T) + 90 || back > N*0.4) continue;   // メインストレート（グリッドとピット）の上は避ける
+    let dm = Infinity; for(const c of G.P) dm = Math.min(dm, Math.hypot(q.x - c[0], q.y - c[1]));
+    if(dm > 300) continue;
+    for(const L of [150, 125, 100, 80]){
+      const h = Math.ceil(L/2/T.sp), qa = K[((i - h) % N + N) % N], qb = K[(i + h) % N], ang = Math.atan2(qb.y - qa.y, qb.x - qa.x);   // 建物の向き：建物の長さの分のコースの向き（弦）
+      const ok = [-1, 1].every(sd => { for(let u = -L/2; u <= L/2; u += L/4) for(const v of [-bh/2, 0, bh/2]){
+        const x = q.x + Math.cos(ang)*u - Math.sin(ang)*(sd*d + v), y = q.y + Math.sin(ang)*u + Math.cos(ang)*(sd*d + v);
+        let near = Infinity; for(let k = 0; k < N; k++) near = Math.min(near, Math.hypot(K[k].x - x, K[k].y - y));
+        if(near < hw + e - 1) return false;                    // 2棟はコース（ほかの区間も含む）とランオフに掛からない
+        if(pcw.isPointInPath(water, x, y) || (T.seaPath && pcw.isPointInPath(T.seaPath, x, y))) return false;
+        if(x < 10 || y < 10 || x > W - 10 || y > H - 10) return false; }
+        return true; });
+      if(ok){ const sc = dm + (150 - L)*1.5; if(!best || sc < best.sc) best = { x: q.x, y: q.y, a: ang, i, L, bh, d, sc }; break; }
+    }
+  }
+  return best;
+}
+// 大屋根の形（ホテル中心の座標）：細長い葉の形。長さ L、幅は2棟の外側まで
+function yasHotelShell(H0){
+  const a = H0.L/2 + 26, b = H0.d + H0.bh/2 + 5, sh = new Path2D();
+  sh.moveTo(-a, 0); sh.bezierCurveTo(-a*0.55, -b*1.36, a*0.55, -b*1.36, a, 0); sh.bezierCurveTo(a*0.55, b*1.36, -a*0.55, b*1.36, -a, 0); sh.closePath();
+  return { sh, a, b };
+}
+// 車の上に描く：渡り廊下と格子の大屋根（半透明で、下を走る車が透けて見える）。トワイライトの夜は暗くしてLEDを光らせる
+function drawYasHotelOver(T){
+  const G = T && T.yasGeom, H0 = G && G.hotel; if(!H0 || H0.L == null) return;
+  const TW = twilightState(), nt = TW ? TW.night : 0;
+  const { sh, a, b } = yasHotelShell(H0);
+  ctx.save(); ctx.translate(H0.x, H0.y); ctx.rotate(H0.a);
+  const dk = v => Math.round(v*(1 - 0.62*nt));                                                    // 夜は建物を暗く
+  for(const sd of [-1, 1]){                                                                         // コースの両側の2棟
+    const cy = sd*H0.d;
+    ctx.fillStyle = 'rgba(0,0,0,.24)'; ctx.fillRect(-H0.L/2 + 4, cy - H0.bh/2 + 6, H0.L, H0.bh);
+    ctx.fillStyle = `rgb(${dk(243)},${dk(242)},${dk(238)})`; ctx.strokeStyle = 'rgba(90,90,90,.45)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(-H0.L/2, cy - H0.bh/2, H0.L, H0.bh, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = nt > 0.3 ? `rgba(255,214,150,${0.5*nt})` : 'rgba(120,150,175,.35)';         // 窓のすじ（夜は明かり）
+    for(let x = -H0.L/2 + 8; x < H0.L/2 - 8; x += 10) ctx.fillRect(x, cy - H0.bh/2 + 4, 6, H0.bh - 8);
+  }
+  ctx.save(); ctx.translate(3, 5); ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fill(sh); ctx.restore();   // 屋根の影（路面に薄く）
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(-7 + 2, -H0.d + 3, 14, H0.d*2);                  // 渡り廊下の影
+  ctx.fillStyle = '#dfe3e6'; ctx.fillRect(-7, -H0.d, 14, H0.d*2);                                  // 渡り廊下（コースの上）
+  ctx.strokeStyle = 'rgba(80,90,100,.5)'; ctx.lineWidth = 0.8; ctx.strokeRect(-7, -H0.d, 14, H0.d*2);
+  ctx.fillStyle = `rgba(215,226,236,${0.32 - nt*0.12})`; ctx.fill(sh);
+  ctx.save(); ctx.clip(sh);
+  ctx.strokeStyle = nt > 0.02 ? `rgba(${Math.round(245 - 75*nt)},${Math.round(248 - 98*nt)},255,${0.75 + 0.2*nt})` : 'rgba(245,248,250,.75)'; ctx.lineWidth = 1;
+  const span = a + b*2;
+  for(let x = -span; x < span; x += 9){ ctx.beginPath(); ctx.moveTo(x, -b*1.4); ctx.lineTo(x + b*1.4, b*1.4); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, -b*1.4); ctx.lineTo(x - b*1.4, b*1.4); ctx.stroke(); }
+  if(nt > 0.02){ ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = `rgba(110,70,255,${0.18*nt})`; ctx.fill(sh); }
+  ctx.restore();
+  ctx.strokeStyle = nt > 0.02 ? `rgba(190,170,255,${0.85})` : 'rgba(245,248,250,.9)'; ctx.lineWidth = 1.6; ctx.stroke(sh);
+  ctx.restore();
 }
 // 格子の屋根（グリッドシェル）：細長い葉のような形に、ひし形の格子
 function yasShell(g, fill, line, lw){
@@ -6764,7 +6819,7 @@ function yasHotelGlow(NBC, k){
   NBC.globalCompositeOperation = 'lighter';
   const gr = NBC.createRadialGradient(0, 0, 10, 0, 0, 120); gr.addColorStop(0, 'rgba(150,90,255,.45)'); gr.addColorStop(0.6, 'rgba(70,130,255,.18)'); gr.addColorStop(1, 'rgba(70,130,255,0)');
   NBC.fillStyle = gr; NBC.beginPath(); NBC.ellipse(0, 0, 130, 70, 0, 0, 7); NBC.fill();
-  yasShell(NBC, 'rgba(120,80,255,.25)', 'rgba(170,150,255,.9)', 1.2);
+  if(H0.L == null) yasShell(NBC, 'rgba(120,80,255,.25)', 'rgba(170,150,255,.9)', 1.2);   // コースをまたぐホテルの屋根は車の上に描く（drawYasHotelOver）
   NBC.restore();
 }
 /* ---------- ナイトレース（シンガポールGP） ----------
@@ -7340,6 +7395,8 @@ function drawViewInner(cm){
     drawSmokePuffs();                                            // トラブル・リタイア車の煙は車の上にたなびく
     for(const c of shown) if(!c.out && !onBridge(c.idx)) drawRearLight(c);   // リアライトは水しぶきの上に（霧の中でも光が見える）
     if(track && track.type === 'street') drawTunnelRoof(track);    // モナコのトンネル：半透明の屋根（札はその上に出す）
+    if(track && track.yasGeom) drawYasHotelOver(track);          // アブダビ：コースをまたぐホテルの渡り廊下と大屋根
+    if(race.fw) drawFireworks();                                 // 夜のレースの優勝の花火
     drawRankTags(tags); tags = [];                               // 橋の下を走る車の札
     drawSCCar(0);                                                // 橋の下をくぐるセーフティカー
     drawBridge();
@@ -10532,6 +10589,8 @@ const SFX = {
     SND.radioEnd = now + wait;
     return wait;
   },
+  fwLaunch(){ if(!sndCan('fwL', 120)) return; noise(0.35, { filter:'bandpass', freq: 900, freqTo: 2600, q: 1.2, vol: 0.035, attack: 0.04 }); },   // 花火：ヒューと上がる
+  fwBoom(){ if(!sndCan('fwB', 160)) return; noise(0.7, { freq: 700, freqTo: 120, vol: 0.09 }); tone(70 + Math.random()*20, 0.45, { type:'sine', vol: 0.06, to: 40 }); },   // 花火：パーン
   finish(){ [523, 659, 784, 1046].forEach((f,i)=> tone(f, i === 3 ? 0.6 : 0.16, { type:'triangle', vol:0.14, when:i*0.13 })); }   // チェッカー
 };
 /* ---------- エンジン音 ----------
@@ -10968,7 +11027,7 @@ function startComp(comp){
 function prepareGridBase(keepWx){                         // keepWx：天気と路面温度を決め直さない（スタート前に見せた条件のまま決勝を始める）
   pwReset(); tcPickFor = null;
   if(race.state === 'idle') race.laps = +lapsSel.value || race.laps;   // スタート前は選んでいる周回数を使う
-  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.chainQ = []; race.twS = null; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
+  race.cars = []; race.inv = []; race.pitBusy = {}; race.inc = null; race.contacts = []; race.ctCD = {}; race.chainQ = []; race.twS = null; race.fw = null; race.to = {}; race.toLog = []; toKey = ''; race.t = 0; race.firstFinish = null; race.sc = null; race.vsc = null; race.redN = 0; race.scCar = null; try{ scPlace(); }catch(e){} race.yellows = []; intT = -99; intCache = new Map();
   race.bestLap = null; race.bestSplits = null; race.flCar = null; race.flT = -99; race.lapDone = []; race.sparks = []; race.dust = []; race.spray = []; race.smoke = []; race.debris = []; race.recov = []; race.wind = null; race.skids = []; race.greenUntil = 0; race.greenSec = -1; race.greens = []; race.red = null; race.form = null; race.redSkip = false; hideRecord(); clearFlags(); race.leader = null; race.leadCand = null;
   DIR.events = []; DIR.shot = null; DIR.next = 0; DIR.fade = null; DIR.fadeA = 0; DIR.pan = null;
   RP.buf = []; RP.pbuf = []; RP.lastRec = -1; RP.pending = null; stopReplay();
@@ -11870,7 +11929,7 @@ function onCross(c){
     (race.inv || []).filter(v => v.car === c).forEach(v => { v.at = race.t; });  // 審議中ならすぐに裁定する
     applyPostPen(c);
     if(c.m === MY) setTimeout(() => pwFinish(c), 700);
-    if(race.firstFinish === null){ race.firstFinish = tx; SFX.finish(); crowdCheer(null, null, 1.0, true); showFlag('chk', 'CHEQUERED FLAG', `${c.m.name} ${c.pen ? 'FIRST ACROSS THE LINE' : 'WINS'}`); }
+    if(race.firstFinish === null){ race.firstFinish = tx; SFX.finish(); crowdCheer(null, null, 1.0, true); try{ fwStart(c); }catch(e){} showFlag('chk', 'CHEQUERED FLAG', `${c.m.name} ${c.pen ? 'FIRST ACROSS THE LINE' : 'WINS'}`); }
   }
 }
 
@@ -14235,6 +14294,72 @@ function emitSparks(c, n){
               age: 0, life: life*(0.6 + Math.random()*0.8) });
   }
 }
+/* ---------- 夜のレースの優勝の花火（2026-11-27） ----------
+   夜のレース（とアブダビの夜）で、1位がゴールラインを越えた瞬間から約10秒、ホームストレートの両脇から花火。
+   ・吹き出し：ストレート沿いの両側に等間隔に並べた噴き出し花火。コースと反対の外側へ扇形に光の粒を噴き上げる
+   ・打ち上げ：ところどころから光の玉が外側へ上がり、パッと円形に開いて落ちる
+   ・色：金と白に、1位のチームの色を少し混ぜる。光は加算で重ねる
+   ・時間は画面の時間（倍速でも10秒）。粒の数には上限 */
+const FW_DUR = 10, FW_MAX = 700, FW_FOUNT = 330;   // 粒の上限（全体／吹き出しの分。残りは打ち上げ用に空けておく）
+function fwNight(){ if(mode !== 'race' || !track) return false; if(isNightCourse()) return true; const TW = twilightState(); return !!TW && TW.night > 0.5; }
+function fwStart(c){
+  if(!fwNight() || race.fw) return;
+  const h = String((c && c.m && c.m.color) || '#ffd23c').replace('#', ''), v = h.length === 3 ? h.split('').map(x => x + x).join('') : h.slice(0, 6);
+  const col = [0, 2, 4].map(k => parseInt(v.slice(k, k + 2), 16) || 255).join(',');
+  const T = track, K = T.pts, N = T.N, s0 = T.startIdx || 0, off = T.width/2 + escW(T)*0.55, step = Math.max(1, Math.round(34/T.sp)), spots = [];
+  for(let k = -7; k <= 5; k++){ const q = K[((s0 + k*step) % N + N) % N]; for(const sd of [1, -1]) spots.push({ x: q.x + q.nx*off*sd, y: q.y + q.ny*off*sd, ox: q.nx*sd, oy: q.ny*sd, ph: Math.random() }); }
+  race.fw = { t0: performance.now()/1000, last: performance.now()/1000, col, spots, p: [], shells: [], nextShell: 0.15 };
+}
+function fwPick(F){ const r = Math.random(); return r < 0.45 ? '255,214,110' : r < 0.75 ? '255,250,235' : F.col; }
+function stepFireworks(){
+  const F = race && race.fw; if(!F) return null;
+  const now = performance.now()/1000, t = now - F.t0, dt = Math.min(0.05, Math.max(0, now - F.last)); F.last = now;
+  if(t > FW_DUR + 2.5){ race.fw = null; return null; }
+  const P = F.p, room = () => P.length < FW_MAX, U = F.U || 1;   // U：画面の1px がコースの座標でいくつか（大きさと速さは画面の px で決める）
+  if(t < FW_DUR){
+    const fade = t < 0.6 ? t/0.6 : t > FW_DUR - 2 ? (FW_DUR - t)/2 : 1;   // 吹き出しは始めと終わりを弱く
+    for(const S of F.spots){                                            // 吹き出し
+      const n = dt*24*fade*(0.75 + 0.5*Math.sin((t + S.ph)*5)); let m = Math.floor(n) + (Math.random() < n % 1 ? 1 : 0);
+      while(m-- > 0 && P.length < FW_FOUNT){ const a = Math.atan2(S.oy, S.ox) + (Math.random() - 0.5)*0.7, sp = (55 + Math.random()*60)*U;
+        P.push({ x: S.x, y: S.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, age: 0, life: 0.55 + Math.random()*0.5, c: Math.random() < 0.7 ? '255,226,140' : '255,250,235', w: 1.3*U }); }
+    }
+    F.nextShell -= dt;
+    if(F.nextShell <= 0 && t < FW_DUR - 1.2){                           // 打ち上げ
+      F.nextShell = 0.35 + Math.random()*0.45;
+      const S = F.spots[(Math.random()*F.spots.length) | 0], up = (45 + Math.random()*45)*U, a = Math.atan2(S.oy, S.ox) + (Math.random() - 0.5)*0.5;
+      F.shells.push({ x: S.x, y: S.y, vx: Math.cos(a)*up/0.7, vy: Math.sin(a)*up/0.7, age: 0, life: 0.7, c: fwPick(F) });
+      try{ SFX.fwLaunch(); }catch(e){}
+    }
+  }
+  F.shells = F.shells.filter(sh => {
+    sh.age += dt; sh.x += sh.vx*dt; sh.y += sh.vy*dt; sh.vx *= Math.exp(-1.6*dt); sh.vy *= Math.exp(-1.6*dt);
+    if(sh.age < sh.life){ if(room()) P.push({ x: sh.x, y: sh.y, vx: 0, vy: 0, age: 0, life: 0.35, c: '255,220,150', w: 1.1*U }); return true; }
+    const n = 44 + ((Math.random()*16) | 0), c2 = Math.random() < 0.5 ? sh.c : fwPick(F);   // パッと開く
+    for(let k = 0; k < n && room(); k++){ const a = k/n*Math.PI*2 + Math.random()*0.15, sp = (75 + Math.random()*45)*U;
+      P.push({ x: sh.x, y: sh.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, age: 0, life: 1.1 + Math.random()*0.7, c: k % 3 ? sh.c : c2, w: 2*U, tw: true }); }
+    P.push({ x: sh.x, y: sh.y, vx: 0, vy: 0, age: 0, life: 0.25, c: '255,250,235', w: 0, flash: 40*U });
+    try{ SFX.fwBoom(); }catch(e){}
+    return false;
+  });
+  const k = Math.exp(-2.4*dt); let j = 0;
+  for(const q of P){ q.age += dt; if(q.age >= q.life) continue; q.px = q.x; q.py = q.y; q.x += q.vx*dt; q.y += q.vy*dt; q.vx *= k; q.vy *= k; P[j++] = q; }
+  P.length = j;
+  return F;
+}
+function drawFireworks(){
+  if(race.fw){ const m = ctx.getTransform(); race.fw.U = Math.max(0.5, (typeof dpr !== 'undefined' ? dpr : 1)/Math.max(1e-3, Math.hypot(m.a, m.b))); }
+  const F = stepFireworks(); if(!F) return;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
+  for(const sh of F.shells){ ctx.fillStyle = `rgba(${sh.c},.95)`; ctx.beginPath(); ctx.arc(sh.x, sh.y, 1.8*(F.U || 1), 0, 7); ctx.fill(); }
+  for(const q of F.p){
+    const u = q.age/q.life, a = (1 - u)*(q.tw ? (0.65 + 0.35*Math.sin(q.age*40 + q.x)) : 1);
+    if(q.flash){ const r = q.flash*(0.4 + u); const g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, r); g.addColorStop(0, `rgba(255,245,220,${0.5*(1 - u)})`); g.addColorStop(1, 'rgba(255,245,220,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, 7); ctx.fill(); continue; }
+    const x2 = q.x - q.vx*0.06, y2 = q.y - q.vy*0.06;
+    ctx.strokeStyle = `rgba(${q.c},${(0.3*a).toFixed(3)})`; ctx.lineWidth = q.w*2.4; ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.strokeStyle = `rgba(${q.c},${a.toFixed(3)})`; ctx.lineWidth = q.w; ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+  ctx.restore();
+}
 function stepSparks(dt){
   const sp = race.sparks; if(!sp || !sp.length) return;
   const k = Math.exp(-7*dt);                                          // 空気抵抗ですぐ減速
@@ -15069,6 +15194,7 @@ const SPONSOR_TYPES = {
   pay:    { n:'ペイドライバー型', d:'推しのドライバーを正ドライバーとして起用する条件。報酬が高く、契約時に持参金。そのドライバーの年俸はスポンサーが負担' },
   payres: { n:'ペイドライバー型（リザーブ）', d:'推しのドライバーをリザーブとして起用する条件。契約時に持参金。そのドライバーの年俸はスポンサーが負担' }
 };
+SPONSOR_TYPES.title = { n:'タイトルスポンサー', d:'チーム名の前に会社名が付き、チームカラーも会社の色に。複数シーズンの契約で、期間中はほかのスポンサーとは契約しない。期間中に目標の順位に届くと成功ボーナス' };
 const isPaySp = s => !!s && (s.type === 'pay' || s.type === 'payres');
 const YOUTH_AGE = 23;
 /* ---------- スポンサー企業の架空ロゴ ----------
@@ -15297,6 +15423,7 @@ function makePayDriver(){
 /* スポンサー契約を、項目ごとのタイルにする（本部の概要）。説明が要る契約（持参金つきなど）は note に文章を添える */
 function sponsorTiles(s){
   const M = v => money(v), P2 = v => `$${v.toFixed(2)}M`;
+  if(s.type === 'title'){ const o = s.offer || (career && career.title) || {}; return { t: [['毎戦', M(o.base || 0)], ['目標', `${o.goal}位以上`]] }; }
   if(s.type === 'stable') return { t: [['毎戦', M(s.base)]] };
   if(s.type === 'points') return { t: [['毎戦', M(s.base)], ['1ptごと', P2(s.perPt)], ['表彰台', M(s.podium)], ['優勝', M(s.win)]] };
   if(s.type === 'quali') return { t: [['毎戦', M(s.base)], ['予選TOP10/台', M(s.top10)], ['TOP3で追加', M(s.top3)], ['ポール', M(s.pole)]] };
@@ -15307,6 +15434,11 @@ function sponsorTiles(s){
   return { t: [['毎戦', M(s.base)], ['完走1台', M(s.perFin)], ['順位1つ上げ', P2(s.perGain)]] };
 }
 function sponsorTerms(s){
+  if(s.type === 'title'){
+    const o = s.offer; if(!o){ const T = career && career.title; return T ? `毎戦 ${money(T.base)}・${SY(T.until)}年まで・期間中にコンストラクターズ${T.goal}位以上で成功ボーナス` : ''; }
+    return `${o.renew ? '延長' : '契約'}金 ${money(o.bonus)} ＋ 毎戦 ${money(o.base)}（${o.years}シーズン）。期間中のどれか1シーズンでコンストラクターズ${o.goal}位以上なら成功ボーナス ${money(o.succ)}。`
+      + (o.renew ? '選ばなければ契約は終わり、元の名前・カラーに戻る' : `チーム名の前に「${esc(o.brand)}」が付き、カラーも${esc(o.co)}の色になる`);
+  }
   if(s.type === 'stable') return `毎戦 ${money(s.base)}`;
   if(s.type === 'points') return `毎戦 ${money(s.base)} ＋ 1ポイントごと $${s.perPt.toFixed(2)}M ＋ 表彰台 ${money(s.podium)} ＋ 優勝 ${money(s.win)}`;
   if(s.type === 'quali') return `毎戦 ${money(s.base)} ＋ 予選トップ10の1台ごと ${money(s.top10)} ＋ トップ3でさらに ${money(s.top3)} ＋ ポール ${money(s.pole)}`;
@@ -17840,6 +17972,7 @@ const HQ_TAB_ICO = {
   mkt: 'M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5',
   rec: 'M8 4h8v5.5a4 4 0 0 1-8 0zM8 6H5.2a3 3 0 0 0 3.1 4.2M16 6h2.8a3 3 0 0 1-3.1 4.2M12 13.5V17M8.5 20.5h7M10 17h4v3.5h-4z'
 };
+let drvSub = 'main';                                   // ドライバータブの中の表示（正ドライバー・リザーブ・アカデミー・セカンド）。保存しない（2026-11-26）
 let hqTab = lsGet(HQ_TAB_KEY, 'ov'); if(!HQ_TABS.some(([k]) => k === hqTab)) hqTab = 'ov';
 const hqOpen = new Set();                         // 前戦の結果で開いている折りたたみ（ニュースの続き・収支の内訳）
 let recView = 'season', recPick = null;          // 記録の表示（歴代チャンピオン・チーム・ドライバー・レース履歴）と、詳しく見ている対象
@@ -19893,8 +20026,28 @@ function titleOffseason(){
   career.titleOffer = o; res.offer = o; return res;
 }
 // 提案に答える（オフシーズンの間だけ）
-function titleChoose(accept){
-  const o = career.titleOffer; if(!o || career.round > 0) return;
+/* タイトルスポンサーは通常のスポンサー契約（4択）の1つ（2026-11-26）。
+   ・新しい提案／継続の提案は、シーズンの初めのスポンサーの選択肢の1つとして出る（ほかの1社と入れ替え）
+   ・選ぶとタイトルスポンサー契約になり、契約期間中はスポンサーの選択はなく、タイトルスポンサーが今季のスポンサー（career.sponsor.type==='title'）
+   ・継続の提案を選ばなければ契約は終わる。報酬は led.title（毎戦）で払い、スポンサー契約の欄（led.deal）は0 */
+const titleSpObj = () => ({ type: 'title', name: career.title.co, base: 0, kk: 1 });
+function titleSponsorSync(){
+  if(!career || career.round > 0 || career.sponsor) return;
+  const offers = career.sponsorOffers || (career.sponsorOffers = []);
+  const drop = x => { if(isPaySp(x) && !x.renew){ const d = career.drivers[x.drv]; if(d && d.spHold) delete career.drivers[x.drv]; } };
+  if(titleActive() && !career.titleOffer){                        // 契約期間中：スポンサーはタイトルスポンサーのまま（選択なし）
+    offers.forEach(drop); career.sponsorOffers = []; career.sponsor = titleSpObj(); return;
+  }
+  const o = career.titleOffer; if(!o || !offers.length) return;
+  if(offers.some(x => x.type === 'title')) return;
+  let i = -1; for(let k = offers.length - 1; k >= 0; k--){ if(!offers[k].renew && !isPaySp(offers[k])){ i = k; break; } }
+  if(i < 0) for(let k = offers.length - 1; k >= 0; k--){ if(!offers[k].renew){ i = k; break; } }
+  if(i < 0) i = offers.length - 1;
+  drop(offers[i]);
+  offers[i] = { type: 'title', name: o.co, base: 0, kk: 1, offer: o, renew: !!o.renew };
+}
+function titleChoose(accept, quiet){
+  const o = career.titleOffer; if(!o || career.round > 0) return '';
   const me = myTeam();
   if(accept){
     if(o.renew && titleActive()){
@@ -19906,15 +20059,17 @@ function titleChoose(accept){
     }
     career.money = r1(career.money + o.bonus);
   } else if(o.renew && titleActive()) titleEnd('expire');
-  career.titleOffer = null; saveCareer();
-  renderHQ(accept ? (o.renew ? `${o.co}とのタイトルスポンサー契約を${o.years}シーズン延長しました。契約金 ${money(o.bonus)}を受け取りました。` : `${o.co}とタイトルスポンサー契約を結びました。チーム名は「${me.name}」になり、チームカラーも変わりました。契約金 ${money(o.bonus)}を受け取りました。`)
+  career.titleOffer = null;
+  const msg = (accept ? (o.renew ? `${o.co}とのタイトルスポンサー契約を${o.years}シーズン延長しました。契約金 ${money(o.bonus)}を受け取りました。` : `${o.co}とタイトルスポンサー契約を結びました。チーム名は「${me.name}」になり、チームカラーも変わりました。契約金 ${money(o.bonus)}を受け取りました。`)
     : (o.renew ? `${o.co}との契約を終えました。チーム名とカラーは「${me.name}」に戻りました。` : `${o.co}からの提案を断りました。`));
+  if(quiet) return msg;
+  saveCareer(); renderHQ(msg); return msg;
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-title]'); if(b && career && career.titleOffer) titleChoose(b.dataset.title === 'yes'); });
 // 本部の概要に出すカード（契約中の状態／提案）
 function titleCardHtml(){
   if(!career) return '';
-  const me = myTeam(), o = career.round === 0 ? career.titleOffer : null, T = titleActive() ? career.title : null;
+  const me = myTeam(), o = career.round === 0 && career.sponsor && career.titleOffer ? career.titleOffer : null, T = titleActive() ? career.title : null;   // 提案はスポンサーの選択肢に出す
   if(!o && !T) return '';
   const sw = (a, b) => `<span class="tkSw" style="background:linear-gradient(135deg,${a} 58%,${b} 58%)"></span>`;
   if(o){
@@ -20099,7 +20254,7 @@ function nextSeason(){
   try{ rep.take = takeOffseason(); }catch(e){ console.error(e); }       // チームの身売り（2年続けて下位3チーム）
   try{ rep.title = titleOffseason(); }catch(e){ console.error(e); }     // タイトルスポンサー（契約の評価・継続・新しい提案）
   if(career.home && career.home.stage === 'open'){ const i = homeInsert(career.calendar); career.money = r1(career.money - HOME_FEE); rep.home = { opened: homeOpened, reno: homeReno, round: i + 1, fee: HOME_FEE }; }
-  career.owner.target = ownerTarget(); career.sponsor = null; career.sponsorOffers = makeSponsorOffers(); try{ payRenewApply(payRe); }catch(e){ console.error(e); }
+  career.owner.target = ownerTarget(); career.sponsor = null; career.sponsorOffers = makeSponsorOffers(); try{ payRenewApply(payRe); }catch(e){ console.error(e); } try{ titleSponsorSync(); }catch(e){ console.error(e); }
   const shift = rep.take && rep.take.mine ? null : ownerPersShift(subRes.length > 0 && subRes.every(x => !x.ok));   // 身売りで新しいオーナーになったときは方針転換なし   // オーナーの方針転換（性格が変わることがある）
   if(shift) rep.owner.pers = shift;
   career.owner.goal = makeOwnerGoal(); career.owner.goalSeason = career.season;   // 新しいシーズンの主目標（新しい性格で選ぶ）
@@ -20514,6 +20669,8 @@ function checkPayDeal(){
 }
 const payTag = code => { const sp = career && career.sponsor; return isPaySp(sp) && !sp.broken && sp.drv === code ? ` <span class="payTag" title="${esc(sp.name)}との契約の条件：${sp.type === 'pay' ? '正ドライバーから外す' : 'チームから外す'}と違約金 ${money(sp.fine)}">スポンサーの推し</span>` : ''; };
 function renderSponsorPick(msg){
+  titleSponsorSync();
+  if(career.sponsor){ saveCareer(); renderHQ(msg); return; }
   const el = $('#hq'), me = myTeam(), offers = career.sponsorOffers;
   if(spPickSel >= offers.length) spPickSel = -1;
   el.innerHTML = `
@@ -20538,9 +20695,10 @@ function renderSponsorPick(msg){
     if(spPickSel < 0) return;
     const o = offers[spPickSel];
     if(isPaySp(o) && !payChoiceOk(o)) return;
-    const note = isPaySp(o) ? signPayDeal(o) : '';
+    let note = isPaySp(o) ? signPayDeal(o) : '';
+    if(career.titleOffer){ const tm = titleChoose(o.type === 'title', true); if(o.type === 'title' || (tm && !titleActive())) note = tm; }   // 選ばなかったタイトルの継続の提案は、ここで契約終了
     for(const x of offers) if(x !== o && isPaySp(x) && !x.renew){ const d = career.drivers[x.drv]; if(d){ delete d.spHold; if(pt100(ovr(d)) >= PAY_FA_MIN*10){ if(!career.fa.includes(x.drv)) career.fa.push(x.drv); } else { d.retired = true; d.lower = true; } } }   // 選ばなかった推し：総合C以上だけ移籍市場へ（それ未満はスポンサーと一緒に去る）   // 選ばなかった推しは移籍市場へ
-    career.sponsor = o; career.sponsorOffers = []; spPickSel = -1; payPick = null;
+    career.sponsor = o.type === 'title' ? titleSpObj() : o; career.sponsorOffers = []; spPickSel = -1; payPick = null;
     saveCareer(); renderHQ(note); window.scrollTo(0, 0);
   };
 }
@@ -21977,7 +22135,7 @@ function renderHQView(msg){
     if(!career.sponsor) todoI.unshift(['bad', 'スポンサーを選ぶ', 'ov']);
     Object.keys(career.facRen || {}).forEach(k => todoI.push(['warn', `${FAC_K[k].n}の改修を決める`, 'fac']));
     if(career.takeAsk) todoI.unshift(['bad', '新しいチーム名にするか決める（下の「チームの身売り」）', 'ov']);
-    if(career.titleOffer) todoI.unshift(['bad', career.titleOffer.renew ? 'タイトルスポンサーの延長を決める' : 'タイトルスポンサーの提案に答える', 'ov']);
+    if(career.titleOffer && career.sponsor) todoI.unshift(['bad', career.titleOffer.renew ? 'タイトルスポンサーの延長を決める' : 'タイトルスポンサーの提案に答える', 'ov']);
     const todoB = `<div class="osBlk osTodo ${todoI.length ? '' : 'ok'}"><span class="osLab">要対応${todoI.length ? `<b>${todoI.length}件</b>` : ''}</span>${todoI.length ? `<div class="osTodoL">${todoI.map(([lv, t, tab]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"><i aria-hidden="true">!</i><span>${esc(t)}</span></button>`).join('')}</div>` : '<p class="osNone">対応が必要なことはありません。</p>'}</div>`;
     // ドライバー：総合の前後と、能力ごとの伸び
     const drvCard = code => { const d = career.drivers[code]; if(!d || !d.st) return '';
@@ -22334,7 +22492,7 @@ function renderHQView(msg){
       <div class="gLegend" aria-label="ランクの区切り">${GRADES.map(([, g]) => `<span><span class="gd g${g}">${g}</span>${GRADE_RANGE[g]}</span>`).join('')}</div>
     </div>`;
   /* オーナーの目標（概要タブ）：性格・主目標・副目標と進み具合。第3戦のあとからは中間評価の一言 */
-  const spCard = sp ? (() => { const T = sponsorTiles(sp);
+  const spCard = sp && sp.type !== 'title' ? (() => { const T = sponsorTiles(sp);
     return `<div class="sec spSec"><h2><span class="spHd">${sponsorLogo(sp.name, 26)}</span><span class="kick spTier">${SPONSOR_TYPES[sp.type].n}</span></h2>
       <div class="spTiles" style="grid-template-columns:repeat(${Math.min(4, T.t.length)},minmax(0,1fr))">${T.t.map(([l, v]) => `<div><small>${l}</small><b class="num">${v}</b></div>`).join('')}</div>
       ${T.note ? `<p class="note" style="margin:8px 0 0">${T.note}</p>` : ''}</div>`; })() : '';
@@ -22360,25 +22518,26 @@ function renderHQView(msg){
       ${regN ? `<p class="note">${regN}</p>` : ''}
       <p class="note">副目標は1つ達成するごとにボーナス +${money(SUB_REWARD.bonus)}・信頼度 +${SUB_REWARD.trust}（未達は ${SUB_REWARD.miss}）。</p></div>`;
   })();
+  const drvSubN = {};                                               // ドライバータブの中の表示ごとの「やること」の件数
   const todoTabs = {};                                              // タブごとの「やること」の件数（タブに数字を出す）
   const todo = (() => {
     const it = [];   // [重さ, 文, 開くタブ]
     pendingContracts().forEach(x => it.push(['bad', x, 'drv']));
-    if(career.resDemand) it.push(['bad', `リザーブ${career.resDemand.code}の要求に返事をする`, 'drv']);
+    if(career.resDemand) it.push(['bad', `リザーブ${career.resDemand.code}の要求に返事をする`, 'drv', 'res']);
     if(career.money < 0) it.push(['bad', '資金がマイナス（開発・契約ができません）。融資で補えます', 'dev']);
     if(career.sreq && career.sreq.state === 'offer' && career.sreq.round === career.round && !seasonOver) it.push(['warn', 'スポンサーからの依頼に返事をする（この画面の上）', 'ov']);
     if(career.ev && career.ev.kind !== 'cash' && !seasonOver) it.push(['warn', `チームの出来事に返事をする：${evHead(career.ev)[0]}`, 'ov']);
     if(evActive(career.evFix)) it.push(['info', `${CAR_LAB[career.evFix.key]}の開発費が今戦は −30%（${career.evFix.code}の要望）`, 'dev']);
-    me.drivers.forEach(c => { const d = career.drivers[c]; if(d && d.inj) it.push(['warn', `${c}が${d.injWhy === 'sick' ? '体調不良で欠場' : '負傷中'}（あと${d.inj}戦）。代役を確認`, 'drv']); });
+    me.drivers.forEach(c => { const d = career.drivers[c]; if(d && d.inj) it.push(['warn', `${c}が${d.injWhy === 'sick' ? '体調不良で欠場' : '負傷中'}（あと${d.inj}戦）。代役を確認`, 'drv', 'main']); });
     if(rd && !inProgress && !seasonOver){
       const n = slotsLeft(); if(n > 0) it.push(['info', `開発枠が今戦あと${n}回（持ち越し不可）`, 'dev']);
       try{ if(career.pu && puWorks(me) && puSlotsLeft() > 0) it.push(['info', `PU開発枠が今戦あと${puSlotsLeft()}回${aduoOf(me.id) ? '（ADUO認定中）' : ''}`, 'dev']); }catch(e){}
       try{ const L = career.last && career.last.aduo; if(L && L.round === career.round && L.granted.length){ const mine = L.granted.find(x => x.id === me.id), sup = !puWorks(me) && L.granted.find(x => x.id === puMakerOf(me)); if(mine) it.push(['warn', `ADUOに認定されました：PU開発枠 +${ADUO_LV[mine.lv].slots}・PUの開発費 −${Math.round(ADUO_LV[mine.lv].disc*100)}%（今季の残り）`, 'dev']); else if(sup) it.push(['info', `供給元の${(teamOf(sup.id) || {}).name || ''}がADUOに認定：PUが伸びやすくなります`, 'dev']); } }catch(e){}
-      const noTr = me.drivers.filter(c => !trainOf(c)); if(noTr.length) it.push(['info', `${noTr.join('・')}のトレーニングが未設定`, 'drv']);
+      const noTr = me.drivers.filter(c => !trainOf(c)); if(noTr.length) it.push(['info', `${noTr.join('・')}のトレーニングが未設定`, 'drv', 'main']);
     }
     const ico = { bad:'!', warn:'▲', info:'・' };
-    it.forEach(x => { if(x[2] !== 'ov') todoTabs[x[2]] = (todoTabs[x[2]] || 0) + 1; });
-    return `<div class="sec todoSec"><h2>やること${it.length ? `<span class="todoN num">${it.length}</span>` : '<span class="kick">なし</span>'}</h2>${it.length ? `<div class="todoL">${it.map(([lv, t, tab]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"><i aria-hidden="true">${ico[lv]}</i><span>${esc(t)}</span><small>${HQ_TABS.find(x => x[0] === tab)[1]} ›</small></button>`).join('')}</div>` : '<p class="muted" style="margin:0;font-size:12.5px">いま対応が必要なことはありません。</p>'}</div>`;
+    it.forEach(x => { if(x[2] !== 'ov') todoTabs[x[2]] = (todoTabs[x[2]] || 0) + 1; if(x[3]) drvSubN[x[3]] = (drvSubN[x[3]] || 0) + 1; });
+    return `<div class="sec todoSec"><h2>やること${it.length ? `<span class="todoN num">${it.length}</span>` : '<span class="kick">なし</span>'}</h2>${it.length ? `<div class="todoL">${it.map(([lv, t, tab, sub]) => `<button type="button" class="todo ${lv}" data-hqt="${tab}"${sub ? ` data-dsub="${sub}"` : ''}><i aria-hidden="true">${ico[lv]}</i><span>${esc(t)}</span><small>${HQ_TABS.find(x => x[0] === tab)[1]} ›</small></button>`).join('')}</div>` : '<p class="muted" style="margin:0;font-size:12.5px">いま対応が必要なことはありません。</p>'}</div>`;
   })();
   const sreqCard = (() => { const q = career.sreq; if(!q || q.season !== career.season || q.round !== career.round || seasonOver) return '';
     const body = `次戦（${rd ? esc(rd.name) : ''}）で <b>「${esc(goalText(q.g))}」</b> を達成したら、今季の残り（${q.left}戦）は基本スポンサー収入が毎戦 <b class="gainT">+${money(pr(q.up))}</b>。失敗すると毎戦 <b class="lossT">−${money(pr(q.down))}</b>。`;
@@ -22435,9 +22594,14 @@ function renderHQView(msg){
       <nav class="hqTabs" role="tablist" aria-label="チーム本部の表示">${HQ_TABS.map(([k, l]) => `<button type="button" role="tab" data-hqt="${k}" class="${hqTab === k ? 'on' : ''}" aria-selected="${hqTab === k}" aria-label="${l}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${HQ_TAB_ICO[k]}"/></svg><span class="tl">${l}</span>${HQ_TAB_SHORT[k] ? `<span class="ts" aria-hidden="true">${HQ_TAB_SHORT[k]}</span>` : ''}${badge(k)}</button>`).join('')}</nav></div>`; })()}
     ${hqTab === 'ov' ? `<div class="hqGrid">
       <div class="hqCol">${conCard}${evCard}${sreqCard}${nextCard}${myCarCardHtml(me)}${offCard}${todo}</div>
-      <div class="hqCol">${ownerCard}${titleCardHtml()}${spCard}${last}${miniStand}</div>
+      <div class="hqCol">${ownerCard}${titleCardHtml()}${spCard}${last}${miniStand}${loanCard}</div>
     </div>${cal}` : ''}
-    ${hqTab === 'drv' ? `${conCard}${drivers}${reserveCard}${acadCard}${sisDrvCard}${loanCard}` : ''}
+    ${hqTab === 'drv' ? (() => {                                       // ドライバータブ：契約はいつも一番上、その下を小さなタブで切り替える（2026-11-26）
+      const subs = [['main', '正ドライバー', drivers], ['res', 'リザーブ', reserveCard], ['acad', 'アカデミー', acadCard], ['sis', 'セカンド', sisDrvCard]].filter(x => x[0] === 'main' || x[0] === 'res' || x[2]);
+      if(!subs.some(x => x[0] === drvSub)) drvSub = 'main';
+      const cur = subs.find(x => x[0] === drvSub);
+      const bar = `<div class="drvSubs" role="tablist" aria-label="ドライバーの表示" style="--n:${subs.length}">${subs.map(([k, l]) => `<button type="button" role="tab" data-dsub="${k}" class="${k === drvSub ? 'on' : ''}" aria-selected="${k === drvSub}">${l}${drvSubN[k] && k !== drvSub ? `<i class="tBadge num">${drvSubN[k]}</i>` : ''}</button>`).join('')}</div>`;
+      return `${conCard}${bar}${cur[2]}`; })() : ''}
     ${hqTab === 'dev' ? dev + loanCard : ''}
     ${hqTab === 'fac' ? facHtml() + loanCard : ''}
     ${hqTab === 'mkt' ? market + loanCard : ''}
@@ -22553,8 +22717,10 @@ function renderHQView(msg){
   const gr = $('#goRace'); if(gr) gr.onclick = () => { sndInit(); skipPending = false; goRace(); };
   const grb = $('#goRaceBar'); if(grb) grb.onclick = () => { sndInit(); skipPending = false; goRace(); };
   ['#skipRace', '#skipRaceBar'].forEach(id => { const b = $(id); if(b) b.onclick = skipChoose; });   // 予選だけか、決勝までかを選ぶ
+  el.querySelectorAll('.drvSubs [data-dsub]').forEach(b => b.onclick = () => { hqHit = null; drvSub = b.dataset.dsub; renderHQ(); const bar = $('#hq .drvSubs'); if(bar && bar.getBoundingClientRect().top < 0) bar.scrollIntoView({ block: 'start', behavior: 'instant' }); });
   el.querySelectorAll('[data-hqt]').forEach(b => b.onclick = () => {
     hqHit = null;                                                       // タブを切り替えたら、押したボタンの位置は保たない
+    if(b.dataset.dsub) drvSub = b.dataset.dsub;                         // 「やること」から開くときは、ドライバータブの中の表示も合わせる
     hqTab = b.dataset.hqt; lsSet(HQ_TAB_KEY, hqTab); renderHQ();
     const hq = $('#hq'); if(hq) hq.style.paddingBottom = '';
     window.scrollTo({ top: 0, behavior: 'instant' });                   // どのタブも、開いたら毎回いちばん上から
@@ -27872,7 +28038,7 @@ function makeRealPoints(type){
   return { pts: cands[0].pts, startPos: cands[0].startPos, type, score: cands[0].score, tried: cands.length };
 }
 /* アップデート情報：本部の画面のいちばん下にボタンを置き、押すと更新内容の一覧を出す */
-const APP_VER = '1.10.0';
+const APP_VER = '1.11.0';
 /* 自動更新（2026-11）：ホーム画面に追加したアプリ（iPhoneのホーム画面のWebアプリ）は、前に読んだページを使い続けることがある。
    開いたとき・アプリに戻ってきたときに、サーバーの最新の index.html を（キャッシュを使わずに）取りに行き、
    バージョンかビルド番号が違えば読み込み直す。レースの途中なら、読み込み直さずに知らせるだけ（ボタンで更新） */
@@ -27912,6 +28078,17 @@ if(/github\.io$/.test(location.hostname) || (window.matchMedia && matchMedia('(d
   setInterval(() => { if(updFound && updSafe()){ try{ if(career) saveCareer(); }catch(e){} updGo(); } }, 5000);
 }
 const UPD_LOG = [
+  { v: '1.11.0', items: [
+    ['レース', [
+      '夜のレースで、1位がゴールした瞬間にホームストレートの両脇から花火が上がるように',
+      'アブダビGPのホテルを、実際と同じくコースをまたいで建つ形に（下をマシンが走り抜ける）',
+    ]],
+    ['チーム運営', [
+      'タイトルスポンサーを別枠ではなく、シーズン初めのスポンサー契約（4択）の1つとして提案されるように。契約期間中はほかのスポンサーとは契約しない',
+      'ドライバータブを「正ドライバー・リザーブ・アカデミー・セカンド」の小さなタブで切り替える形に（契約はどのタブでも一番上）',
+      '借入（融資）のカードを、ドライバータブから概要タブへ移動',
+    ]],
+  ] },
   { v: '1.10.0', items: [
     ['サーキット', [
       'アブダビGPを夕暮れから夜へ移るトワイライトレースに（予選も夕暮れ）',
